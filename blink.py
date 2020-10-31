@@ -5,7 +5,8 @@ from time import sleep
 led = LED(17)
 while True:
     led.on()
-    sleep(1)
+    sleep(0.25)
     led.off()
-    sleep(1)
+    sleep(0.25)
+    print( "Running now .... " )
 pass
