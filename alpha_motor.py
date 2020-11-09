@@ -21,7 +21,7 @@ def main():
     pwma = 6
     pwmb = 26
     
-    ain1 = 13
+    ain1 = 12
     bin1 = 20
 
     GPIO.setmode(GPIO.BCM)
