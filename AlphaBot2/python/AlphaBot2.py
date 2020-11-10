@@ -98,10 +98,30 @@ class AlphaBot2(object):
 
 if __name__=='__main__':
 
-	Ab = AlphaBot2()
-	Ab.forward()
+	ab = AlphaBot2()
+
 	try:
-		while True:
-			time.sleep(1)
+		for i in range( 4 ) : 
+			d = i%4
+			if d == 0 : 
+				ab.forward()
+			elif d == 1 :
+				ab.left()
+			elif d == 2 :
+				ab.right()
+			elif d == 3 :
+				ab.backward()
+			pass
+
+			time.sleep(2) 
+		pass
 	except KeyboardInterrupt:
-		GPIO.cleanup()
+		print( "" )
+	pass
+
+	ab.stop()
+	time.sleep(2)
+	GPIO.cleanup()
+
+	print( "Good bye!" )
+	pass
