@@ -101,6 +101,7 @@ if __name__=='__main__':
 	ab = AlphaBot2()
 
 	try:
+		st = 0.5
 		for i in range( 4 ) : 
 			d = i%4
 			if d == 0 : 
@@ -113,7 +114,7 @@ if __name__=='__main__':
 				ab.backward()
 			pass
 
-			time.sleep(2) 
+			time.sleep(st) 
 		pass
 	except KeyboardInterrupt:
 		print( "" )
