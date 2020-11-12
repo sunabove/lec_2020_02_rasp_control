@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
-class Base(object):
+class Motor:
     
     def __init__(self,ain1=12,ain2=13,ena=6,bin1=20,bin2=21,enb=26):
         self.AIN1 = ain1
@@ -26,92 +26,73 @@ class Base(object):
         self.PWMA.start(self.PA)
         self.PWMB.start(self.PB)
         self.stop()
+    pass
 
-    def forward(self):
-        self.PWMA.ChangeDutyCycle(self.PA)
-        self.PWMB.ChangeDutyCycle(self.PB)
-        GPIO.output(self.AIN1,GPIO.LOW)
-        GPIO.output(self.AIN2,GPIO.HIGH)
-        GPIO.output(self.BIN1,GPIO.LOW)
-        GPIO.output(self.BIN2,GPIO.HIGH)
+    def forward(self, value=50):
+        print("foward")
+        self.setMotor( value, value)
+    pass
 
+    def backward(self, value=50):
+        print("backward")
+        self.setMotor( -value, -value)
+    pass
 
     def stop(self):
-        self.PWMA.ChangeDutyCycle(0)
-        self.PWMB.ChangeDutyCycle(0)
-        GPIO.output(self.AIN1,GPIO.LOW)
-        GPIO.output(self.AIN2,GPIO.LOW)
-        GPIO.output(self.BIN1,GPIO.LOW)
-        GPIO.output(self.BIN2,GPIO.LOW)
+        print("stop")
+        self.setMotor( 0, 0 )
+    pass
 
-    def backward(self):
-        self.PWMA.ChangeDutyCycle(self.PA)
-        self.PWMB.ChangeDutyCycle(self.PB)
-        GPIO.output(self.AIN1,GPIO.HIGH)
-        GPIO.output(self.AIN2,GPIO.LOW)
-        GPIO.output(self.BIN1,GPIO.HIGH)
-        GPIO.output(self.BIN2,GPIO.LOW)
-
-        
     def left(self):
-        self.PWMA.ChangeDutyCycle(30)
-        self.PWMB.ChangeDutyCycle(30)
-        GPIO.output(self.AIN1,GPIO.HIGH)
-        GPIO.output(self.AIN2,GPIO.LOW)
-        GPIO.output(self.BIN1,GPIO.LOW)
-        GPIO.output(self.BIN2,GPIO.HIGH)
-
+        print("left")
+        self.setMotor( 30, -30 )
+    pass
 
     def right(self):
-        self.PWMA.ChangeDutyCycle(30)
-        self.PWMB.ChangeDutyCycle(30)
-        GPIO.output(self.AIN1,GPIO.LOW)
-        GPIO.output(self.AIN2,GPIO.HIGH)
-        GPIO.output(self.BIN1,GPIO.HIGH)
-        GPIO.output(self.BIN2,GPIO.LOW)
-        
-    def setPWMA(self,value):
-        self.PA = value
-        self.PWMA.ChangeDutyCycle(self.PA)
-
-    def setPWMB(self,value):
-        self.PB = value
-        self.PWMB.ChangeDutyCycle(self.PB)    
+        print("right")
+        self.setMotor( -30, 30 )
+    pass
         
     def setMotor(self, left, right):
-        if((right >= 0) and (right <= 100)):
-            GPIO.output(self.AIN1,GPIO.HIGH)
-            GPIO.output(self.AIN2,GPIO.LOW)
-            self.PWMA.ChangeDutyCycle(right)
-        elif((right < 0) and (right >= -100)):
-            GPIO.output(self.AIN1,GPIO.LOW)
-            GPIO.output(self.AIN2,GPIO.HIGH)
-            self.PWMA.ChangeDutyCycle(0 - right)
-        if((left >= 0) and (left <= 100)):
-            GPIO.output(self.BIN1,GPIO.HIGH)
-            GPIO.output(self.BIN2,GPIO.LOW)
-            self.PWMB.ChangeDutyCycle(left)
-        elif((left < 0) and (left >= -100)):
-            GPIO.output(self.BIN1,GPIO.LOW)
-            GPIO.output(self.BIN2,GPIO.HIGH)
-            self.PWMB.ChangeDutyCycle(0 - left)
+        self.setGPIO_PWN( self.AIN1, self.AIN2, self.PWMA, right )
+        self.setGPIO_PWN( self.BIN1, self.BIN2, self.PWMB, left )
+    pass
+
+    def setGPIO_PWN( self, ain1, ain2, pwma, value ) : 
+        value = 100 if value > 100 else value 
+        value = -100 if value < -100 else value 
+
+        if value > 0 :
+            GPIO.output(ain1,GPIO.HIGH)
+            GPIO.output(ain2,GPIO.LOW)
+            pwma.ChangeDutyCycle(value)
+        elif value < 0 :
+            GPIO.output(ain1,GPIO.LOW)
+            GPIO.output(ain2,GPIO.HIGH)
+            pwma.ChangeDutyCycle( - value)
+        else :
+            pwma.ChangeDutyCycle( 0 )
+            GPIO.output(ain1,GPIO.LOW)
+            GPIO.output(ain2,GPIO.LOW)
+        pass 
+    pass
 
 if __name__=='__main__':
 
-    ab = Base()
+    motor = Motor()
 
     try:
-        duration = 2
+        duration = 3
         for i in range( 4 ) : 
             d = i%4
             if d == 0 : 
-                ab.forward()
+                motor.forward()
             elif d == 1 :
-                ab.left()
+                motor.backward()
             elif d == 2 :
-                ab.right()
+                motor.left()
             elif d == 3 :
-                ab.backward()
+                motor.right()
             pass
 
             time.sleep(duration) 
@@ -120,9 +101,9 @@ if __name__=='__main__':
         print( "" )
     pass
 
-    ab.stop()
-    time.sleep(2)
+    motor.stop()
+    time.sleep(0.5)
     GPIO.cleanup()
 
     print( "Good bye!" )
-    pass
+pass
