@@ -37,6 +37,7 @@ def cmd():
     code = request.body.read().decode()
     speed = request.POST.get('speed')
     print(code)
+    
     if(speed != None):
         Ab.setPWMA(float(speed))
         Ab.setPWMB(float(speed))
@@ -70,8 +71,11 @@ def cmd():
     elif code == "right":
         HStep = -5
         print("right")
+    pass
+
     return "OK"
-	
+pass
+
 def timerfunc():
 	global HPulse,VPulse,HStep,VStep,pwm
 	

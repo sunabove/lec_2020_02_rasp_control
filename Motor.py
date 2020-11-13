@@ -10,7 +10,6 @@ class Motor:
         self.PA  = 50 ; self.PB  = 50
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
         for port in [ ain1, ain2, ena, bin1, bin2, enb ] : 
             GPIO.setup(port,GPIO.OUT)
         pass
@@ -75,6 +74,8 @@ class Motor:
 pass
 
 if __name__=='__main__':
+    GPIO.setwarnings(False)
+    
     motor = Motor()
 
     try:
