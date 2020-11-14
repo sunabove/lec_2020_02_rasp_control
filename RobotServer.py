@@ -41,19 +41,21 @@ if __name__=='__main__':
         return Response(gen(camera), mimetype='multipart/x-mixed-replace; boundary=frame')
     pass 
 
-    @app.route("/")
+    @app.route( '/' )
+    @app.route( '/index.html' )
+    @app.route( '/index.htm' )
     def index():
         return render_template("index.html")
     pass
         
     @app.route('/<filename>')
     def server_static(filename):
-        return render_template(filename, root='./')
+        return render_template(filename)
     pass
 
     @app.route('/fonts/<filename>')
     def server_fonts(filename):
-        return render_template(filename, root='./fonts/')
+        return render_template( f"fonts/{filename}" )
     pass
         
     @app.route("/cmd")
