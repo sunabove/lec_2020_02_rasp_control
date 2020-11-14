@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
-from bottle import get,post,run,route,request,template,static_file
 from AlphaBot import AlphaBot
 from PCA9685 import PCA9685
 import threading
@@ -19,6 +18,9 @@ VStep = 0      #Sets the initial step length
 pwm.setServoPulse(1,VPulse)
 pwm.setServoPulse(0,HPulse)
 
+# web by flask framewwork
+    from flask import Flask, render_template, Response, request, jsonify
+    
 @get("/")
 def index():
 	return template("index")

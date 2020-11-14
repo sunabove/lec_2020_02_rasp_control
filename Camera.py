@@ -5,7 +5,7 @@ import numpy as np
 
 class Camera(object):
     def __init__(self):
-        self.video = cv2.VideoCapture(0)
+        self.video = cv2.VideoCapture(-1)
         self.video.set(cv2.CAP_PROP_FPS, 15)
         self.video.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc(*'X264'))
     pass
