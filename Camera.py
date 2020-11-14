@@ -62,18 +62,35 @@ class Camera(object):
 pass
 
 if __name__=='__main__':
-    camera = Camera() 
 
-    while(True):
-        # Capture frame-by-frame
-        image = camera.get_image()
+    # web by flask framewwork
+    from flask import Flask, render_template, Response, request, jsonify
 
-        # Display the resulting frame
-        cv2.imshow('frame', image )
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+    app = Flask(__name__)
+
+    camera = Camera()
+    
+    def gen(camera): 
+        while True:
+            frame = camera.get_frame()
+            yield (b'--frame\r\n'
+                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
         pass
+    pass 
+
+    @app.route( '/' )
+    @app.route( '/index.html' )
+    @app.route( '/index.htm' )
+    def index(): 
+        return render_template('index_camera.html')
     pass
 
-    cv2.destroyAllWindows()
+    @app.route('/video_feed')
+    def video_feed(): 
+        return Response(gen(camera), mimetype='multipart/x-mixed-replace; boundary=frame')
+    pass 
+
+    print( "## Normal WEB")
+    app.run(host='0.0.0.0', port=80, debug=True, threaded=True) 
+
 pass
