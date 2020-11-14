@@ -1,13 +1,13 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 from AlphaBot import AlphaBot
-from PCA9685 import PCA9685
+from Servo import Servo
 import threading
 import socket #ip
 import os
 
-Ab = AlphaBot()
-pwm = PCA9685(0x40)
+robot = AlphaBot()
+pwm = Servo()
 pwm.setPWMFreq(50)
 
 #Set servo parameters
@@ -19,21 +19,24 @@ pwm.setServoPulse(1,VPulse)
 pwm.setServoPulse(0,HPulse)
 
 # web by flask framewwork
-    from flask import Flask, render_template, Response, request, jsonify
-    
-@get("/")
-def index():
-	return template("index")
-	
-@route('/<filename>')
-def server_static(filename):
-    return static_file(filename, root='./')
+from flask import Flask, render_template, Response, request, jsonify
 
-@route('/fonts/<filename>')
-def server_fonts(filename):
-    return static_file(filename, root='./fonts/')
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+	return render_template("index.html")
+pass
 	
-@post("/cmd")
+@app.route('/<filename>')
+def server_static(filename):
+    return render_template(filename, root='./')
+
+@app.route('/fonts/<filename>')
+def server_fonts(filename):
+    return render_template(filename, root='./fonts/')
+	
+@app.route("/cmd")
 def cmd():
     global HStep,VStep
     code = request.body.read().decode()
@@ -41,25 +44,25 @@ def cmd():
     print(code)
     
     if(speed != None):
-        Ab.setPWMA(float(speed))
-        Ab.setPWMB(float(speed))
+        robot.setPWMA(float(speed))
+        robot.setPWMB(float(speed))
         print(speed)
     if code == "stop":
         HStep = 0
         VStep = 0
-        Ab.stop()
+        robot.stop()
         print("stop")
     elif code == "forward":
-        Ab.forward()
+        robot.forward()
         print("forward")
     elif code == "backward":
-        Ab.backward()
+        robot.backward()
         print("backward")
     elif code == "turnleft":
-        Ab.left()
+        robotb.left()
         print("turnleft")
     elif code == "turnright":
-        Ab.right()
+        robot.right()
         print("turnright")
     elif code == "up":
         VStep = -5
@@ -76,53 +79,26 @@ def cmd():
     pass
 
     return "OK"
-pass
+pass 
 
-def timerfunc():
-	global HPulse,VPulse,HStep,VStep,pwm
-	
-	if(HStep != 0):
-		HPulse += HStep
-		if(HPulse >= 2500): 
-			HPulse = 2500
-		if(HPulse <= 500):
-			HPulse = 500
-		#set channel 2, the Horizontal servo
-		pwm.setServoPulse(0,HPulse)    
-		
-	if(VStep != 0):
-		VPulse += VStep
-		if(VPulse >= 2500): 
-			VPulse = 2500
-		if(VPulse <= 500):
-			VPulse = 500
-		#set channel 3, the vertical servo
-		pwm.setServoPulse(1,VPulse)   
-	
-	global t        #Notice: use global variable!
-	t = threading.Timer(0.02, timerfunc)
-	t.start()
+if __name__=='__main__': 
+    from Camera import Camera
+
+    camera = Camera()
     
-def camera():
-    lastpath = os.path.abspath(os.path.join(os.getcwd(), "../"))
-    print("lastpath = %s" %lastpath)
-    os.system( "sudo python3 camera_stream.py" )
-pass
+    def gen(camera): 
+        while True:
+            frame = camera.get_frame()
+            yield (b'--frame\r\n'
+                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+        pass
+    pass
 
-if __name__=='__main__':
-    tcamera = threading.Thread(target = camera)
-    tcamera.setDaemon(True)
-    tcamera.start()
-    tcamera = threading.Thread(target = camera)
-    tcamera.setDaemon(True)
-    tcamera.start()
+    @app.route('/video_feed')
+    def video_feed(): 
+        return Response(gen(camera), mimetype='multipart/x-mixed-replace; boundary=frame')
+    pass 
 
-    t = threading.Timer(0.02, timerfunc)
-    t.setDaemon(True)
-    t.start()
-
-    s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-    s.connect(('8.8.8.8',80))
-    localhost=s.getsockname()[0]
-    run(host = localhost, port = 8000)
+    print( "## Normal WEB")
+    app.run(host='0.0.0.0', port=80, debug=True, threaded=True) 
 pass
