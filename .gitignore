@@ -140,3 +140,5 @@ cython_debug/
 
 *.h264
 *.mp4
+dark.jpg
+image.jpg
