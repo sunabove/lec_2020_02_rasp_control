@@ -48,9 +48,9 @@ if __name__=='__main__':
         return render_template("index.html")
     pass
         
-    @app.route('/<filename>')
+    @app.route('/static/<filename>')
     def server_static(filename):
-        return render_template(filename)
+        return render_template( f"static/{filename}" )
     pass
 
     @app.route('/fonts/<filename>')
