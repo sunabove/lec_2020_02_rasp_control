@@ -15,10 +15,6 @@ class Camera(object):
     pass
 
     def get_image(self):
-        global ads
-        car = ads.car 
-        gps = ads.gps
-
         success, img = self.video.read()
 
         if not success :
@@ -28,10 +24,7 @@ class Camera(object):
             img = np.zeros(shape=[h, w, 3], dtype=np.uint8)
             pass 
         pass
-
-        img = cv2.flip( img, 0 )
-        h, w, _ = img.shape # image height, width 
-
+        
         x = 10   # text x position
         y = 20   # text y position
         h = 20   # line height
