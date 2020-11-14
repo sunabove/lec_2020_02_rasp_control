@@ -8,6 +8,8 @@ class Camera(object):
         self.video = cv2.VideoCapture(-1)
         self.video.set(cv2.CAP_PROP_FPS, 15)
         self.video.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc(*'X264'))
+        # 전체 프레임 카운트 
+        self.frame_cnt = 0 
     pass
     
     def __del__(self):
@@ -16,6 +18,8 @@ class Camera(object):
 
     def get_image(self):
         success, img = self.video.read()
+
+        self.frame_cnt += 1 
 
         if not success :
             h = 480
@@ -29,7 +33,7 @@ class Camera(object):
         y = 20   # text y position
         h = 20   # line height
 
-        txt = "Hello"
+        txt = f"Hello [{self.frame_cnt}]"
         self.putTextLine( img, txt , x, y )
 
         return img
@@ -45,11 +49,9 @@ class Camera(object):
         return jpg.tobytes()
     pass
 
-    # opencv 이미지에 텍스트를 그린다.
     def putTextLine(self, img, txt, x, y ) :
-        # /usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf
-        font = cv2.FONT_HERSHEY_SIMPLEX # font
-        
+        # opencv 이미지에 텍스트를 그린다.
+        font = cv2.FONT_HERSHEY_SIMPLEX
         fs = 0.4  # font size(scale)
         ft = 1    # font thickness 
 
@@ -61,8 +63,15 @@ class Camera(object):
     pass
 pass
 
-if __name__=='__main__':
+def generate_frame(camera): 
+    while True:
+        frame = camera.get_frame()
+        yield (b'--frame\r\n'
+            b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+    pass
+pass
 
+if __name__=='__main__':
     # web by flask framewwork
     from flask import Flask, render_template, Response, request, jsonify
 
@@ -70,27 +79,18 @@ if __name__=='__main__':
 
     camera = Camera()
     
-    def gen(camera): 
-        while True:
-            frame = camera.get_frame()
-            yield (b'--frame\r\n'
-                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-        pass
-    pass 
-
     @app.route( '/' )
     @app.route( '/index.html' )
     @app.route( '/index.htm' )
     def index(): 
-        return render_template('index_camera.html')
+        return render_template('index_camera_only.html')
     pass
 
     @app.route('/video_feed')
     def video_feed(): 
-        return Response(gen(camera), mimetype='multipart/x-mixed-replace; boundary=frame')
+        return Response(generate_frame(camera), mimetype='multipart/x-mixed-replace; boundary=frame')
     pass 
 
     print( "## Normal WEB")
     app.run(host='0.0.0.0', port=80, threaded=True) 
-
 pass
