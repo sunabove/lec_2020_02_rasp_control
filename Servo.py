@@ -32,8 +32,14 @@ class Servo :
         self.address = address
         self.debug = debug
         if (self.debug):
-            print("Reseting PCA9685")
+            print("Reseting PCA9685") 
         self.write(self.__MODE1, 0x00)
+
+        #Set servo parameters
+        self.HPulse = 1500  #Sets the initial Pulse
+        self.HStep = 0      #Sets the initial step length
+        self.VPulse = 1500  #Sets the initial Pulse
+        self.VStep = 0      #Sets the initial step length
     pass
 	
     def write(self, reg, value):

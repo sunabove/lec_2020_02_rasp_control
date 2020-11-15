@@ -15,12 +15,12 @@
 			var BUTTON_UP     = isTouchDevice ? "touchend"   : "mouseup";
 			
             $("button").bind(BUTTON_DOWN,function(){
-                $.post("/cmd",this.id,function(data,status){
+                $.post("/cmd",{cmd: this.id},function(data,status){
                 });
             });
 
 			$("button").bind(BUTTON_UP,function(){
-                $.post("/cmd","stop",function(data,status){
+                $.post("/cmd",{cmd:"stop"},function(data,status){
                 });
             });
 			
@@ -65,7 +65,6 @@
 				</div>
 				<div align="center">
 					<button id='turnleft' class="btn btn-lg btn-primary">&llarr;</button>
-					<button id='stop' class="btn btn-lg btn-primary">&odot;</button>
 					<button id='turnright' class="btn btn-lg btn-primary">&rrarr;</button>
 				</div>
 				<div align="center">
@@ -78,7 +77,6 @@
 				</div>
 				<div align="center">
 					<button id='left' class="btn btn-lg btn-primary ">&llarr;</button>
-					<button id='stop' class="btn btn-lg btn-primary ">&odot;</button>
 					<button id='right' class="btn btn-lg btn-primary ">&rrarr;</button>
 				</div align="center">
 				<div align="center">

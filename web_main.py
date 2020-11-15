@@ -100,6 +100,7 @@ def timerfunc():
 	global t        #Notice: use global variable!
 	t = threading.Timer(0.02, timerfunc)
 	t.start()
+pass
     
 def camera():
     lastpath = os.path.abspath(os.path.join(os.getcwd(), "../"))
