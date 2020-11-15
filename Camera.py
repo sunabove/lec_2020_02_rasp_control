@@ -75,7 +75,7 @@ if __name__=='__main__':
     # web by flask framewwork
     from flask import Flask, render_template, Response, request, jsonify
 
-    app = Flask(__name__)
+    app = Flask(__name__, static_url_path='', static_folder='html/static', template_folder='html/templates')
 
     camera = Camera()
     

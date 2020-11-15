@@ -10,7 +10,7 @@ if __name__=='__main__':
     # web by flask framewwork
     from flask import Flask, render_template, Response, request, jsonify
 
-    app = Flask(__name__)
+    app = Flask(__name__, static_url_path='', static_folder='html/static', template_folder='html/templates')
 
     camera = Camera() 
 
@@ -19,7 +19,7 @@ if __name__=='__main__':
     @app.route( '/index.htm' )
     def index(): 
         return render_template('index_robot_server.html')
-    pass
+    pass 
 
     @app.route('/video_feed')
     def video_feed(): 
