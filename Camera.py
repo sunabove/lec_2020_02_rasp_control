@@ -76,6 +76,7 @@ if __name__=='__main__':
     from flask import Flask, render_template, Response, request, jsonify
 
     app = Flask(__name__, static_url_path='', static_folder='html/static', template_folder='html/templates')
+    app.config["TEMPLATES_AUTO_RELOAD"] = True
 
     camera = Camera()
     

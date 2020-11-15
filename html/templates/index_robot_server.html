@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AlphaBot</title>
 	<link href="/bootstrap.min.css" rel="stylesheet" media="screen">
-	<script src="/jquery.js"></script>
-    <script>
+	<script src="/jquery.min.js"></script>
+	<script src="/bootstrap.min.js"></script>
+    <script> 
 		
         $(function(){
 			var isTouchDevice = "ontouchstart" in document.documentElement ? true : false;
@@ -47,9 +48,10 @@
 </head>
 <body>
 <div id="container" class="container" align="center">
-	<h3>AlphaBot Robot Web Control </h3>
+	<h4>AlphaBot Robot Web Control v1.0</h4>
 
 	<center><img src="{{ url_for('video_feed') }}" /></center>
+	<br/>
 	
 	<table align="center">
 		<tr>
@@ -59,33 +61,33 @@
 		<tr>
 			<td>
 				<div align="center">
-					<button id="forward" class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-up"></button>
+					<button id="forward" class="btn btn-lg btn-primary">&uuarr;</button>
 				</div>
 				<div align="center">
-					<button id='turnleft' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-left"></button>
-					<!--<button id='stop' class="btn btn-lg btn-primary glyphicon glyphicon-stop"></button>-->
-					<button id='turnright' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-right"></button>
+					<button id='turnleft' class="btn btn-lg btn-primary">&llarr;</button>
+					<button id='stop' class="btn btn-lg btn-primary">&odot;</button>
+					<button id='turnright' class="btn btn-lg btn-primary">&rrarr;</button>
 				</div>
 				<div align="center">
-					<button id='backward' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-down"></button>
+					<button id='backward' class="btn btn-lg btn-primary">&ddarr;</button>
 				</div>
 			</td>
 			<td>
 				<div align="center">
-					<button id="up" class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-up"></button>
+					<button id="up" class="btn btn-lg btn-primary ">&uuarr;</button>
 				</div>
 				<div align="center">
-					<button id='left' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-left"></button>
-					<!--<button id='stop' class="btn btn-lg btn-primary glyphicon glyphicon-stop"></button>-->
-					<button id='right' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-right"></button>
+					<button id='left' class="btn btn-lg btn-primary ">&llarr;</button>
+					<button id='stop' class="btn btn-lg btn-primary ">&odot;</button>
+					<button id='right' class="btn btn-lg btn-primary ">&rrarr;</button>
 				</div align="center">
 				<div align="center">
-					<button id='down' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-down"></button>
+					<button id='down' class="btn btn-lg btn-primary ">&ddarr;</button>
 				</div>
 			</td>
 		</tr>
 	</table>
-	<input type="range" min="20" max="100", style="width:300px";>
+	<input type="range" min="20" max="100", style="width:300px"; >
 </div>
 </body>
 </html>
