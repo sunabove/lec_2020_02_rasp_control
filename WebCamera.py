@@ -5,9 +5,9 @@ import io
 import cv2
 import numpy as np 
 import threading
+from threading import Condition
 import socketserver
 from time import sleep
-from threading import Condition
 from http import server
 
 PAGE="""\
@@ -45,6 +45,95 @@ class StreamingOutput(object):
         self.buffer.seek(0) 
             
         return self.buffer.write(buf)
+    pass
+pass
+
+class Camera(object):
+    
+    def __init__(self):
+        self.output = StreamingOutput()
+        # 전체 프레임 카운트 
+        self.frame_cnt = 0 
+        
+        self.video = cv2.VideoCapture(-1)
+        self.video.set(cv2.CAP_PROP_FPS, 24)
+        self.video.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc(*'X264'))
+    pass 
+    
+    def __del__(self):
+        self.video.release()
+    pass
+
+    def start_recording(self) :
+        x = threading.Thread(target=self.start_recording_impl, args=[] )
+        x.start()
+    pass
+
+    def start_recording_impl(self) :
+        print( "Recording now ...." )
+
+        self.recording = True
+
+        while self.recording: 
+            #print( "recording ...." , end="" )
+            image = self.get_image()
+
+            _, jpg = cv2.imencode('.jpg', image ) 
+            self.output.write( jpg )
+            #print( "Done." )
+        pass
+    pass
+
+    def stop_recording(self):
+        self.recording = False 
+
+        print( "Recording is stopped." )
+    pass
+
+    def get_image(self):
+        success, image = self.video.read()
+
+        self.frame_cnt += 1 
+
+        if not success :
+            h = 480
+            w= 640
+            # black blank image
+            img = np.zeros(shape=[h, w, 3], dtype=np.uint8)
+            pass 
+        pass
+        
+        x = 10   # text x position
+        y = 20   # text y position
+        h = 20   # line height
+
+        txt = f"Hello [{self.frame_cnt}]"
+        self.putTextLine( image, txt , x, y )
+
+        return image
+    pass
+
+    def get_frame( self ) : 
+        # get video frame
+
+        img = self.get_image()
+         
+        _, jpg = cv2.imencode('.jpg', img) 
+        
+        return jpg.tobytes()
+    pass
+
+    def putTextLine(self, image, txt, x, y ) :
+        # opencv 이미지에 텍스트를 그린다.
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        fs = 0.4  # font size(scale)
+        ft = 1    # font thickness 
+
+        bg_color = (255, 255, 255) # text background color
+        fg_color = (255,   0,   0) # text foreground color
+
+        cv2.putText(image, txt, (x, y), font, fs, bg_color, ft + 2, cv2.LINE_AA)
+        cv2.putText(image, txt, (x, y), font, fs, fg_color, ft    , cv2.LINE_AA) 
     pass
 pass
 
@@ -96,91 +185,6 @@ pass
 class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
-pass
-
-class Camera(object):
-
-    def __init__(self):
-        self.output = StreamingOutput()
-        # 전체 프레임 카운트 
-        self.frame_cnt = 0 
-        
-        self.video = cv2.VideoCapture(-1)
-        self.video.set(cv2.CAP_PROP_FPS, 24)
-        self.video.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc(*'X264'))
-    pass 
-    
-    def __del__(self):
-        self.video.release()
-    pass
-
-    def start_recording(self) :
-        x = threading.Thread(target=self.start_recording_impl, args=[] )
-        x.start()
-    pass
-
-    def start_recording_impl(self) :
-        self.recording = True
-
-        while self.recording: 
-            #print( "recording ...." , end="" )
-            image = self.get_image()
-
-            _, jpg = cv2.imencode('.jpg', image ) 
-            self.output.write( jpg )
-            #print( "Done." )
-        pass
-    pass
-
-    def stop_recording(self):
-        self.recording = False 
-    pass
-
-    def get_image(self):
-        success, image = self.video.read()
-
-        self.frame_cnt += 1 
-
-        if not success :
-            h = 480
-            w= 640
-            # black blank image
-            img = np.zeros(shape=[h, w, 3], dtype=np.uint8)
-            pass 
-        pass
-        
-        x = 10   # text x position
-        y = 20   # text y position
-        h = 20   # line height
-
-        txt = f"Hello [{self.frame_cnt}]"
-        self.putTextLine( image, txt , x, y )
-
-        return image
-    pass
-
-    def get_frame( self ) : 
-        # get video frame
-
-        img = self.get_image()
-         
-        _, jpg = cv2.imencode('.jpg', img) 
-        
-        return jpg.tobytes()
-    pass
-
-    def putTextLine(self, image, txt, x, y ) :
-        # opencv 이미지에 텍스트를 그린다.
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        fs = 0.4  # font size(scale)
-        ft = 1    # font thickness 
-
-        bg_color = (255, 255, 255) # text background color
-        fg_color = (255,   0,   0) # text foreground color
-
-        cv2.putText(image, txt, (x, y), font, fs, bg_color, ft + 2, cv2.LINE_AA)
-        cv2.putText(image, txt, (x, y), font, fs, fg_color, ft    , cv2.LINE_AA) 
-    pass
 pass
 
 if __name__=='__main__':
