@@ -22,9 +22,9 @@ class Motor:
         self.stop()
     pass
 
-    def setMotor(self, left, right):
-        self.setGPIO_PWN( self.AIN1, self.AIN2, self.PWMA, right )
-        self.setGPIO_PWN( self.BIN1, self.BIN2, self.PWMB, left )
+    def setMotor(self, left = 0, right =0):
+        self.setGPIO_PWN( self.AIN1, self.AIN2, self.PWMA, left )
+        self.setGPIO_PWN( self.BIN1, self.BIN2, self.PWMB, right )
     pass
 
     def setGPIO_PWN( self, ain1, ain2, pwma, value ) : 
@@ -32,12 +32,12 @@ class Motor:
         value = -100 if value < -100 else value 
 
         if value > 0 :
-            GPIO.output(ain1,GPIO.HIGH)
-            GPIO.output(ain2,GPIO.LOW)
-            pwma.ChangeDutyCycle(value)
-        elif value < 0 :
             GPIO.output(ain1,GPIO.LOW)
             GPIO.output(ain2,GPIO.HIGH)
+            pwma.ChangeDutyCycle(value)
+        elif value < 0 :
+            GPIO.output(ain1,GPIO.HIGH)
+            GPIO.output(ain2,GPIO.LOW)
             pwma.ChangeDutyCycle( - value)
         else :
             pwma.ChangeDutyCycle( 0 )
@@ -63,12 +63,12 @@ class Motor:
 
     def left(self):
         print("left")
-        self.setMotor( 30, -30 )
+        self.setMotor( -30, 30 )
     pass
 
     def right(self):
         print("right")
-        self.setMotor( -30, 30 )
+        self.setMotor( 30, -30 )
     pass
 
 pass

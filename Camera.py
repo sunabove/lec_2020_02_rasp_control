@@ -63,7 +63,7 @@ class Camera(object):
     pass
 pass
 
-def generate_frame(camera): 
+def generate_frame(camera, frame_id): 
     while True:
         frame = camera.get_frame()
         yield (b'--frame\r\n'
@@ -79,6 +79,7 @@ if __name__=='__main__':
     app.config["TEMPLATES_AUTO_RELOAD"] = True
 
     camera = Camera()
+    frame_id = 0
     
     @app.route( '/' )
     @app.route( '/index.html' )
@@ -89,7 +90,9 @@ if __name__=='__main__':
 
     @app.route('/video_feed')
     def video_feed(): 
-        return Response(generate_frame(camera), mimetype='multipart/x-mixed-replace; boundary=frame')
+        global frame_id
+        frame_id += 1 
+        return Response(generate_frame(camera, frame_id), mimetype='multipart/x-mixed-replace; boundary=frame')
     pass 
 
     print( "## Normal WEB")
