@@ -1,5 +1,6 @@
-#!/usr/bin/python
+# coding: utf-8
 
+import threading
 import time
 import math
 import smbus
@@ -98,6 +99,41 @@ class Servo :
         "Sets the Servo Pulse,The PWM frequency must be 50HZ"
         pulse = pulse*4096/20000                #PWM frequency is 50HZ,the period is 20000us
         self.setPWM(channel, 0, int(pulse))
+    pass
+
+    def stop(self) :
+        self.HStep = 0 
+        self.VPulse = 0 
+    pass
+
+    def timerfunc(self):
+        if(self.HStep != 0):
+            self.HPulse += HStep
+            if(self.HPulse >= 2500): 
+                self.HPulse = 2500
+            elif(self.HPulse <= 500):
+                self.HPulse = 500
+            pass
+
+            #set channel 2, the Horizontal servo
+            self.setServoPulse(0,HPulse)
+        pass
+            
+        if(self.VStep != 0):
+            self.VPulse += VStep
+            if(self.VPulse >= 2500): 
+                self.VPulse = 2500
+            elif(self.VPulse <= 500):
+                self.VPulse = 500
+            pass
+
+            #set channel 3, the vertical servo
+            self.setServoPulse(1,VPulse)
+        pass
+
+        t = threading.Timer(0.02, self.timerfunc)
+        #t.setDaemon(True)
+        t.start()
     pass
 pass
 

@@ -61,6 +61,10 @@ class Motor:
         self.setMotor( 0, 0 )
     pass
 
+    def motor_stop(self):
+        self.stop()
+    pass
+
     def left(self):
         print("left")
         self.setMotor( -30, 30 )
