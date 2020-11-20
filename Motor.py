@@ -61,7 +61,7 @@ class Motor:
         self.setMotor( 0, 0 )
     pass
 
-    def motor_stop(self):
+    def stop_motor(self):
         self.stop()
     pass
 

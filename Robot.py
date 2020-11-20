@@ -18,12 +18,11 @@ class Robot( Motor ):
         self.servo = Servo()  
     pass
 
-    def stop(self):
-        self.motor_stop()
-        self.servo.stop()
+    def stop_robot(self):
+        self.stop_motor()
+        self.servo.stop_servo()
     pass
 pass
-
 
 if __name__=='__main__':
     GPIO.setwarnings(False)
@@ -35,6 +34,7 @@ if __name__=='__main__':
     app.config["TEMPLATES_AUTO_RELOAD"] = True
 
     robot = Robot()
+    robot.camera.start_recording()
 
     @app.route( '/' )
     @app.route( '/index.html' )

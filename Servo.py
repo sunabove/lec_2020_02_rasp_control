@@ -41,6 +41,12 @@ class Servo :
         self.HStep = 0      #Sets the initial step length
         self.VPulse = 1500  #Sets the initial Pulse
         self.VStep = 0      #Sets the initial step length
+
+        self.setPWMFreq(50)
+        self.setServoPulse(1, self.VPulse)
+        self.setServoPulse(0, self.HPulse)
+
+        self.timerfunc()
     pass
 	
     def write(self, reg, value):
@@ -101,14 +107,17 @@ class Servo :
         self.setPWM(channel, 0, int(pulse))
     pass
 
-    def stop(self) :
+    def stop_servo(self) :
         self.HStep = 0 
         self.VPulse = 0 
     pass
 
     def timerfunc(self):
+        #print( "timerfunc" )
+
         if(self.HStep != 0):
             self.HPulse += HStep
+
             if(self.HPulse >= 2500): 
                 self.HPulse = 2500
             elif(self.HPulse <= 500):
@@ -121,6 +130,7 @@ class Servo :
             
         if(self.VStep != 0):
             self.VPulse += VStep
+
             if(self.VPulse >= 2500): 
                 self.VPulse = 2500
             elif(self.VPulse <= 500):
@@ -132,7 +142,7 @@ class Servo :
         pass
 
         t = threading.Timer(0.02, self.timerfunc)
-        #t.setDaemon(True)
+        t.setDaemon(True)
         t.start()
     pass
 pass
