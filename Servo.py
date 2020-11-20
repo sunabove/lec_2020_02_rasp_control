@@ -123,7 +123,7 @@ class Servo :
         HStep = self.HStep
         VStep = self.VStep
 
-        if(self.HStep != 0):
+        if(HStep != 0):
             self.HPulse += HStep
 
             if(self.HPulse >= 2500): 
