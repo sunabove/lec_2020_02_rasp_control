@@ -42,9 +42,11 @@ class Servo :
         self.VPulse = 1500  #Sets the initial Pulse
         self.VStep = 0      #Sets the initial step length
 
-        self.setPWMFreq(50)
-        self.setServoPulse(1, self.VPulse)
-        self.setServoPulse(0, self.HPulse)
+        if False : 
+            self.setPWMFreq(50)
+            self.setServoPulse(1, self.VPulse)
+            self.setServoPulse(0, self.HPulse)
+        pass
 
         self.timerfunc()
     pass
@@ -90,6 +92,7 @@ class Servo :
         self.write(self.__MODE1, oldmode)
         time.sleep(0.005)
         self.write(self.__MODE1, oldmode | 0x80)
+    pass
 
     def setPWM(self, channel, on, off):
         "Sets a single PWM channel"
@@ -97,9 +100,11 @@ class Servo :
         self.write(self.__LED0_ON_H+4*channel, on >> 8)
         self.write(self.__LED0_OFF_L+4*channel, off & 0xFF)
         self.write(self.__LED0_OFF_H+4*channel, off >> 8)
+        
         if (self.debug):
             print("channel: %d    LED_ON: %d LED_OFF: %d" % (channel,on,off))
         pass
+    pass
 	    
     def setServoPulse(self, channel, pulse):
         "Sets the Servo Pulse,The PWM frequency must be 50HZ"
@@ -142,7 +147,7 @@ class Servo :
         pass
 
         t = threading.Timer(0.02, self.timerfunc)
-        t.setDaemon(True)
+        #t.setDaemon(True)
         t.start()
     pass
 pass
