@@ -120,6 +120,9 @@ class Servo :
     def timerfunc(self):
         #print( "timerfunc" )
 
+        HStep = self.HStep
+        VStep = self.VStep
+
         if(self.HStep != 0):
             self.HPulse += HStep
 
@@ -130,10 +133,10 @@ class Servo :
             pass
 
             #set channel 2, the Horizontal servo
-            self.setServoPulse(0,HPulse)
+            self.setServoPulse(0, self.HPulse)
         pass
             
-        if(self.VStep != 0):
+        if(VStep != 0):
             self.VPulse += VStep
 
             if(self.VPulse >= 2500): 
@@ -143,7 +146,7 @@ class Servo :
             pass
 
             #set channel 3, the vertical servo
-            self.setServoPulse(1,VPulse)
+            self.setServoPulse(1, self.VPulse)
         pass
 
         self.t = threading.Timer(0.02, self.timerfunc)
