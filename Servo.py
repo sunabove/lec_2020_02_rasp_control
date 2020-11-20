@@ -146,9 +146,9 @@ class Servo :
             self.setServoPulse(1,VPulse)
         pass
 
-        t = threading.Timer(0.02, self.timerfunc)
-        #t.setDaemon(True)
-        t.start()
+        self.t = threading.Timer(0.02, self.timerfunc)
+        #self.t.setDaemon(True)
+        self.t.start()
     pass
 pass
 

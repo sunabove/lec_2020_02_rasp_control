@@ -19,8 +19,8 @@ class Robot( Motor ):
     pass
 
     def stop_robot(self):
-        self.stop_motor()
         self.servo.stop_servo()
+        self.stop_motor()
     pass
 pass
 
