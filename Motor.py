@@ -84,20 +84,16 @@ if __name__=='__main__':
 
     try:
         duration = 3
-        for i in range( 4 ) : 
-            d = i%4
-            if d == 0 : 
-                motor.forward()
-            elif d == 1 :
-                motor.backward()
-            elif d == 2 :
-                motor.left()
-            elif d == 3 :
-                motor.right()
-            pass
-
-            time.sleep(duration) 
-        pass
+    
+        motor.forward()
+        time.sleep(duration)
+        motor.backward()
+        time.sleep(duration)
+        motor.left()
+        time.sleep(duration)
+        motor.right()
+        time.sleep(duration)
+        
     except KeyboardInterrupt:
         print( "" )
     pass
