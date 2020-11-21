@@ -1,6 +1,7 @@
 #coding: utf-8
 import RPi.GPIO as GPIO
 import time
+import inspect
 
 class Motor:
 
@@ -23,11 +24,11 @@ class Motor:
     pass
 
     def setMotor(self, left = 0, right =0):
-        self.setGPIO_PWN( self.AIN1, self.AIN2, self.PWMA, left )
-        self.setGPIO_PWN( self.BIN1, self.BIN2, self.PWMB, right )
+        self.setGPIO_PWM( self.AIN1, self.AIN2, self.PWMA, left )
+        self.setGPIO_PWM( self.BIN1, self.BIN2, self.PWMB, right )
     pass
 
-    def setGPIO_PWN( self, ain1, ain2, pwma, value ) : 
+    def setGPIO_PWM( self, ain1, ain2, pwma, value ) : 
         value = 100 if value > 100 else value 
         value = -100 if value < -100 else value 
 
@@ -47,17 +48,17 @@ class Motor:
     pass
 
     def forward(self, value=50):
-        print("foward")
+        print(inspect.currentframe().f_code.co_name)
         self.setMotor( value, value)
     pass
 
     def backward(self, value=50):
-        print("backward")
+        print(inspect.currentframe().f_code.co_name)
         self.setMotor( -value, -value)
     pass
 
     def stop(self):
-        print("stop")
+        print(inspect.currentframe().f_code.co_name)
         self.setMotor( 0, 0 )
     pass
 
@@ -66,12 +67,12 @@ class Motor:
     pass
 
     def left(self):
-        print("left")
+        print(inspect.currentframe().f_code.co_name)
         self.setMotor( -30, 30 )
     pass
 
     def right(self):
-        print("right")
+        print(inspect.currentframe().f_code.co_name)
         self.setMotor( 30, -30 )
     pass
 
