@@ -142,3 +142,5 @@ cython_debug/
 *.mp4
 dark.jpg
 image.jpg
+my*
+old/
