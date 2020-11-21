@@ -143,4 +143,5 @@ cython_debug/
 dark.jpg
 image.jpg
 my*
+My*
 old/
