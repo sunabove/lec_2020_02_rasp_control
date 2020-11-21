@@ -47,14 +47,14 @@ class Motor:
         pass 
     pass
 
-    def forward(self, value=50):
+    def forward(self, left=50, right=50):
         print(inspect.currentframe().f_code.co_name)
-        self.setMotor( value, value)
+        self.setMotor( left, right)
     pass
 
-    def backward(self, value=50):
+    def backward(self, left=50, right=50):
         print(inspect.currentframe().f_code.co_name)
-        self.setMotor( -value, -value)
+        self.setMotor( -left, -right)
     pass
 
     def stop(self):
