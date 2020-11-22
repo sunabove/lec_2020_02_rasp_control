@@ -85,7 +85,7 @@ class Motor:
         self.setMotor( -left, -right)
     pass
 
-    def back(self, left, right):
+    def back(self, left=50, right=50):
         self.backward(left, right)
     pass
 
