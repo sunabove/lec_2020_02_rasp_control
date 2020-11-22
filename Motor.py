@@ -8,10 +8,11 @@ class Motor:
     def __init__(self,ain1=12,ain2=13,ena=6,bin1=20,bin2=21,enb=26):
         self.AIN1 = ain1; self.AIN2 = ain2; self.ENA = ena
         self.BIN1 = bin1; self.BIN2 = bin2; self.ENB = enb
-        self.PA  = 50 ; self.PB  = 50
+        self.PA  = 50 ; self.PB  = 50       
 
         self.clear()
 
+        GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         for port in [ ain1, ain2, ena, bin1, bin2, enb ] : 
             GPIO.setup(port,GPIO.OUT)
@@ -43,6 +44,7 @@ class Motor:
         self.PWMA = None
         self.PWMB = None
 
+        GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         for port in [ self.AIN1, self.AIN2, self.ENA, self.BIN1, self.BIN2, self.ENB ] : 
             GPIO.cleanup(port)
