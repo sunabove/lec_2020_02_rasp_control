@@ -12,6 +12,7 @@ class Motor:
 
         GPIO.setmode(GPIO.BCM)
         for port in [ ain1, ain2, ena, bin1, bin2, enb ] : 
+            GPIO.cleanup(port)
             GPIO.setup(port,GPIO.OUT)
         pass
 
