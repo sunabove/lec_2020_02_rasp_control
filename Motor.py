@@ -1,18 +1,19 @@
 #coding: utf-8
 import RPi.GPIO as GPIO
-import time
+from time import sleep
 import inspect
 
 class Motor:
 
     def __init__(self,ain1=12,ain2=13,ena=6,bin1=20,bin2=21,enb=26):
-        self.AIN1 = ain1; self.AIN2 = ain2; 
-        self.BIN1 = bin1; self.BIN2 = bin2; 
+        self.AIN1 = ain1; self.AIN2 = ain2; self.ENA = ena
+        self.BIN1 = bin1; self.BIN2 = bin2; self.ENB = enb
         self.PA  = 50 ; self.PB  = 50
+
+        self.clear()
 
         GPIO.setmode(GPIO.BCM)
         for port in [ ain1, ain2, ena, bin1, bin2, enb ] : 
-            GPIO.cleanup(port)
             GPIO.setup(port,GPIO.OUT)
         pass
 
@@ -22,6 +23,26 @@ class Motor:
         self.PWMB.start(self.PB)
         
         self.stop()
+    pass
+
+    def clear(self) :
+        print(inspect.currentframe().f_code.co_name)
+        
+        if hasattr( self, "PWMA" ) : 
+            self.PWMA.stop()
+        pass
+
+        if hasattr( self, "PWMB") :
+            self.PWMB.stop()
+        pass
+
+        self.PWMA = None
+        self.PWMB = None
+
+        GPIO.setmode(GPIO.BCM)
+        for port in [ self.AIN1, self.AIN2, self.ENA, self.BIN1, self.BIN2, self.ENB ] : 
+            GPIO.cleanup(port)
+        pass
     pass
 
     def setMotor(self, left = 0, right =0):
@@ -58,6 +79,10 @@ class Motor:
         self.setMotor( -left, -right)
     pass
 
+    def back(self, left, right):
+        self.backward(left, right)
+    pass
+
     def stop(self):
         print(inspect.currentframe().f_code.co_name)
         self.setMotor( 0, 0 )
@@ -88,20 +113,22 @@ if __name__=='__main__':
         duration = 3
     
         motor.forward()
-        time.sleep(duration)
+        sleep(duration)
         motor.backward()
-        time.sleep(duration)
+        sleep(duration)
         motor.left()
-        time.sleep(duration)
+        sleep(duration)
         motor.right()
-        time.sleep(duration)
+        sleep(duration)
         
     except KeyboardInterrupt:
         print( "" )
     pass
 
     motor.stop()
-    time.sleep(0.5)
+    sleep(0.5)
+    motor.clear()
+    sleep( 0.5 )
     GPIO.cleanup()
 
     print( "Good bye!" )
