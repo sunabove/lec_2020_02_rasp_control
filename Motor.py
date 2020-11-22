@@ -108,6 +108,18 @@ class Motor:
         self.setMotor( 30, -30 )
     pass
 
+    def test_all(self, duration=3) :    
+        self.forward()
+        sleep(duration)
+        self.backward()
+        sleep(duration)
+        self.left()
+        sleep(duration)
+        self.right()
+        sleep(duration)
+        self.stop()
+    pass
+
 pass
 
 if __name__=='__main__':
@@ -116,23 +128,10 @@ if __name__=='__main__':
     motor = Motor()
 
     try:
-        duration = 3
-    
-        motor.forward()
-        sleep(duration)
-        motor.backward()
-        sleep(duration)
-        motor.left()
-        sleep(duration)
-        motor.right()
-        sleep(duration)
-        
+        motor.test_all(duration=3)        
     except KeyboardInterrupt:
         print( "" )
-    pass
-
-    motor.stop()
-    sleep(0.5)
+    pass 
     motor.clear()
     sleep( 0.5 )
     GPIO.cleanup()
