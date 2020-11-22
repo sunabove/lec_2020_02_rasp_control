@@ -25,9 +25,13 @@ class Motor:
         self.stop()
     pass
 
+    def __del__( self ) :
+        self.clear()
+    pass
+
     def clear(self) :
         print(inspect.currentframe().f_code.co_name)
-        
+
         if hasattr( self, "PWMA" ) : 
             self.PWMA.stop()
         pass
