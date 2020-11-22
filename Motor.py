@@ -34,11 +34,11 @@ class Motor:
         print(inspect.currentframe().f_code.co_name)
 
         if hasattr( self, "PWMA" ) : 
-            self.PWMA.stop()
+            self.PWMA and self.PWMA.stop()
         pass
 
         if hasattr( self, "PWMB") :
-            self.PWMB.stop()
+            self.PWMB and self.PWMB.stop(0)
         pass
 
         self.PWMA = None
