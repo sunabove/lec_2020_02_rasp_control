@@ -6,16 +6,39 @@ import threading
 from time import  sleep
 
 import RPi.GPIO as GPIO    
-from Camera import Camera, generate_frame
 from Motor import Motor
+from RGB_LED import RGB_LED
+from Camera import Camera, generate_frame
 from Servo import Servo
 
-class Robot( Motor ):
+class Robot :
     def __init__(self): 
         super().__init__()
 
+        self.motor = Motor()
+        self.rgb_led = RGB_LED()
         self.camera = Camera()
         self.servo = Servo()  
+    pass
+
+    def stop(self) :
+        self.motor.stop()
+    pass
+
+    def forward(self, speed = None) :
+        self.motor.forward( speed )
+    pass
+
+    def backward(self, speed = None) :
+        self.motor.backward( speed )
+    pass
+
+    def left(self) :
+        self.motor.left()
+    pass
+
+    def right(self):
+        self.motor.right()
     pass
 
     def stop_robot(self):
@@ -51,15 +74,12 @@ if __name__=='__main__':
     @app.route("/cmd", methods=['POST'] )
     def cmd():
         code = request.form.get("cmd")
-        speed = request.form.get("spped")
-        print(code)
+        speed = request.form.get("speed")
+
+        print(f"code={code}, speed={speed}")
 
         servo = robot.servo 
-        
-        if(speed != None):
-            robot.setPWMA(float(speed))
-            robot.setPWMB(float(speed))
-            print(speed)
+
         if code == "stop":
             robot.stop()
             print("stop")

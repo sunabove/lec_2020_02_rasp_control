@@ -75,13 +75,27 @@ class Motor:
         pass 
     pass
 
-    def forward(self, left=50, right=50):
-        print(inspect.currentframe().f_code.co_name)
+    def forward(self, left=50, right=None):
+        print(inspect.currentframe().f_code.co_name) 
+        if left is None : 
+            left = 50 
+        pass
+
+        if right is None :
+            right = left
+        pass
         self.setMotor( left, right)
     pass
 
-    def backward(self, left=50, right=50):
+    def backward(self, left=50, right=None):
         print(inspect.currentframe().f_code.co_name)
+        if left is None : 
+            left = 50 
+        pass
+    
+        if right is None :
+            right = left
+        pass
         self.setMotor( -left, -right)
     pass
 
