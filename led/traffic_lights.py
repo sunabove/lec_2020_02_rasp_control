@@ -3,10 +3,10 @@ from gpiozero import TrafficLights, Button
 from time import sleep
 from time import time
 
-trafficLights = TrafficLights(2, 3, 4)
+tr = TrafficLights(2, 3, 4)
 
 # 신호등 
-lights = [ trafficLights.green, trafficLights.amber, trafficLights.red ]
+lights = [ tr.green, tr.amber, tr.red ]
 durations   = [ 5, 3, 10 ]   # 신호등을 켜는 시간 
 periods     = [ 0, 1/3, 1/4 ]   # 깜빡이는 주기 
 
@@ -15,9 +15,11 @@ signal_no = 0 # 신호 번호
 
 # 신호 바꾸는 함수 
 def change_signal() :
-   if light_no == 2 : #  핸재 신호가 빨간색이면,
+   print( "Button pressed." )
+   global light_no, signal_no
+   if light_no in (1, 2) : #  핸재 녹색이 아니면, 
       signal_no += 1 # 신호 번호를 하나 증가 시키고 
-      light_no = 1   # 다음 신호를 노란색으로 설정한다.
+      light_no = 0   # 다음 신호를 녹색으로 설정한다.
    pass
 pass
 
@@ -58,7 +60,7 @@ while True :
       pass
 
       if curr_signal_no == signal_no :
-         sleep( 0.1 ) # 0.1 초 동안 멈춤.
+         sleep( 0.2 ) # 0.1 초 동안 멈춤.
          elapsed = time() - then # 신호 노출 시간 
       pass
    pass
