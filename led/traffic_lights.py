@@ -21,8 +21,8 @@ def change_signal() :
    pass
 pass
 
-button = Button(17)
-button.when_pressed = change_signal
+button = Button(17) # 버튼
+button.when_pressed = change_signal  # 버튼을 누르면 신호를 변경한다.
 
 while True :
    for light in lights :
