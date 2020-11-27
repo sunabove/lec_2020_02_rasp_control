@@ -38,8 +38,8 @@ while True :
    duration = durations[ light_no ]  # 점등 시간
    period = periods[ light_no ]  # 깜빡이는 주기
 
-   then = time()
-   elapsed = time() - then
+   then = time() # 신호 시작 시각 
+   elapsed = time() - then # 신호 노출 시간 
 
    # 신호 번호가 바뀌지 않고, 점듬 시간 이하 일 때, 신호를 깜빡인다.
    while ( curr_signal_no == signal_no ) and ( elapsed < duration ):
@@ -59,7 +59,7 @@ while True :
 
       if curr_signal_no == signal_no :
          sleep( 0.1 ) # 0.1 초 동안 멈춤.
-         elapsed = time() - then
+         elapsed = time() - then # 신호 노출 시간 
       pass
    pass
 
