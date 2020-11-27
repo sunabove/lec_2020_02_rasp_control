@@ -6,16 +6,16 @@ from time import time
 trafficLights = TrafficLights(2, 3, 4)
 
 # 신호등 
-lights = [ trafficLights.red, trafficLights.amber, trafficLights.green ]
-durations   = [ 10, 3, 5 ]   # 신호등을 켜는 시간 
-periods     = [ 1/4, 1/3, 0 ]   # 깜빡이는 주기 
+lights = [ trafficLights.green, trafficLights.amber, trafficLights.red ]
+durations   = [ 5, 3, 10 ]   # 신호등을 켜는 시간 
+periods     = [ 0, 1/3, 1/4 ]   # 깜빡이는 주기 
 
 light_no = 0  # 현재 신호등 번호 
 signal_no = 0 # 신호 번호 
 
 # 신호 바꾸는 함수 
 def change_signal() :
-   if light_no == 0 : #  핸재 신호가 빨간색이면,
+   if light_no == 2 : #  핸재 신호가 빨간색이면,
       signal_no += 1 # 신호 번호를 하나 증가 시키고 
       light_no = 1   # 다음 신호를 노란색으로 설정한다.
    pass
