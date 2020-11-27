@@ -2,21 +2,28 @@
 from gpiozero import TrafficLights
 from time import sleep
 
-lights = TrafficLights(2, 3, 4)
+trafficLights = TrafficLights(2, 3, 4)
 
-lights.green.on()
+lights = [ trafficLights.green, trafficLights.amber, trafficLights.red ]
+durations = [ 3, 2, 5 ]
+frequecies = [ 0, 2, 0 ]
 
-while True:
-   sleep(10)
-   lights.green.off()
-   lights.amber.on()
-   sleep(1)
-   lights.amber.off()
-   lights.red.on()
-   sleep(10)
-   lights.amber.on()
-   sleep(1)
-   lights.green.on()
-   lights.amber.off()
-   lights.red.off()
+light_no = 0 
+
+while True :
+   for light in lights :
+      light.off()
+   pass
+
+   light_no = light_no % 3 
+
+   light = lights[ light_no ]
+
+   light.on()
+
+   duration = durations[ light_no ]
+
+   sleep(duration) 
+
+   light_no += 1 
 pass
