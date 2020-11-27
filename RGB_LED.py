@@ -1,8 +1,5 @@
-# NeoPixel library strandtest example
-# Author: Tony DiCola (tony@tonydicola.com)
-#
-# Direct port of the Arduino NeoPixel library strandtest example.  Showcases
-# various animations on a strip of NeoPixels.
+# coding: utf-8
+
 from time import sleep
 import time, threading
 
@@ -26,17 +23,18 @@ class RGB_LED :
     
         self.strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
 
-        strip.begin()
-        strip.show()
+        self.strip.begin()
+        self.strip.show()
 
         self.rgb = 0
-        self.light_type = 'static' 
+        self.light_type = '' 
 
-        self.t = threading.Thread(target = lightLoop)
-        self.t.setDaemon(True)
-        self.t.start()
+        if 1 : 
+            self.t = threading.Thread(target = self._lightLoop)
+            self.t.setDaemon(True)
+            self.t.start()
+        pass
     pass
-    
 
     def begin(self):
         self.strip.begin()
@@ -50,15 +48,22 @@ class RGB_LED :
         self.strip.setPixelColor(led_no, rgb)
     pass
 
-    def lightLoop():
-    	flashTime = [0.3, 0.2, 0.1, 0.05, 0.05, 0.1, 0.2, 0.5, 0.2]
+    def light_effect(self, light_type="", rgb=Color(0,0,0)):
+        self.light_type = light_type
+        self.rgb = rgb
+    pass 
+
+    def _lightLoop(self):
+        flashTime = [0.3, 0.2, 0.1, 0.05, 0.05, 0.1, 0.2, 0.5, 0.2]
         flashTimeIndex = 0 
         f = lambda x: (-1/10000.0)*x*x + (1/50.0)*x 
         x = 0
+
+        strip = self.strip 
         while True:
-            rgb = self.rgb
             light_type = self.light_type
-        
+            rgb = self.rgb 
+
             if light_type == 'static': 
                 for i in range(0,strip.numPixels()):
                     strip.setPixelColor(i, rgb)
@@ -102,20 +107,37 @@ pass
 
 if __name__ == "__main__":
     rgb_led = RGB_LED()
-
     rgb_led.begin()
+
+    # turn on
     rgb_led.setPixelColor(0, Color(255, 0, 0))       #Red
     rgb_led.setPixelColor(1, Color(0, 255, 0))       #Green
     rgb_led.setPixelColor(2, Color(0, 0, 255))       #Blue
     rgb_led.setPixelColor(3, Color(255, 255, 0))     #Yellow
     rgb_led.show()
 
-    time.sleep(2)
+    sleep(2)
+
+    rgb_led.light_effect( "static", Color(255, 255, 0) )
+    sleep( 3 )
+
+    rgb_led.light_effect( "breath", Color(255, 0, 0) )
+    sleep( 3 )
+
+    rgb_led.light_effect( "flash", Color(0, 255, 0) )
+    sleep( 3 )
+
+    # remove light_effect 
+    rgb_led.light_effect( "", Color(0, 0, 0) )
+
+    # turn off 
     rgb_led.setPixelColor(0, Color(0, 0, 0))       #Red
     rgb_led.setPixelColor(1, Color(0, 0, 0))       #Green
     rgb_led.setPixelColor(2, Color(0, 0, 0))       #Blue
     rgb_led.setPixelColor(3, Color(0, 0, 0))       #Yellow
-    rgb_led.show()
+    rgb_led.show() 
+
+    sleep(2)
 pass
 
 
