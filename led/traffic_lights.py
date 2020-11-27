@@ -1,7 +1,6 @@
 # coding: utf-8
 from gpiozero import TrafficLights, Button
-from time import sleep
-from time import time
+from time import sleep, time
 
 tr = TrafficLights(2, 3, 4)
 
