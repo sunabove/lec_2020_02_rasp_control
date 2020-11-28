@@ -84,6 +84,7 @@ class Motor:
         if right is None :
             right = left
         pass
+
         self.setMotor( left, right)
     pass
 
@@ -92,14 +93,23 @@ class Motor:
         if left is None : 
             left = 50 
         pass
-    
+
         if right is None :
             right = left
         pass
+    
         self.setMotor( -left, -right)
     pass
 
     def back(self, left=50, right=50):
+        if left is None : 
+            left = 50 
+        pass
+    
+        if right is None :
+            right = left
+        pass
+
         self.backward(left, right)
     pass
 

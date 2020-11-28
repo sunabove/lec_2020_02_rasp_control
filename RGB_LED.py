@@ -49,8 +49,14 @@ class RGB_LED :
     pass
 
     def light_effect(self, light_type="", rgb=Color(0,0,0)):
+        print( f"light_type: {light_type}" )
         self.light_type = light_type
         self.rgb = rgb
+    pass 
+
+    def turn_off(self):
+        self.light_type = None
+        self.rgb = Color(0,0,0)
     pass 
 
     def _lightLoop(self):
@@ -128,7 +134,7 @@ if __name__ == "__main__":
     sleep( 3 )
 
     # remove light_effect 
-    rgb_led.light_effect( "", Color(0, 0, 0) )
+    rgb_led.turn_off()
 
     # turn off 
     rgb_led.setPixelColor(0, Color(0, 0, 0))       #Red

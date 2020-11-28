@@ -15,21 +15,21 @@ class Robot :
     def __init__(self): 
         super().__init__()
 
-        self.motor = Motor()
-        self.rgb_led = RGB_LED()
-        self.camera = Camera()
-        self.servo = Servo()  
+        self.motor      = Motor()
+        self.rgb_led    = RGB_LED()
+        self.camera     = Camera()
+        self.servo      = Servo()  
     pass
 
     def stop(self) :
         self.motor.stop()
     pass
 
-    def forward(self, speed = None) :
+    def forward(self, speed = 50) :
         self.motor.forward( speed )
     pass
 
-    def backward(self, speed = None) :
+    def backward(self, speed = 50) :
         self.motor.backward( speed )
     pass
 
@@ -76,6 +76,12 @@ if __name__=='__main__':
         code = request.form.get("cmd")
         speed = request.form.get("speed")
 
+        if speed :
+            speed = int( speed )
+        else :
+            speed = 50 
+        pass
+
         print(f"code={code}, speed={speed}")
 
         servo = robot.servo 
@@ -84,10 +90,10 @@ if __name__=='__main__':
             robot.stop()
             print("stop")
         elif code == "forward":
-            robot.forward()
+            robot.forward( speed )
             print("forward")
         elif code == "backward":
-            robot.backward()
+            robot.backward( speed )
             print("backward")
         elif code == "turnleft":
             robot.left()
