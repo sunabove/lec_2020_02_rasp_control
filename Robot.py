@@ -9,7 +9,9 @@ import RPi.GPIO as GPIO
 from Motor import Motor
 from RGB_LED import RGB_LED
 from Camera import Camera, generate_frame
-from Servo import Servo
+from Servo import Servo 
+
+from rpi_ws281x import Color
 
 class Robot :
     def __init__(self): 
@@ -23,20 +25,27 @@ class Robot :
 
     def stop(self) :
         self.motor.stop()
+        # LEF 끈다.
+        self.rgb_led.turn_off()
     pass
 
     def forward(self, speed = 50) :
         self.motor.forward( speed )
+        self.rgb_led.light_effect( "breath", Color(0, 255, 0) )
     pass
 
     def backward(self, speed = 50) :
         self.motor.backward( speed )
+        # 후진시에는 빨간색으로 깜박인다.
+        self.rgb_led.light_effect( "flash", Color(255, 0, 0) ) 
     pass
 
+    # 좌회전
     def left(self) :
         self.motor.left()
     pass
 
+    # 우회전 
     def right(self):
         self.motor.right()
     pass
