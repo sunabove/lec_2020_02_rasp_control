@@ -27,7 +27,8 @@ class RGB_LED :
         self.strip.show()
 
         self.rgb = 0
-        self.light_type = '' 
+        self.light_type = None
+        self.is_off = False
 
         if 1 : 
             self.t = threading.Thread(target = self._lightLoop)
@@ -57,7 +58,6 @@ class RGB_LED :
     def turn_off(self):
         self.light_type = None
         self.rgb = Color(0,0,0)
-        # test
     pass 
 
     def _lightLoop(self):
@@ -67,41 +67,68 @@ class RGB_LED :
         x = 0
 
         strip = self.strip 
+        numPixels = strip.numPixels()
         while True:
             light_type = self.light_type
             rgb = self.rgb 
+            
+            if light_type is None :
+                self.x = 0
+                if not self.is_off :
+                    for i in range( strip.numPixels() ) : 
+                        strip.setPixelColor(i, Color(0, 0, 0)) 
+                        strip.show()
+                    pass
 
+                    self.is_off = True                    
+                pass
+            else :
+                self.is_off = False
+            pass
+            
             if light_type == 'static': 
-                for i in range(0,strip.numPixels()):
+                for i in range(numPixels):
                     strip.setPixelColor(i, rgb)
                 pass
                 strip.show()
                 sleep(0.05)
-            elif light_type == 'breath': 
-                red = int(((rgb & 0x00ff00)>>8) * f(x))
-                green = int(((rgb & 0xff0000) >> 16) * f(x))
-                blue = int((rgb & 0x0000ff) * f(x))
+            elif light_type == 'breath':  
+                fx = f(x)
+
+                red = int(((rgb & 0x00ff00)>>8) * fx)
+                green = int(((rgb & 0xff0000) >> 16) * fx)
+                blue = int((rgb & 0x0000ff) * fx )
                 _rgb = int((red << 8) | (green << 16) | blue)
-                for i in range(0,strip.numPixels()):
+
+                for i in range(numPixels):
                     strip.setPixelColor(i, _rgb)     
                     strip.show()
                 pass
-                sleep(0.02)
+
                 x += 1
-                if x >= 200:
-                    x = 0
+                
+                if x > 200:
+                    x = 0 
+                    for i in range(numPixels):
+                        strip.setPixelColor(i, 0)     
+                        strip.show()
+                    pass
                 pass
+
+                sleep(0.02)
             elif light_type == 'flash':
-                for i in range(0,strip.numPixels()):
+                for i in range(numPixels):
                     strip.setPixelColor(i, rgb)     
                     strip.show()
                 pass
                 sleep(flashTime[flashTimeIndex])
-                for i in range(0,strip.numPixels()):
+
+                for i in range(numPixels):
                     strip.setPixelColor(i, 0)     
                     strip.show()
                 pass
                 sleep(flashTime[flashTimeIndex])
+                
                 flashTimeIndex += 1
                 if flashTimeIndex >= len(flashTime):
                     flashTimeIndex = 0
