@@ -107,9 +107,6 @@ def camera():
 tcamera = threading.Thread(target = camera)
 tcamera.setDaemon(True)
 tcamera.start()
-tcamera = threading.Thread(target = camera)
-tcamera.setDaemon(True)
-tcamera.start()
 
 t = threading.Timer(0.02, timerfunc)
 t.setDaemon(True)

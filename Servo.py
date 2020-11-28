@@ -1,17 +1,13 @@
 # coding: utf-8
 
-import threading
-import time
-import math
-import smbus
+import threading, math, RPi.GPIO as GPIO, smbus, inspect
 
-import RPi.GPIO as GPIO
-
-# ============================================================================
-# Raspi PCA9685 16-Channel PWM Servo Driver
-# ============================================================================
+from time import sleep
 
 class Servo :
+    # ============================================================================
+    # Raspi PCA9685 16-Channel PWM Servo Driver
+    # ============================================================================
 
     # Registers/etc.
     __SUBADR1          = 0x02
@@ -32,23 +28,20 @@ class Servo :
         self.bus = smbus.SMBus(1)
         self.address = address
         self.debug = debug
-        if (self.debug):
+        
+        if self.debug :
             print("Reseting PCA9685") 
+        pass
+
         self.write(self.__MODE1, 0x00)
 
         #Set servo parameters
-        self.HPulse = 1500  #Sets the initial Pulse
-        self.HStep = 0      #Sets the initial step length
-        self.VPulse = 1500  #Sets the initial Pulse
-        self.VStep = 0      #Sets the initial step length
+        self.HPulse = 0  #Sets the initial Pulse
+        self.VPulse = 0  #Sets the initial Pulse 
 
-        if False : 
-            self.setPWMFreq(50)
-            self.setServoPulse(1, self.VPulse)
-            self.setServoPulse(0, self.HPulse)
-        pass
-
-        self.timerfunc()
+        self.setPWMFreq(50)
+        self.setServoPulse(1, self.VPulse)
+        self.setServoPulse(0, self.HPulse)
     pass
 	
     def write(self, reg, value):
@@ -90,7 +83,9 @@ class Servo :
         self.write(self.__MODE1, newmode)                # go to sleep
         self.write(self.__PRESCALE, int(math.floor(prescale)))
         self.write(self.__MODE1, oldmode)
-        time.sleep(0.005)
+        
+        sleep(0.005)
+        
         self.write(self.__MODE1, oldmode | 0x80)
     pass
 
@@ -107,85 +102,107 @@ class Servo :
     pass
 	    
     def setServoPulse(self, channel, pulse):
-        "Sets the Servo Pulse,The PWM frequency must be 50HZ"
+        # "Sets the Servo Pulse,The PWM frequency must be 50HZ"
         pulse = pulse*4096/20000                #PWM frequency is 50HZ,the period is 20000us
         self.setPWM(channel, 0, int(pulse))
     pass
 
     def stop_servo(self) :
-        self.HStep = 0 
-        self.VPulse = 0 
+        print(inspect.currentframe().f_code.co_name)
+    pass 
+
+    def stop(self):
+        print(inspect.currentframe().f_code.co_name)
     pass
 
-    def timerfunc(self):
-        #print( "timerfunc" )
-
-        HStep = self.HStep
-        VStep = self.VStep
-
-        if(HStep != 0):
-            self.HPulse += HStep
-
-            if(self.HPulse >= 2500): 
-                self.HPulse = 2500
-            elif(self.HPulse <= 500):
-                self.HPulse = 500
-            pass
-
-            #set channel 2, the Horizontal servo
-            self.setServoPulse(0, self.HPulse)
-        pass
-            
-        if(VStep != 0):
-            self.VPulse += VStep
-
-            if(self.VPulse >= 2500): 
-                self.VPulse = 2500
-            elif(self.VPulse <= 500):
-                self.VPulse = 500
-            pass
-
-            #set channel 3, the vertical servo
-            self.setServoPulse(1, self.VPulse)
-        pass
-
-        self.t = threading.Timer(0.02, self.timerfunc)
-        #self.t.setDaemon(True)
-        self.t.start()
+    def up(self):
+        print(inspect.currentframe().f_code.co_name)
     pass
+
+    def down(self):
+        print(inspect.currentframe().f_code.co_name)
+    pass
+
+    def left(self):
+        print(inspect.currentframe().f_code.co_name)
+    pass
+
+    def right(self):
+        print(inspect.currentframe().f_code.co_name)
+    pass
+
 pass
 
 if __name__=='__main__':
+    import curses
+
     GPIO.setwarnings(False)
 
     servo = Servo()
-    servo.setPWMFreq(50)
 
-    servo.setServoPulse(0,1500)
-    time.sleep(1)
-    servo.setServoPulse(1,2000)
-    time.sleep(1)
+    if False : 
+        channel = 0
 
-    for channel in range( 2 ) : 
-        # setServoPulse(2,2500)
-        for i in range(500,2500,10):    
-            servo.setServoPulse(channel,i)     
-            time.sleep(0.02)         
-        
-        for i in range(2500,500,-10):
-            servo.setServoPulse(channel,i) 
-            time.sleep(0.02)
+        for pulse in range(500, 2500, 10):    
+            print( f"pulse = {pulse}" )
+            servo.setServoPulse(channel, pulse)     
+            sleep(0.02)  
+        pass
+    pass
+    
+    if False : 
+        for channel in range( 2 ) : 
+            # setServoPulse(2,2500)
+            for i in range(500,2500,10):    
+                servo.setServoPulse(channel,i)     
+                sleep(0.02)         
+            
+            for i in range(2500,500,-10):
+                servo.setServoPulse(channel,i) 
+                sleep(0.02)
+            pass
+        pass
+    pass  
+
+    GPIO.cleanup()   
+
+    actions = {
+        curses.KEY_UP:    servo.up,
+        curses.KEY_DOWN:  servo.down,
+        curses.KEY_LEFT:  servo.left,
+        curses.KEY_RIGHT: servo.right,
+    }
+
+    def main(window):
+        next_key = None
+        go_on = True
+
+        while go_on :
+            curses.halfdelay(1)
+            if next_key is None:
+                try : 
+                    key = window.getch()
+                except KeyboardInterrupt :
+                    go_on = False
+                pass
+            else:
+                key = next_key
+                next_key = None
+            pass
+
+            if go_on and key != -1:
+                # KEY PRESSED
+                curses.halfdelay(3)
+                action = actions.get(key)
+                if action is not None:
+                    action()
+                next_key = key
+                while next_key == key:
+                    next_key = window.getch()
+                pass 
+            pass
         pass
     pass
 
-    servo.setServoPulse(0,1500)
-    time.sleep(1)
-    servo.setServoPulse(1,2000)
-    time.sleep(1)
-
-    servo.setServoPulse(0,0)
-    servo.setServoPulse(1,0)
-    time.sleep(1)
-
-    GPIO.cleanup()    
+    curses.wrapper(main) 
 pass    

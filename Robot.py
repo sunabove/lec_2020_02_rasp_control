@@ -20,7 +20,7 @@ class Robot :
         self.motor      = Motor()
         self.rgb_led    = RGB_LED()
         self.camera     = Camera()
-        self.servo      = Servo()  
+        self.servo      = Servo()
     pass
 
     def stop(self) :
@@ -43,11 +43,13 @@ class Robot :
     # 좌회전
     def left(self) :
         self.motor.left()
+        # LED 깜빡이기
     pass
 
     # 우회전 
     def right(self):
         self.motor.right()
+        # LED 깜빡이기
     pass
 
     def stop_robot(self):
