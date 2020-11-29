@@ -23,9 +23,14 @@ class Robot :
         self.servo      = Servo()
     pass
 
+    def __del__(self):
+        self.stop()
+    pass
+
     def stop(self) :
         self.motor.stop()
-        # LEF 끈다.
+        self.servo.stop() 
+        # LED 끈다.
         self.rgb_led.turn_off()
     pass
 
@@ -52,9 +57,8 @@ class Robot :
         # LED 깜빡이기
     pass
 
-    def stop_robot(self):
-        self.stop_motor()
-        self.servo.stop()
+    def speed_up(self, speed = 10 ) :
+        pass
     pass
 
     # servo control
