@@ -53,9 +53,27 @@ class Robot :
     pass
 
     def stop_robot(self):
-        self.servo.stop_servo()
         self.stop_motor()
+        self.servo.stop()
     pass
+
+    # servo control
+    def servo_left( self ) : 
+        self.servo.left()
+    pass
+
+    def servo_right( self ) : 
+        self.servo.right()
+    pass
+
+    def servo_up( self ) : 
+        self.servo.up()
+    pass
+
+    def servo_down( self ) : 
+        self.servo.down()
+    pass
+
 pass
 
 if __name__=='__main__':
@@ -95,35 +113,24 @@ if __name__=='__main__':
 
         print(f"code={code}, speed={speed}")
 
-        servo = robot.servo 
-
         if code == "stop":
             robot.stop()
-            print("stop")
         elif code == "forward":
             robot.forward( speed )
-            print("forward")
         elif code == "backward":
-            robot.backward( speed )
-            print("backward")
+            robot.backward( speed 
         elif code == "turnleft":
             robot.left()
-            print("turnleft")
         elif code == "turnright":
             robot.right()
-            print("turnright")
-        elif code == "up":
-            servo.VStep = -5
-            print("up")
-        elif code == "down":
-            servo.VStep = 5
-            print("down")
         elif code == "left":
-            servo.HStep = 5
-            print("left")
+            robot.servo_left()
         elif code == "right":
-            servo.HStep = -5
-            print("right")
+            robot.servo_right()
+        elif code == "up":
+            robot.servo_up()
+        elif code == "down":
+            robot.servo_down()
         pass
 
         return "OK"

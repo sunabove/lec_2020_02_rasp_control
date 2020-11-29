@@ -83,7 +83,7 @@ class PCA9685:
 
 if __name__=='__main__':
 
-  pwm = PCA9685(0x40, debug=True)
+  pwm = PCA9685(0x40, debug=False) 
   pwm.setPWMFreq(50)
   pwm.setServoPulse(0,1000)
   pwm.setServoPulse(1,2000)
@@ -102,9 +102,9 @@ if __name__=='__main__':
     time.sleep(0.02)
   pass
 
-  pwm.setServoPulse(0,1000)
+  pwm.setServoPulse(0,0)
   time.sleep(1)
-  pwm.setServoPulse(1,2000)
+  pwm.setServoPulse(1,0)
   time.sleep(1)
   
 pass  

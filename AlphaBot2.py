@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
-class AlphaBot(object):
+class AlphaBot2(object):
 	
 	def __init__(self,ain1=12,ain2=13,ena=6,bin1=20,bin2=21,enb=26):
 		self.AIN1 = ain1
@@ -98,7 +98,7 @@ class AlphaBot(object):
 
 if __name__=='__main__':
 
-	ab = AlphaBot()
+	ab = AlphaBot2()
 
 	try:
 		duration = 2
