@@ -146,7 +146,7 @@ if __name__=='__main__':
         elif code == "forward":
             robot.forward( speed )
         elif code == "backward":
-            robot.backward( speed 
+            robot.backward( speed )
         elif code == "turnleft":
             robot.left()
         elif code == "turnright":
