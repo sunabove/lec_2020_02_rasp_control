@@ -30,12 +30,29 @@ class RGB_LED :
         self.light_type = None
         self.is_off = False
 
+        self._running = False
+
         if 1 : 
-            self.t = threading.Thread(target = self._lightLoop)
-            self.t.setDaemon(True)
-            self.t.start()
+            self._thread = threading.Thread(target = self._lightLoop)
+            _thread = self._thread 
+            _thread.setDaemon(True)
+            _thread.start()
         pass
     pass
+
+    def __del__(self):
+        self.finish()
+    pass
+
+    def finish( self ) :
+        self.turn_off()
+        self._running = False
+
+        _thread = self._thread
+        if _thread :
+            _thread.join()
+        pass        
+    pass 
 
     def begin(self):
         self.strip.begin()
@@ -68,7 +85,7 @@ class RGB_LED :
 
         strip = self.strip 
         numPixels = strip.numPixels()
-        while True:
+        while self._running :
             light_type = self.light_type
             rgb = self.rgb 
             
@@ -134,9 +151,12 @@ class RGB_LED :
                     flashTimeIndex = 0
                 pass
             pass
-        pass
-    pass # -- loop
-
+        pass # loop
+        
+        self._running = False
+        self._thread = None 
+    pass # -- _lightLoop
+    
 pass
 
 if __name__ == "__main__":

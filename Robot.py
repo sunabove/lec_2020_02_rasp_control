@@ -1,16 +1,13 @@
 #coding: utf-8
 
-import cv2
-import numpy as np 
-import threading
-from time import  sleep
-
+import cv2, numpy as np, threading
 import RPi.GPIO as GPIO    
+
+from time import  sleep
 from Motor import Motor
 from RGB_LED import RGB_LED
 from Camera import Camera, generate_frame
-from Servo import Servo 
-
+from Servo import Servo
 from rpi_ws281x import Color
 
 class Robot :
@@ -24,14 +21,19 @@ class Robot :
     pass
 
     def __del__(self):
-        self.stop()
+        self.finish()
+    pass
+
+    def finish(self) :
+        self.motor.finish()
+        self.rgb_led.finish() # RGB LED 꺼기 
+        self.camera.finish()
+        self.servo.finish()         
     pass
 
     def stop(self) :
         self.motor.stop()
-        self.servo.stop() 
-        # LED 끈다.
-        self.rgb_led.turn_off()
+        self.rgb_led.turn_off() # RGB LED 꺼기  
     pass
 
     def forward(self, speed = 50) :
@@ -81,7 +83,7 @@ class Robot :
 pass
 
 if __name__=='__main__':
-    GPIO.setwarnings(False)
+    print( "Hello....." )
 
     # web by flask framewwork
     from flask import Flask, render_template, Response, request, jsonify
@@ -89,8 +91,30 @@ if __name__=='__main__':
     app = Flask(__name__, static_url_path='', static_folder='html/static', template_folder='html/templates')
     app.config["TEMPLATES_AUTO_RELOAD"] = True
 
+    GPIO.setwarnings(False)
+    
     robot = Robot()
     robot.camera.start_recording()
+
+    def handler(signal, frame):
+        print('You have pressed Ctrl-C.')
+
+        global robot
+        
+        robot.finish()
+
+        GPIO.cleanup()
+
+        sleep( 0.5 )
+
+        print( "Good bye!" )
+
+        import sys
+        sys.exit(0)
+    pass
+
+    import signal
+    signal.signal(signal.SIGINT, handler)
 
     @app.route( '/' )
     @app.route( '/index.html' )

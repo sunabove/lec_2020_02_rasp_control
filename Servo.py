@@ -44,6 +44,10 @@ class Servo :
     pass
 
     def __del__(self):
+        self.finish()
+    pass
+
+    def finish(self) :
         self.stop()
     pass
 	

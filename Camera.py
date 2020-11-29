@@ -79,7 +79,7 @@ class Camera(object):
         print( "Recording is stopped." )
     pass
 
-    def stop(self):
+    def finish(self):
         self.stop_recording()
     pass
 
@@ -165,7 +165,7 @@ if __name__=='__main__':
 
         global camera
         
-        camera.stop()
+        camera.finish()
 
         sleep( 0.5 )
 
