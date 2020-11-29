@@ -1,9 +1,8 @@
 #coding: utf-8
 
 import cv2
-import numpy as np 
-import io
-import threading
+import numpy as np, io, threading
+from time import sleep
 from threading import Condition
 
 class StreamingOutput(object):
@@ -36,27 +35,31 @@ class Camera(object):
         self.output = StreamingOutput()
         # 전체 프레임 카운트 
         self.frame_cnt = 0 
+        self._running = False
+        self._thread = None
         
-        self.video = cv2.VideoCapture(-1)
-        self.video.set(cv2.CAP_PROP_FPS, 24)
-        self.video.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc(*'X264'))
+        self.video = None
     pass 
     
     def __del__(self):
-        self.video.release()
+        self.stop_recording()
     pass
 
     def start_recording(self) :
-        x = threading.Thread(target=self.start_recording_impl, args=[] )
-        x.start()
+        self.video = cv2.VideoCapture(-1)
+        self.video.set(cv2.CAP_PROP_FPS, 24)
+        self.video.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc(*'X264'))
+
+        self._thread = threading.Thread(target=self._start_recording_impl, args=[] )
+        self._thread.start()
     pass
 
-    def start_recording_impl(self) :
-        self.recording = True
+    def _start_recording_impl(self) :
+        self._running = True
 
         print( "Recording now ...." )
 
-        while self.recording: 
+        while self._running: 
             #print( "recording ...." , end="" )
             image = self.get_image()
 
@@ -64,12 +67,29 @@ class Camera(object):
             self.output.write( jpg )
             #print( "Done." )
         pass
+
+        self._thread = None
+
+        video = self.video
+        self.video = None
+        if video : 
+            video.release()
+        pass
+
+        print( "Recording is stopped." )
+    pass
+
+    def stop(self):
+        self.stop_recording()
     pass
 
     def stop_recording(self):
-        self.recording = False 
+        self._running = False 
 
-        print( "Recording is stopped." )
+        _thread = self._thread
+        if _thread is not None :
+            _thread.join()
+        pass 
     pass
 
     def get_image(self):
@@ -97,11 +117,8 @@ class Camera(object):
 
     def get_frame( self ) : 
         # get video frame
-
-        img = self.get_image()
-         
-        _, jpg = cv2.imencode('.jpg', img) 
-        
+        img = self.get_image()         
+        _, jpg = cv2.imencode('.jpg', img)         
         return jpg.tobytes()
     pass
 
@@ -133,7 +150,8 @@ def generate_frame(camera):
 pass
 
 if __name__=='__main__':
-    # web by flask framewwork
+    print( "Hello....." )
+    
     from flask import Flask, render_template, Response, request, jsonify
 
     app = Flask(__name__, static_url_path='', static_folder='html/static', template_folder='html/templates')
@@ -141,6 +159,24 @@ if __name__=='__main__':
 
     camera = Camera() 
     camera.start_recording()
+
+    def handler(signal, frame):
+        print('You have pressed Ctrl-C.')
+
+        global camera
+        
+        camera.stop()
+
+        sleep( 0.5 )
+
+        print( "Good bye!" )
+
+        import sys
+        sys.exit(0)
+    pass
+
+    import signal
+    signal.signal(signal.SIGINT, handler)
 
     @app.route( '/' )
     @app.route( '/index.html' )
