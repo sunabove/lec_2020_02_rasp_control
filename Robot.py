@@ -107,7 +107,7 @@ if __name__=='__main__':
 
         sleep( 0.5 )
 
-        print( "Good bye!" )
+        print( "\nGood bye!" )
 
         import sys
         sys.exit(0)
