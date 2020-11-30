@@ -18,10 +18,19 @@ class IRremote :
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.IR_GPIO_NO, GPIO.IN)
 
+        self._repeat_cnt = 0 
+
         self._running = False 
 
         self._thread = threading.Thread(target=self.process_signal, args=[] )
         self._thread.start()
+    pass
+
+    def join(self) :
+        _thread = self._thread 
+        if _thread :
+            _thread.join()
+        pass
     pass
 
     def __del__(self):
@@ -29,8 +38,6 @@ class IRremote :
     pass
 
     def finish(self) :
-        GPIO.cleanup( self.IR_GPIO_NO )
-
         self._running = False 
         _thread = self._thread 
         if _thread is not None :
@@ -38,6 +45,8 @@ class IRremote :
 
             self._thread = None 
         pass
+
+        GPIO.cleanup( self.IR_GPIO_NO ) 
     pass # -- finish
 
     def _getkey(self):
@@ -60,19 +69,22 @@ class IRremote :
             idx = 0
             cnt = 0
             data = [0,0,0,0]
+
             for i in range(0,32):
                 count = 0
                 while GPIO.input(gpio_no) == 0 and count < 15:    #0.56ms
                     count += 1
                     sleep(0.00006)
+                pass
                     
                 count = 0
                 while GPIO.input(gpio_no) == 1 and count < 40:   #0: 0.56mx
-                    count += 1                               #1: 1.69ms
+                    count += 1 
                     sleep(0.00006)
+                pass
                     
                 if count > 7:
-                    data[idx] |= 1<<cnt
+                    data[idx] |= 1 << cnt
                 if cnt == 7:
                     cnt = 0
                     idx += 1
@@ -83,9 +95,13 @@ class IRremote :
 
             # print data
             if data[0]+data[1] == 0xFF and data[2]+data[3] == 0xFF:  #check
+                self._repeat_cnt = 0 
+
                 return data[2]
             else:
-                log.info("repeat")
+                self._repeat_cnt += 1
+                log.info( f"repeat : {self._repeat_cnt}" )
+
                 return "repeat"
             pass
         pass
@@ -159,6 +175,27 @@ if __name__ == '__main__':
     robot = AlphaBot2()
 
     irremote = IRremote( robot )
+
+    def handler(signal, frame):
+        print()
+        sleep( 0.01 )
+
+        log.info('You have pressed Ctrl-C.')
+
+        irremote.finish()
+
+        sleep( 0.5 )
+
+        log.info( "Good bye!" )
+
+        import sys
+        sys.exit(0)
+    pass
+
+    import signal
+    signal.signal(signal.SIGINT, handler)
+
+    irremote.join()
 
     robot.stop() 
 

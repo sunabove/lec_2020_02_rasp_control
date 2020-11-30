@@ -168,6 +168,9 @@ if __name__=='__main__':
     camera.start_recording()
 
     def handler(signal, frame):
+        print()
+        sleep( 0.01 )
+        
         log.info('You have pressed Ctrl-C.')
 
         global camera
