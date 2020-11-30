@@ -7,6 +7,10 @@ log.basicConfig(
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
     )
 
+class ObstacleSensor:
+    pass
+pass
+
 from AlphaBot2 import AlphaBot2
 
 Ab = AlphaBot2()
