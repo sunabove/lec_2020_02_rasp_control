@@ -1,6 +1,6 @@
 #coding: utf-8
 
-import cv2, numpy as np, io, threading
+import cv2, numpy as np, io, threading, inspect
 from time import sleep
 from threading import Condition
 
