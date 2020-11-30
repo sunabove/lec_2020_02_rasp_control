@@ -30,12 +30,12 @@ try:
         if DL_status == 0 or DR_status == 0 :
             print( f"DL = {DL_status}, DR = {DR_status}" )
 
-            Ab.left()
-            #Ab.right()
-            sleep(0.002)
-            Ab.stop()            
+            Ab.left()          
         else:
             Ab.forward() 
+            sleep(0.01)
+            Ab.stop()
+            sleep( 0.02 )
         pass
     pass  
 except KeyboardInterrupt:

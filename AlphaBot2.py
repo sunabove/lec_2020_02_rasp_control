@@ -13,6 +13,9 @@ class AlphaBot2(object):
 		self.PA  = 50
 		self.PB  = 50
 
+		self.PA  = 30
+		self.PB  = 30
+
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
 		GPIO.setup(self.AIN1,GPIO.OUT)
