@@ -94,19 +94,29 @@ class ObstacleSensor :
 
                 if left_obstacle and left_obstacle :
                     # 양쪽에 장애물이 있을 때
+                    robot.stop()
+                    sleep( 0.01 )
                     robot.backward()
                     sleep( 0.01 )
                     robot.left()
                     sleep( 0.01 )
                     robot.stop()
                     sleep( 0.01 )
-                elif left_obstacle :                 
-                    robot.right()
+                elif left_obstacle : # 왼쪽에 장애가 있을 때
+                    robot.stop()
+                    sleep( 0.01 )
+                    robot.backward()
+                    sleep( 0.005 )
+                    robot.left()
                     sleep( 0.01 )
                     robot.stop()
                     sleep( 0.01 ) 
-                elif right_obstacle :                 
-                    robot.left()
+                elif right_obstacle : # 오른쪽에 장애가 있을 때
+                    robot.stop()
+                    sleep( 0.01 )
+                    robot.backward()
+                    sleep( 0.005 )
+                    robot.right()
                     sleep( 0.015 )
                     robot.stop()
                     sleep( 0.01 ) 
