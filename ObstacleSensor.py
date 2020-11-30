@@ -83,43 +83,19 @@ class ObstacleSensor :
             
             if not left_obstacle and not right_obstacle :
                 # 장애물이 없을 때
-                log.info( "forward")
-                robot.forward() 
-                sleep( 0.01 ) 
+                #log.info( "forward")
+                robot.forward()  
+                sleep(0.01)
                 robot.stop()
-                sleep( 0.01 )
+                sleep( 0.02 )
             else :
                 # 왼쪽에 장애물이 있을 때
                 log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
 
-                if left_obstacle and left_obstacle :
-                    # 양쪽에 장애물이 있을 때
-                    robot.stop()
-                    sleep( 0.01 )
-                    robot.backward()
-                    sleep( 0.01 )
-                    robot.left()
-                    sleep( 0.01 )
-                    robot.stop()
-                    sleep( 0.01 )
-                elif left_obstacle : # 왼쪽에 장애가 있을 때
-                    robot.stop()
-                    sleep( 0.01 )
-                    robot.backward()
-                    sleep( 0.005 )
-                    robot.left()
-                    sleep( 0.01 )
-                    robot.stop()
-                    sleep( 0.01 ) 
-                elif right_obstacle : # 오른쪽에 장애가 있을 때
-                    robot.stop()
-                    sleep( 0.01 )
-                    robot.backward()
-                    sleep( 0.005 )
-                    robot.right()
-                    sleep( 0.015 )
-                    robot.stop()
-                    sleep( 0.01 ) 
+                if left_obstacle : # 왼쪽에 장애가 있을 때 
+                    robot.left() 
+                elif right_obstacle : # 오른쪽에 장애가 있을 때 
+                    robot.left()  
                 pass
             pass
         pass  
@@ -137,6 +113,7 @@ if __name__ == '__main__':
     GPIO.setwarnings(False)
 
     from AlphaBot2 import AlphaBot2 
+    from Motor import Motor 
 
     robot = AlphaBot2()
 
