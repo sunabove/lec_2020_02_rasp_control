@@ -51,12 +51,12 @@ class Robot :
         self.rgb_led.turn_off() # RGB LED 꺼기  
     pass
 
-    def forward(self, speed = 50) :
+    def forward(self, speed = 30) :
         self.motor.forward( speed )
         self.rgb_led.light_effect( "breath", Color(0, 255, 0) )
     pass
 
-    def backward(self, speed = 50) :
+    def backward(self, speed = 30) :
         self.motor.backward( speed )
         # 후진시에는 빨간색으로 깜박인다.
         self.rgb_led.light_effect( "flash", Color(255, 0, 0) ) 

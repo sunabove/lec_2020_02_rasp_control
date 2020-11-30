@@ -13,7 +13,7 @@ class Motor:
     def __init__(self, ain1=12, ain2=13, ena=6, bin1=20, bin2=21, enb=26):
         self.AIN1 = ain1; self.AIN2 = ain2; self.ENA = ena
         self.BIN1 = bin1; self.BIN2 = bin2; self.ENB = enb
-        self.PA  = 50 ; self.PB  = 50
+        self.PA  = 30 ; self.PB  = 30
 
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
@@ -23,6 +23,7 @@ class Motor:
 
         self.PWMA = GPIO.PWM(ena,500)
         self.PWMB = GPIO.PWM(enb,500)
+
         self.PWMA.start(self.PA)
         self.PWMB.start(self.PB)
         
@@ -78,11 +79,11 @@ class Motor:
         pass 
     pass
 
-    def forward(self, left=50, right=None):
+    def forward(self, left=30, right=None):
         log.info(inspect.currentframe().f_code.co_name) 
 
         if left is None : 
-            left = 50 
+            left = 30 
         pass
 
         if right is None :
@@ -92,11 +93,11 @@ class Motor:
         self.setMotor( left, right)
     pass
 
-    def backward(self, left=50, right=None):
+    def backward(self, left=30, right=None):
         log.info(inspect.currentframe().f_code.co_name)
         
         if left is None : 
-            left = 50 
+            left = 30 
         pass
 
         if right is None :
@@ -106,9 +107,9 @@ class Motor:
         self.setMotor( -left, -right)
     pass
 
-    def back(self, left=50, right=50):
+    def back(self, left=30, right=30):
         if left is None : 
-            left = 50 
+            left = 30 
         pass
     
         if right is None :
