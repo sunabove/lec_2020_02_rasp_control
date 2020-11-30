@@ -1,14 +1,20 @@
 #coding: utf-8
 
-import cv2, numpy as np, threading
-import RPi.GPIO as GPIO    
+import cv2, numpy as np, threading, logging, RPi.GPIO as GPIO    
 
 from time import  sleep
 from Motor import Motor
 from RGB_LED import RGB_LED
 from Camera import Camera, generate_frame
 from Servo import Servo
+from IRRemote import IRRemote
 from rpi_ws281x import Color
+
+import logging as log
+log.basicConfig(
+    format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
+    datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
+    )
 
 class Robot :
     def __init__(self): 
@@ -18,6 +24,7 @@ class Robot :
         self.rgb_led    = RGB_LED()
         self.camera     = Camera()
         self.servo      = Servo()
+        self.irremote   = IRRemote()
     pass
 
     def __del__(self):
@@ -26,9 +33,10 @@ class Robot :
 
     def finish(self) :
         self.motor.finish()
-        self.rgb_led.finish() # RGB LED 꺼기 
+        self.rgb_led.finish() 
         self.camera.finish()
-        self.servo.finish()         
+        self.servo.finish()
+        self.irremote.finish() 
     pass
 
     def stop(self) :
@@ -83,7 +91,7 @@ class Robot :
 pass
 
 if __name__=='__main__':
-    print( "Hello....." )
+    log.info( "Hello....." )
 
     # web by flask framewwork
     from flask import Flask, render_template, Response, request, jsonify
@@ -97,9 +105,10 @@ if __name__=='__main__':
     robot.camera.start_recording()
 
     def handler(signal, frame):
-        print('You have pressed Ctrl-C.')
+        print()
+        sleep( 0.01)
 
-        global robot
+        log.info( 'You have pressed Ctrl-C.' ) 
         
         robot.finish()
 
@@ -107,7 +116,7 @@ if __name__=='__main__':
 
         sleep( 0.5 )
 
-        print( "\nGood bye!" )
+        log.info( "Good bye!" )
 
         import sys
         sys.exit(0)
@@ -164,7 +173,10 @@ if __name__=='__main__':
         return "OK"
     pass
 
-    print( "## Normal WEB")
+    log.info( "## Normal WEB")
+
     app.run(host='0.0.0.0', port=80, debug=False, threaded=True) 
+
+    log.info( "Good bye!")
 
 pass
