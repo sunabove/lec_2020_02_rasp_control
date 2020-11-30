@@ -8,7 +8,7 @@ log.basicConfig(
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
     )
 
-class IRremote : 
+class IRRemote : 
 
     IR_GPIO_NO = 17
 
@@ -132,26 +132,25 @@ class IRremote :
             if key is None :
                 n += 1
                 if n > 20_000:
-                    n = 0
-                    robot.stop()
+                    n = 0 
                 pass
             else : 
                 n = 0                 
                 if key == 0x18:
-                    log.info( "key: {key}, forward" )
+                    log.info( f"key: 0x{key:02X}, forward" )
                     robot.forward() 
                 elif key == 0x52:
-                    log.info( "key: {key}, backward" )
+                    log.info( f"key: 0x{key:02X}, backward" )
                     robot.backward() 
                 elif key == 0x08:
-                    log.info( "key: {key}, left" )
+                    log.info( f"key: 0x{key:02X}, left" )
                     robot.left() 
                 elif key == 0x5a:
-                    log.info( "key: {key}, right" )
+                    log.info( f"key: 0x{key:02X}, right" )
                     robot.right() 
                 elif key == 0x1c:
-                    log.info( "key: {key}, stop" )
-                    robot.stop() 
+                    log.info( f"key: 0x{key:02X}, stop" )
+                    robot.stop_robot() 
                 elif key == 0x15:
                     robot.speed_up( 10 ) 
                 elif key == 0x07:
@@ -174,7 +173,7 @@ if __name__ == '__main__':
 
     robot = AlphaBot2()
 
-    irremote = IRremote( robot )
+    irremote = IRRemote( robot )
 
     def handler(signal, frame):
         print()

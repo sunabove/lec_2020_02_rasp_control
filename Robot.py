@@ -1,6 +1,7 @@
 #coding: utf-8
 
-import cv2, numpy as np, threading, logging, RPi.GPIO as GPIO    
+import cv2, numpy as np, threading, logging, inspect 
+import RPi.GPIO as GPIO    
 
 from time import  sleep
 from Motor import Motor
@@ -20,11 +21,13 @@ class Robot :
     def __init__(self): 
         super().__init__()
 
+        robot = self 
+
         self.motor      = Motor()
         self.rgb_led    = RGB_LED()
         self.camera     = Camera()
         self.servo      = Servo()
-        self.irremote   = IRRemote()
+        self.irremote   = IRRemote( robot )
     pass
 
     def __del__(self):
@@ -32,6 +35,8 @@ class Robot :
     pass
 
     def finish(self) :
+        log.info(inspect.currentframe().f_code.co_name) 
+
         self.motor.finish()
         self.rgb_led.finish() 
         self.camera.finish()
@@ -39,8 +44,10 @@ class Robot :
         self.irremote.finish() 
     pass
 
-    def stop(self) :
-        self.motor.stop()
+    def stop_robot(self) :
+        log.info(inspect.currentframe().f_code.co_name) 
+
+        self.motor.stop_motor()
         self.rgb_led.turn_off() # RGB LED 꺼기  
     pass
 
@@ -102,7 +109,19 @@ if __name__=='__main__':
     GPIO.setwarnings(False)
     
     robot = Robot()
-    robot.camera.start_recording()
+    robot.camera.start_recording()    
+
+    @app.before_request
+    def before_request_func():
+        log.info(inspect.currentframe().f_code.co_name) 
+
+        global robot
+
+        if robot is None :
+            robot = Robot()
+            robot.camera.start_recording()
+        pass
+    pass
 
     def handler(signal, frame):
         print()
@@ -151,7 +170,7 @@ if __name__=='__main__':
         print(f"code={code}, speed={speed}")
 
         if code == "stop":
-            robot.stop()
+            robot.stop_robot()
         elif code == "forward":
             robot.forward( speed )
         elif code == "backward":

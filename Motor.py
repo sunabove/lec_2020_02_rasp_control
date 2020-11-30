@@ -10,12 +10,10 @@ log.basicConfig(
 
 class Motor:
 
-    def __init__(self,ain1=12,ain2=13,ena=6,bin1=20,bin2=21,enb=26):
+    def __init__(self, ain1=12, ain2=13, ena=6, bin1=20, bin2=21, enb=26):
         self.AIN1 = ain1; self.AIN2 = ain2; self.ENA = ena
         self.BIN1 = bin1; self.BIN2 = bin2; self.ENB = enb
-        self.PA  = 50 ; self.PB  = 50       
-
-        self.clear()
+        self.PA  = 50 ; self.PB  = 50
 
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
@@ -28,18 +26,14 @@ class Motor:
         self.PWMA.start(self.PA)
         self.PWMB.start(self.PB)
         
-        self.stop()
+        #self.stop()
     pass
 
     def __del__( self ) :
         self.finish()
     pass
 
-    def finish(self) :
-        self.clear()
-    pass
-
-    def clear(self) :
+    def finish(self) : 
         log.info(inspect.currentframe().f_code.co_name)
 
         if hasattr( self, "PWMA" ) : 
@@ -86,6 +80,7 @@ class Motor:
 
     def forward(self, left=50, right=None):
         log.info(inspect.currentframe().f_code.co_name) 
+
         if left is None : 
             left = 50 
         pass
@@ -99,6 +94,7 @@ class Motor:
 
     def backward(self, left=50, right=None):
         log.info(inspect.currentframe().f_code.co_name)
+        
         if left is None : 
             left = 50 
         pass
@@ -128,7 +124,8 @@ class Motor:
     pass
 
     def stop_motor(self):
-        self.stop()
+        log.info(inspect.currentframe().f_code.co_name)
+        self.setMotor( 0, 0 )
     pass
 
     def left(self):
@@ -167,8 +164,11 @@ if __name__=='__main__':
     except KeyboardInterrupt:
         print( "" )
     pass 
-    motor.clear()
+    
+    motor.finish()
+    
     sleep( 0.5 )
+
     GPIO.cleanup()
 
     log.info( "Good bye!" )
