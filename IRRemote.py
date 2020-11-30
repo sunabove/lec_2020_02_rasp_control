@@ -1,6 +1,5 @@
 import RPi.GPIO as GPIO, threading, inspect
 from time import sleep
-from AlphaBot2 import AlphaBot2
 
 import logging as log
 log.basicConfig(
@@ -46,6 +45,7 @@ class IRRemote :
             self._thread = None 
         pass
 
+        GPIO.setmode(GPIO.BCM)
         GPIO.cleanup( self.IR_GPIO_NO ) 
     pass # -- finish
 
@@ -150,7 +150,7 @@ class IRRemote :
                     robot.right() 
                 elif key == 0x1c:
                     log.info( f"key: 0x{key:02X}, stop" )
-                    robot.stop_robot() 
+                    robot.stop() 
                 elif key == 0x15:
                     robot.speed_up( 10 ) 
                 elif key == 0x07:
@@ -171,6 +171,8 @@ if __name__ == '__main__':
 
     GPIO.setwarnings(False)
 
+    from AlphaBot2 import AlphaBot2 
+
     robot = AlphaBot2()
 
     irremote = IRRemote( robot )
@@ -183,12 +185,7 @@ if __name__ == '__main__':
 
         irremote.finish()
 
-        sleep( 0.5 )
-
-        log.info( "Good bye!" )
-
-        import sys
-        sys.exit(0)
+        sleep( 0.5 ) 
     pass
 
     import signal

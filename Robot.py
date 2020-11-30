@@ -44,6 +44,10 @@ class Robot :
         self.irremote.finish() 
     pass
 
+    def stop(self) :
+        self.stop_robot()
+    pass
+
     def stop_robot(self) :
         log.info(inspect.currentframe().f_code.co_name) 
 
