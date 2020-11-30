@@ -1,4 +1,4 @@
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO, threading
 from time import sleep
 
 import logging as log
@@ -9,15 +9,15 @@ log.basicConfig(
 
 class ObstacleSensor : 
 
-    DR = 16
-    DL = 19
+    RIGHT_GPIO = 16   # 오른 쪽 센서 GPIO 번호
+    LEFT_GPIO = 19    # 왼쪽 센서 GPIO 번호 
 
     def __init__(self, robot) : 
         self.robot = robot 
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup( self.DR, GPIO.IN, GPIO.PUD_UP)
-        GPIO.setup( self.DL, GPIO.IN, GPIO.PUD_UP)
+        GPIO.setup( self.RIGHT_GPIO, GPIO.IN, GPIO.PUD_UP)
+        GPIO.setup( self.LEFT_GPIO, GPIO.IN, GPIO.PUD_UP)
 
         self._repeat_cnt = 0 
 
@@ -48,8 +48,8 @@ class ObstacleSensor :
         pass
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.cleanup( self.DR ) 
-        GPIO.cleanup( self.DL ) 
+        GPIO.cleanup( self.RIGHT_GPIO ) 
+        GPIO.cleanup( self.LEFT_GPIO ) 
     pass # -- finish 
 
     def process_signal(self) :
@@ -78,19 +78,39 @@ class ObstacleSensor :
         while self._running :
             idx += 1
 
-            DL_status = GPIO.input( self.DL )
-            DR_status = GPIO.input( self.DR )        
+            left_obstacle = GPIO.input( self.LEFT_GPIO ) == 0 
+            right_obstacle = GPIO.input( self.RIGHT_GPIO ) == 0 
             
-            if DL_status == 0 or DR_status == 0 :
-                print( f"DL = {DL_status}, DR = {DR_status}" )
-
-                robot.left()
-                sleep( 0.02 )
-                robot.stop()
-                sleep( 0.02 )
-            else:
+            if not left_obstacle and not right_obstacle :
+                # 장애물이 없을 때
+                log.info( "forward")
                 robot.forward() 
                 sleep( 0.01 ) 
+                robot.stop()
+                sleep( 0.01 )
+            else :
+                # 왼쪽에 장애물이 있을 때
+                log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
+
+                if left_obstacle and left_obstacle :
+                    # 양쪽에 장애물이 있을 때
+                    robot.backward()
+                    sleep( 0.01 )
+                    robot.left()
+                    sleep( 0.01 )
+                    robot.stop()
+                    sleep( 0.01 )
+                elif left_obstacle :                 
+                    robot.right()
+                    sleep( 0.01 )
+                    robot.stop()
+                    sleep( 0.01 ) 
+                elif right_obstacle :                 
+                    robot.left()
+                    sleep( 0.015 )
+                    robot.stop()
+                    sleep( 0.01 ) 
+                pass
             pass
         pass  
 
