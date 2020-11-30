@@ -151,8 +151,8 @@ class IRremote :
 pass # --IRRemote
 
 if __name__ == '__main__':
-    print( "Hello..." )
-    print( 'IRremote Test Start ...' )
+    log.info( "Hello..." )
+    log.info( 'IRremote Test Start ...' )
 
     GPIO.setwarnings(False)
 
@@ -164,5 +164,5 @@ if __name__ == '__main__':
 
     GPIO.cleanup();
 
-    print( "Good bye!")
+    log.info( "Good bye!")
 pass

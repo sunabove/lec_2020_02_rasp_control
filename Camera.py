@@ -1,9 +1,14 @@
 #coding: utf-8
 
-import cv2
-import numpy as np, io, threading
+import cv2, numpy as np, io, threading
 from time import sleep
 from threading import Condition
+
+import logging as log
+log.basicConfig(
+    format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
+    datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
+    )
 
 class StreamingOutput(object):
     def __init__(self):
@@ -57,7 +62,7 @@ class Camera(object):
     def _start_recording_impl(self) :
         self._running = True
 
-        print( "Recording now ...." )
+        log.info( "Recording now ...." )
 
         while self._running: 
             #print( "recording ...." , end="" )
@@ -76,7 +81,7 @@ class Camera(object):
             video.release()
         pass
 
-        print( "Recording is stopped." )
+        log.info( "Recording is stopped." )
     pass
 
     def finish(self):
@@ -97,19 +102,21 @@ class Camera(object):
 
         self.frame_cnt += 1 
 
-        if not success :
+        txt = f"Alphabot Control [{self.frame_cnt}]"
+
+        if not success or image is None :
             h = 480
             w= 640
             # black blank image
-            img = np.zeros(shape=[h, w, 3], dtype=np.uint8)
-            pass 
+            image = np.zeros(shape=[h, w, 3], dtype=np.uint8) 
+
+            txt = f"No Camera [{self.frame_cnt}]"
         pass
         
         x = 10   # text x position
         y = 20   # text y position
         h = 20   # line height
 
-        txt = f"Hello [{self.frame_cnt}]"
         self.putTextLine( image, txt , x, y )
 
         return image
@@ -150,7 +157,7 @@ def generate_frame(camera):
 pass
 
 if __name__=='__main__':
-    print( "Hello....." )
+    log.info( "Hello....." )
     
     from flask import Flask, render_template, Response, request, jsonify
 
@@ -161,7 +168,7 @@ if __name__=='__main__':
     camera.start_recording()
 
     def handler(signal, frame):
-        print('You have pressed Ctrl-C.')
+        log.info('You have pressed Ctrl-C.')
 
         global camera
         
@@ -169,7 +176,7 @@ if __name__=='__main__':
 
         sleep( 0.5 )
 
-        print( "Good bye!" )
+        log.info( "Good bye!" )
 
         import sys
         sys.exit(0)
@@ -190,6 +197,9 @@ if __name__=='__main__':
         return Response(generate_frame(camera), mimetype='multipart/x-mixed-replace; boundary=frame')
     pass 
 
-    print( "## Normal WEB")
+    log.info( "## Normal WEB")
+
     app.run(host='0.0.0.0', port=80, threaded=True) 
+
+    log.info( "Good bye!" )
 pass
