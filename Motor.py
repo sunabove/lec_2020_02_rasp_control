@@ -1,7 +1,12 @@
 #coding: utf-8
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO, inspect
 from time import sleep
-import inspect
+
+import logging as log
+log.basicConfig(
+    format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
+    datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
+    )
 
 class Motor:
 
@@ -35,7 +40,7 @@ class Motor:
     pass
 
     def clear(self) :
-        print(inspect.currentframe().f_code.co_name)
+        log.info(inspect.currentframe().f_code.co_name)
 
         if hasattr( self, "PWMA" ) : 
             self.PWMA and self.PWMA.stop()
@@ -80,7 +85,7 @@ class Motor:
     pass
 
     def forward(self, left=50, right=None):
-        print(inspect.currentframe().f_code.co_name) 
+        log.info(inspect.currentframe().f_code.co_name) 
         if left is None : 
             left = 50 
         pass
@@ -93,7 +98,7 @@ class Motor:
     pass
 
     def backward(self, left=50, right=None):
-        print(inspect.currentframe().f_code.co_name)
+        log.info(inspect.currentframe().f_code.co_name)
         if left is None : 
             left = 50 
         pass
@@ -118,7 +123,7 @@ class Motor:
     pass
 
     def stop(self):
-        print(inspect.currentframe().f_code.co_name)
+        log.info(inspect.currentframe().f_code.co_name)
         self.setMotor( 0, 0 )
     pass
 
@@ -127,12 +132,12 @@ class Motor:
     pass
 
     def left(self):
-        print(inspect.currentframe().f_code.co_name)
+        log.info(inspect.currentframe().f_code.co_name)
         self.setMotor( -30, 30 )
     pass
 
     def right(self):
-        print(inspect.currentframe().f_code.co_name)
+        log.info(inspect.currentframe().f_code.co_name)
         self.setMotor( 30, -30 )
     pass
 
@@ -151,6 +156,8 @@ class Motor:
 pass
 
 if __name__=='__main__':
+    log.info( "Hello" )
+
     GPIO.setwarnings(False)
     
     motor = Motor()
@@ -164,5 +171,5 @@ if __name__=='__main__':
     sleep( 0.5 )
     GPIO.cleanup()
 
-    print( "Good bye!" )
+    log.info( "Good bye!" )
 pass

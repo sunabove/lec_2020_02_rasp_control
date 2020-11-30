@@ -1,6 +1,12 @@
-import RPi.GPIO as GPIO, threading
+import RPi.GPIO as GPIO, threading, inspect
 from time import sleep
 from AlphaBot2 import AlphaBot2
+
+import logging as log
+log.basicConfig(
+    format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
+    datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
+    )
 
 class IRremote : 
 
@@ -42,13 +48,13 @@ class IRremote :
             count = 0
             while GPIO.input(gpio_no) == 0 and count < 200:  #9ms
                 count += 1
-                time.sleep(0.00006) 
+                sleep(0.00006) 
             if(count < 10):
                 return;
             count = 0
             while GPIO.input(gpio_no) == 1 and count < 80:  #4.5ms
                 count += 1
-                time.sleep(0.00006)
+                sleep(0.00006)
             pass
 
             idx = 0
@@ -58,12 +64,12 @@ class IRremote :
                 count = 0
                 while GPIO.input(gpio_no) == 0 and count < 15:    #0.56ms
                     count += 1
-                    time.sleep(0.00006)
+                    sleep(0.00006)
                     
                 count = 0
                 while GPIO.input(gpio_no) == 1 and count < 40:   #0: 0.56mx
                     count += 1                               #1: 1.69ms
-                    time.sleep(0.00006)
+                    sleep(0.00006)
                     
                 if count > 7:
                     data[idx] |= 1<<cnt
@@ -79,7 +85,7 @@ class IRremote :
             if data[0]+data[1] == 0xFF and data[2]+data[3] == 0xFF:  #check
                 return data[2]
             else:
-                print("repeat")
+                log.info("repeat")
                 return "repeat"
             pass
         pass
@@ -88,9 +94,11 @@ class IRremote :
     def process_signal(self) :
         try:
             self._process_signal()
-        except KeyboardInterrupt:
+        except Exception as e :
             self._running = False 
             self._thread = None 
+
+            log.info( e )
         finally:
             pass
         pass
@@ -114,20 +122,20 @@ class IRremote :
             else : 
                 n = 0                 
                 if key == 0x18:
-                    robot.forward()
-                    print("forward")
-                elif key == 0x08:
-                    robot.left()
-                    print("left")
-                elif key == 0x1c:
-                    robot.stop()
-                    print("stop")
-                elif key == 0x5a:
-                    robot.right()
-                    print("right")
+                    log.info( "key: {key}, forward" )
+                    robot.forward() 
                 elif key == 0x52:
-                    robot.backward()        
-                    print("backward")
+                    log.info( "key: {key}, backward" )
+                    robot.backward() 
+                elif key == 0x08:
+                    log.info( "key: {key}, left" )
+                    robot.left() 
+                elif key == 0x5a:
+                    log.info( "key: {key}, right" )
+                    robot.right() 
+                elif key == 0x1c:
+                    log.info( "key: {key}, stop" )
+                    robot.stop() 
                 elif key == 0x15:
                     robot.speed_up( 10 ) 
                 elif key == 0x07:
@@ -139,6 +147,8 @@ class IRremote :
         self._running = False 
         self._thread = None 
     pass # -- _process_signal
+
+pass # --IRRemote
 
 if __name__ == '__main__':
     print( "Hello..." )
