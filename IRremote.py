@@ -1,30 +1,52 @@
-import RPi.GPIO as GPIO
-import time
+import RPi.GPIO as GPIO, threading
+from time import sleep
 from AlphaBot2 import AlphaBot2
 
 class IRremote : 
 
-    IR = 17
-    PWM = 50
-    
+    IR_GPIO_NO = 17
+
     def __init__(self, robot) : 
-        self.robot = robot
-        self.n=0
+        self.robot = robot 
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.IR, GPIO.IN)
+        GPIO.setup(self.IR_GPIO_NO, GPIO.IN)
+
+        self._running = False 
+
+        self._thread = threading.Thread(target=self.process_signal, args=[] )
+        self._thread.start()
     pass
 
-    def getkey():
-        if GPIO.input(IR) == 0:
+    def __del__(self):
+        self.finish()
+    pass
+
+    def finish(self) :
+        GPIO.cleanup( self.IR_GPIO_NO )
+
+        self._running = False 
+        _thread = self._thread 
+        if _thread is not None :
+            _thread.join()
+
+            self._thread = None 
+        pass
+    pass # -- finish
+
+    def _getkey(self):
+
+        gpio_no = self.IR_GPIO_NO
+
+        if GPIO.input(gpio_no) == 0:
             count = 0
-            while GPIO.input(IR) == 0 and count < 200:  #9ms
+            while GPIO.input(gpio_no) == 0 and count < 200:  #9ms
                 count += 1
                 time.sleep(0.00006) 
             if(count < 10):
                 return;
             count = 0
-            while GPIO.input(IR) == 1 and count < 80:  #4.5ms
+            while GPIO.input(gpio_no) == 1 and count < 80:  #4.5ms
                 count += 1
                 time.sleep(0.00006)
             pass
@@ -34,12 +56,12 @@ class IRremote :
             data = [0,0,0,0]
             for i in range(0,32):
                 count = 0
-                while GPIO.input(IR) == 0 and count < 15:    #0.56ms
+                while GPIO.input(gpio_no) == 0 and count < 15:    #0.56ms
                     count += 1
                     time.sleep(0.00006)
                     
                 count = 0
-                while GPIO.input(IR) == 1 and count < 40:   #0: 0.56mx
+                while GPIO.input(gpio_no) == 1 and count < 40:   #0: 0.56mx
                     count += 1                               #1: 1.69ms
                     time.sleep(0.00006)
                     
@@ -61,24 +83,31 @@ class IRremote :
                 return "repeat"
             pass
         pass
-    pass
+    pass # -- _getkey
 
     def process_signal(self) :
         try:
             self._process_signal()
         except KeyboardInterrupt:
+            self._running = False 
+            self._thread = None 
+        finally:
             pass
         pass
-    pass 
+    pass # -- process_signal
 
     def _process_signal(self) :
+        self._running = True
+
         robot = self.robot
-        while 1:
-            key = self.getkey()
+        n = 0 
+
+        while self._running :
+            key = self._getkey()
 
             if key is None :
                 n += 1
-                if n > 20000:
+                if n > 20_000:
                     n = 0
                     robot.stop()
                 pass
@@ -105,11 +134,15 @@ class IRremote :
                     robot.speed_up( -10 ) 
                 pass 
             pass
-        pass 
-    pass
+        pass # -- while
+
+        self._running = False 
+        self._thread = None 
+    pass # -- _process_signal
 
 if __name__ == '__main__':
-    print('IRremote Test Start ...')
+    print( "Hello..." )
+    print( 'IRremote Test Start ...' )
 
     GPIO.setwarnings(False)
 
@@ -120,4 +153,6 @@ if __name__ == '__main__':
     robot.stop() 
 
     GPIO.cleanup();
+
+    print( "Good bye!")
 pass
