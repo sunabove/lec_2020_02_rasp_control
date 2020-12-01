@@ -32,7 +32,7 @@ class Robot :
         self.irremote   = IRRemote( robot )
 
         # 시동 소리 내기
-        self.rgb_led.light_effect( "flash", Color(0, 255, 0) ) 
+        self.rgb_led.light_effect( "flash", Color(0, 255, 0), duration=6 ) 
         self.buzzer.beep(on_time=1, off_time=0.2, n = 1, background=False)
         self.buzzer.beep(on_time=0.2, off_time=0.2, n = 2)
     pass
@@ -65,10 +65,8 @@ class Robot :
     def stop_robot(self) :
         log.info(inspect.currentframe().f_code.co_name) 
 
-        #elf.buzzer.beep(on_time=0.5, off_time=0.2, n = 1)
-
         self.motor.stop_motor()
-        #self.rgb_led.turn_off() # RGB LED 꺼기  
+        #self.rgb_led.turn_off() # RGB LED 꺼기
     pass
 
     def forward(self, speed = 30) :
