@@ -1,4 +1,4 @@
-import RPi.GPIO as GPIO, threading, inspect
+import RPi.GPIO as GPIO, threading, inspect, signal
 from time import sleep
 
 import logging as log
@@ -177,9 +177,8 @@ if __name__ == '__main__':
 
     irremote = IRRemote( robot )
 
-    def handler(signal, frame):
-        print()
-        sleep( 0.01 )
+    def signal_handler(signal, frame):
+        print( "", flush=True) 
 
         log.info('You have pressed Ctrl-C.')
 
@@ -188,8 +187,7 @@ if __name__ == '__main__':
         sleep( 0.5 ) 
     pass
 
-    import signal
-    signal.signal(signal.SIGINT, handler)
+    signal.signal(signal.SIGINT, signal_handler)
 
     irremote.join()
 

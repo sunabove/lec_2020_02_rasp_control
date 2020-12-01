@@ -1,6 +1,6 @@
 #coding: utf-8
 
-import cv2, numpy as np, threading, logging, inspect 
+import cv2, numpy as np, threading, logging, inspect, signal
 import RPi.GPIO as GPIO    
 
 from time import  sleep
@@ -145,9 +145,8 @@ if __name__=='__main__':
         pass
     pass
 
-    def handler(signal, frame):
-        print()
-        sleep( 0.01)
+    def signal_handler(signal, frame):
+        print( "", flush=True) 
 
         log.info( 'You have pressed Ctrl-C.' ) 
         
@@ -159,8 +158,7 @@ if __name__=='__main__':
         sys.exit(0)
     pass
 
-    import signal
-    signal.signal(signal.SIGINT, handler)
+    signal.signal(signal.SIGINT, signal_handler)
 
     @app.route( '/' )
     @app.route( '/index.html' )

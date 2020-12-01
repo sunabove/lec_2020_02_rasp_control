@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import time, threading, inspect
+import signal, time, threading, inspect
 
 from time import sleep
 from rpi_ws281x import Adafruit_NeoPixel, Color
@@ -35,7 +35,7 @@ class RGB_LED :
         self.rgb = 0
         self.light_type = None
         self.is_off = False
-        self.duration = None 
+        self.duration_to = None 
 
         self._running = False
 
@@ -58,6 +58,13 @@ class RGB_LED :
         pass        
     pass
 
+    def join(self) :
+        _thread = self._thread 
+        if _thread is not None :
+            _thread.join()
+        pass
+    pass
+
     def begin(self):
         self.strip.begin()
     pass
@@ -70,12 +77,17 @@ class RGB_LED :
         self.strip.setPixelColor(led_no, rgb)
     pass
 
-    def light_effect(self, light_type="", rgb=Color(0,0,0)):
+    def light_effect(self, light_type="", rgb=Color(0,0,0), duration=None):
         log.info(inspect.currentframe().f_code.co_name) 
         log.info( f"light_type: {light_type}" )
 
         self.light_type = light_type
         self.rgb = rgb
+        if duration is None :
+            self.duration_to = None 
+        else :
+            self.duration_to = time.time() + duration
+        pass
     pass 
 
     def turn_off(self):
@@ -97,6 +109,15 @@ class RGB_LED :
         numPixels = strip.numPixels()
         
         while self._running :
+            duration_to = self.duration_to
+            if duration_to is not None :
+                # 일정 시간이 지나면, LED를 끈다.
+                now = time.time()
+                if now > duration_to :
+                    self.turn_off()
+                pass
+            pass
+
             light_type = self.light_type
             rgb = self.rgb 
 
@@ -176,6 +197,18 @@ if __name__ == "__main__":
     rgb_led = RGB_LED()
     #rgb_led.begin()
 
+    def handler(signal, frame):
+        print( "", flush=True) 
+
+        log.info('You have pressed Ctrl-C.')
+
+        rgb_led.finish()
+
+        sleep( 0.5 ) 
+    pass
+
+    signal.signal(signal.SIGINT, handler)
+
     # turn on
     rgb_led.setPixelColor(0, Color(255, 0, 0))       #Red
     rgb_led.setPixelColor(1, Color(0, 255, 0))       #Green
@@ -204,7 +237,8 @@ if __name__ == "__main__":
     rgb_led.setPixelColor(3, Color(0, 0, 0))       #Yellow
     rgb_led.show() 
 
-    sleep(2)
+    rgb_led.join()
+
 pass
 
 
