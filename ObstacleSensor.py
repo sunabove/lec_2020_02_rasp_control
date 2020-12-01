@@ -78,6 +78,8 @@ class ObstacleSensor :
         then = time.time()
         interval = 0.02
 
+        pre_state = -1
+
         while self._running :
             now = time.time()
             elapsed = now - then             
@@ -91,31 +93,40 @@ class ObstacleSensor :
 
                 left_obstacle = GPIO.input( self.LEFT_GPIO ) == 0 
                 right_obstacle = GPIO.input( self.RIGHT_GPIO ) == 0 
-                
-                if not left_obstacle and not right_obstacle :
-                    # 장애물이 없을 때
-                    #log.info( "forward")
-                    robot.forward()  
-                    if 0 : 
-                        sleep(0.01)
-                        robot.stop()
-                        sleep( 0.02 )
-                    pass
-                else :
-                    # 왼쪽에 장애물이 있을 때
-                    log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
 
-                    if left_obstacle and right_obstacle: # 양쪽에 장애가 있을 때 
-                        robot.backward() 
-                        sleep(0.1)
-                        robot.left() 
-                        sleep(0.2)
-                    elif left_obstacle : # 왼쪽에 장애가 있을 때 
-                        robot.right() 
-                        sleep(0.1)
-                    elif right_obstacle : # 오른쪽에 장애가 있을 때 
-                        robot.left()  
-                        sleep(0.15)
+                state = 2*left_obstacle + right_obstacle
+
+                if state == pre_state :
+                    # do nothing
+                    sleep( 0.01 ) 
+                else :
+                    pre_state = state
+                
+                    if left_obstacle == 0 and right_obstacle == 0 :
+                        # 장애물이 없을 때
+                        #log.info( "forward")
+                        robot.forward()  
+                        if 0 : 
+                            sleep(0.01)
+                            robot.stop()
+                            sleep( 0.02 )
+                        pass
+                    else :
+                        # 장애물이 있을 때
+                        log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
+
+                        if left_obstacle and right_obstacle: # 양쪽에 장애가 있을 때 
+                            robot.backward() 
+                            sleep(0.1)
+                            robot.left() 
+                            sleep(0.2)
+                        elif left_obstacle : # 왼쪽에 장애가 있을 때 
+                            robot.right() 
+                            sleep(0.1)
+                        elif right_obstacle : # 오른쪽에 장애가 있을 때 
+                            robot.left()  
+                            sleep(0.15)
+                        pass
                     pass
                 pass
             pass
