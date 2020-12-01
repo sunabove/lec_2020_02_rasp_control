@@ -69,16 +69,12 @@ class ObstacleSensor :
         self._running = True
 
         robot = self.robot
-        n = 0 
-
-        idx = 0 
-
-        robot = self.robot
         
-        then = time.time()
+        then = time.time()        
         interval = 0.04
-
         pre_state = -1
+
+        turn_count = 0 
 
         while self._running :
             now = time.time()
@@ -88,8 +84,6 @@ class ObstacleSensor :
                 sleep( interval - elapsed )
             else :
                 then = now 
-
-                idx += 1
 
                 left_obstacle = GPIO.input( self.LEFT_GPIO ) == 0 
                 right_obstacle = GPIO.input( self.RIGHT_GPIO ) == 0 
@@ -101,7 +95,7 @@ class ObstacleSensor :
                     sleep( 0.01 ) 
                 else :
                     pre_state = state
-                
+
                     if left_obstacle == 0 and right_obstacle == 0 :
                         # 장애물이 없을 때
                         #log.info( "forward")
@@ -115,7 +109,13 @@ class ObstacleSensor :
                         # 장애물이 있을 때
                         log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
 
+                        turn_count += 1
+
                         robot.left()
+
+                        if turn_count % 20 == 0 : 
+                            sleep( 0.02 )
+                        pass
                     pass
                 pass
             pass
