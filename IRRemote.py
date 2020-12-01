@@ -138,25 +138,31 @@ class IRRemote :
             else : 
                 n = 0                 
                 if key == 0x18:
-                    log.info( f"key: 0x{key:02X}, forward" )
+                    log.info( f"key: {key}, forward" )
                     robot.forward() 
                 elif key == 0x52:
-                    log.info( f"key: 0x{key:02X}, backward" )
+                    log.info( f"key: {key}, backward" )
                     robot.backward() 
                 elif key == 0x08:
-                    log.info( f"key: 0x{key:02X}, left" )
+                    log.info( f"key: {key}, left" )
                     robot.left() 
                 elif key == 0x5a:
-                    log.info( f"key: 0x{key:02X}, right" )
+                    log.info( f"key: {key}, right" )
                     robot.right() 
                 elif key == 0x1c:
-                    log.info( f"key: 0x{key:02X}, stop" )
+                    log.info( f"key: {key}, stop" )
                     robot.stop() 
-                elif key == 0x15:
-                    robot.speed_up( 10 ) 
-                elif key == 0x07:
-                    robot.speed_up( -10 ) 
-                pass 
+                elif key in [ 0x15, 0x07 ] :
+                    if key == 0x15 : 
+                        log.info( f"key: {key}, speed up" )
+                        robot.speed_up( 5 ) 
+                    elif key == 0x07:
+                        log.info( f"key: {key}, speed down" )
+                        robot.speed_up( -5 ) 
+                    pass
+                else :
+                    log.info( f"key: {key} " )
+                pass
             pass
         pass # -- while
 
@@ -173,8 +179,9 @@ if __name__ == '__main__':
     GPIO.setwarnings(False)
 
     from AlphaBot2 import AlphaBot2 
+    from Motor import Motor
 
-    robot = AlphaBot2()
+    robot = Motor()
 
     irremote = IRRemote( robot )
 
