@@ -1,9 +1,15 @@
 # coding: utf-8
 
-from time import sleep
-import time, threading
+import time, threading, inspect
 
+from time import sleep
 from rpi_ws281x import Adafruit_NeoPixel, Color
+
+import logging as log
+log.basicConfig(
+    format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
+    datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
+    )
 
 class RGB_LED : 
 
@@ -32,12 +38,9 @@ class RGB_LED :
 
         self._running = False
 
-        if 1 : 
-            self._thread = threading.Thread(target = self._lightLoop)
-            _thread = self._thread 
-            _thread.setDaemon(True)
-            _thread.start()
-        pass
+        self._thread = threading.Thread(target = self._lightLoop)
+        self._thread.setDaemon(True)
+        self._thread.start()
     pass
 
     def __del__(self):
@@ -52,7 +55,7 @@ class RGB_LED :
         if _thread :
             _thread.join()
         pass        
-    pass 
+    pass
 
     def begin(self):
         self.strip.begin()
@@ -67,7 +70,9 @@ class RGB_LED :
     pass
 
     def light_effect(self, light_type="", rgb=Color(0,0,0)):
-        print( f"light_type: {light_type}" )
+        log.info(inspect.currentframe().f_code.co_name) 
+        log.info( f"light_type: {light_type}" )
+
         self.light_type = light_type
         self.rgb = rgb
     pass 
@@ -78,6 +83,10 @@ class RGB_LED :
     pass 
 
     def _lightLoop(self):
+        log.info(inspect.currentframe().f_code.co_name) 
+
+        self._running = True 
+
         flashTime = [0.3, 0.2, 0.1, 0.05, 0.05, 0.1, 0.2, 0.5, 0.2]
         flashTimeIndex = 0 
         f = lambda x: (-1/10000.0)*x*x + (1/50.0)*x 
@@ -85,21 +94,22 @@ class RGB_LED :
 
         strip = self.strip 
         numPixels = strip.numPixels()
+        
         while self._running :
             light_type = self.light_type
             rgb = self.rgb 
-            
+
             if light_type is None :
-                self.x = 0
                 if not self.is_off :
+                    x = 0 
+                    self.is_off = True
+
                     for i in range( strip.numPixels() ) : 
                         strip.setPixelColor(i, Color(0, 0, 0)) 
                         strip.show()
                     pass
-
-                    self.is_off = True                    
                 pass
-            else :
+            else : 
                 self.is_off = False
             pass
             
@@ -152,6 +162,8 @@ class RGB_LED :
                 pass
             pass
         pass # loop
+
+        log.info( "End loop" )
         
         self._running = False
         self._thread = None 
@@ -161,7 +173,7 @@ pass
 
 if __name__ == "__main__":
     rgb_led = RGB_LED()
-    rgb_led.begin()
+    #rgb_led.begin()
 
     # turn on
     rgb_led.setPixelColor(0, Color(255, 0, 0))       #Red

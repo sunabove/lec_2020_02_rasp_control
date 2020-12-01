@@ -32,6 +32,7 @@ class Robot :
         self.irremote   = IRRemote( robot )
 
         # 시동 소리 내기
+        self.rgb_led.light_effect( "flash", Color(0, 255, 0) ) 
         self.buzzer.beep(on_time=1, off_time=0.2, n = 1, background=False)
         self.buzzer.beep(on_time=0.2, off_time=0.2, n = 2)
     pass
@@ -44,6 +45,7 @@ class Robot :
         log.info(inspect.currentframe().f_code.co_name) 
 
         self.buzzer.close()
+
         self.motor.finish()
         self.rgb_led.finish() 
         self.camera.finish()
@@ -66,22 +68,22 @@ class Robot :
         #elf.buzzer.beep(on_time=0.5, off_time=0.2, n = 1)
 
         self.motor.stop_motor()
-        self.rgb_led.turn_off() # RGB LED 꺼기  
+        #self.rgb_led.turn_off() # RGB LED 꺼기  
     pass
 
     def forward(self, speed = 30) :
         self.buzzer.beep(on_time=0.2, off_time=0.2, n = 4)
+        self.rgb_led.light_effect( "breath", Color(0, 255, 0) )
         
         self.motor.forward( speed )
-        self.rgb_led.light_effect( "breath", Color(0, 255, 0) )
     pass
 
     def backward(self, speed = 30) :
         self.buzzer.beep(on_time=0.5, off_time=0.5, n = 4)
-
-        self.motor.backward( speed )
         # 후진시에는 빨간색으로 깜박인다.
         self.rgb_led.light_effect( "flash", Color(255, 0, 0) ) 
+
+        self.motor.backward( speed )
     pass
 
     # 좌회전
@@ -139,13 +141,7 @@ if __name__=='__main__':
 
     @app.before_request
     def before_request_func():
-        log.info(inspect.currentframe().f_code.co_name) 
-
-        global robot
-
-        if robot is None :
-            robot = Robot()
-            robot.camera.start_recording()
+        #log.info(inspect.currentframe().f_code.co_name) 
         pass
     pass
 
