@@ -91,6 +91,7 @@ class RGB_LED :
     pass 
 
     def turn_off(self):
+        self.duration_to = None 
         self.light_type = None
         self.rgb = Color(0,0,0)
     pass 
@@ -110,11 +111,15 @@ class RGB_LED :
         
         while self._running :
             duration_to = self.duration_to
+
             if duration_to is not None :
                 # 일정 시간이 지나면, LED를 끈다.
                 now = time.time()
-                if now > duration_to :
+                if now > duration_to and self.light_type is not None :
+                    self.duration_to = None 
                     self.turn_off()
+                else :
+                    sleep( 0.1 )
                 pass
             pass
 

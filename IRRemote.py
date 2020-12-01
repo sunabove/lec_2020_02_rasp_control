@@ -22,6 +22,7 @@ class IRRemote :
         self._running = False 
 
         self._thread = threading.Thread(target=self.process_signal, args=[] )
+        self._thread.setDaemon(True)
         self._thread.start()
     pass
 
