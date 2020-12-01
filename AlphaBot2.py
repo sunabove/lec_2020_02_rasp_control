@@ -9,7 +9,9 @@ log.basicConfig(
 
 class AlphaBot2(object):
     
-    def __init__(self,ain1=12,ain2=13,ena=6,bin1=20,bin2=21,enb=26):
+    def __init__(self,ain1=12,ain2=13,ena=6,bin1=20,bin2=21,enb=26, debug=False):
+        self.debug = debug
+
         self.AIN1 = ain1
         self.AIN2 = ain2
         self.BIN1 = bin1
@@ -37,7 +39,7 @@ class AlphaBot2(object):
         self.stop()
 
     def forward(self):
-        log.info(inspect.currentframe().f_code.co_name)
+        self.debug and log.info(inspect.currentframe().f_code.co_name)
 
         self.PWMA.ChangeDutyCycle(self.PA)
         self.PWMB.ChangeDutyCycle(self.PB)
@@ -48,7 +50,7 @@ class AlphaBot2(object):
     pass
 
     def stop(self):
-        log.info(inspect.currentframe().f_code.co_name)
+        self.debug and log.info(inspect.currentframe().f_code.co_name)
 
         self.PWMA.ChangeDutyCycle(0)
         self.PWMB.ChangeDutyCycle(0)
@@ -59,7 +61,7 @@ class AlphaBot2(object):
     pass
 
     def backward(self):
-        log.info(inspect.currentframe().f_code.co_name)
+        self.debug and log.info(inspect.currentframe().f_code.co_name)
 
         self.PWMA.ChangeDutyCycle(self.PA)
         self.PWMB.ChangeDutyCycle(self.PB)
@@ -70,7 +72,7 @@ class AlphaBot2(object):
     pass
         
     def left(self):
-        log.info(inspect.currentframe().f_code.co_name)
+        self.debug and log.info(inspect.currentframe().f_code.co_name)
 
         self.PWMA.ChangeDutyCycle(30)
         self.PWMB.ChangeDutyCycle(30)
@@ -81,7 +83,7 @@ class AlphaBot2(object):
     pass 
 
     def right(self):
-        log.info(inspect.currentframe().f_code.co_name)
+        self.debug and log.info(inspect.currentframe().f_code.co_name)
 
         self.PWMA.ChangeDutyCycle(30)
         self.PWMB.ChangeDutyCycle(30)

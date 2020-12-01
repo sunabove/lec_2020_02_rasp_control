@@ -1,4 +1,4 @@
-import RPi.GPIO as GPIO, threading, signal
+import RPi.GPIO as GPIO, threading, signal, time, inspect
 from time import sleep
 
 import logging as log
@@ -23,7 +23,7 @@ class ObstacleSensor :
 
         self._running = False 
 
-        self._thread = threading.Thread(target=self.process_signal, args=[] )
+        self._thread = threading.Thread(target=self._process_signal, args=[] )
         self._thread.start()
     pass
 
@@ -52,9 +52,9 @@ class ObstacleSensor :
         GPIO.cleanup( self.LEFT_GPIO ) 
     pass # -- finish 
 
-    def process_signal(self) :
+    def _process_signal(self) :
         try:
-            self._process_signal()
+            self._process_signal_imp()
         except Exception as e :
             self._running = False 
             self._thread = None 
@@ -65,7 +65,7 @@ class ObstacleSensor :
         pass
     pass # -- process_signal
 
-    def _process_signal(self) :
+    def _process_signal_imp(self) :
         self._running = True
 
         robot = self.robot
@@ -74,35 +74,56 @@ class ObstacleSensor :
         idx = 0 
 
         robot = self.robot
+        
+        then = time.time()
+        interval = 0.02
 
         while self._running :
-            idx += 1
+            now = time.time()
+            elapsed = now - then             
 
-            left_obstacle = GPIO.input( self.LEFT_GPIO ) == 0 
-            right_obstacle = GPIO.input( self.RIGHT_GPIO ) == 0 
-            
-            if not left_obstacle and not right_obstacle :
-                # 장애물이 없을 때
-                #log.info( "forward")
-                robot.forward()  
-                sleep(0.01)
-                robot.stop()
-                sleep( 0.02 )
+            if elapsed < interval : 
+                sleep( interval - elapsed )
             else :
-                # 왼쪽에 장애물이 있을 때
-                log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
+                then = now 
 
-                if left_obstacle : # 왼쪽에 장애가 있을 때 
-                    robot.left() 
-                elif right_obstacle : # 오른쪽에 장애가 있을 때 
-                    robot.left()  
+                idx += 1
+
+                left_obstacle = GPIO.input( self.LEFT_GPIO ) == 0 
+                right_obstacle = GPIO.input( self.RIGHT_GPIO ) == 0 
+                
+                if not left_obstacle and not right_obstacle :
+                    # 장애물이 없을 때
+                    #log.info( "forward")
+                    robot.forward()  
+                    if 0 : 
+                        sleep(0.01)
+                        robot.stop()
+                        sleep( 0.02 )
+                    pass
+                else :
+                    # 왼쪽에 장애물이 있을 때
+                    log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
+
+                    if left_obstacle and right_obstacle: # 양쪽에 장애가 있을 때 
+                        robot.backward() 
+                        sleep(0.01)
+                        robot.left() 
+                        sleep(0.01)
+                    elif left_obstacle : # 왼쪽에 장애가 있을 때 
+                        robot.right() 
+                        sleep(0.02)
+                    elif right_obstacle : # 오른쪽에 장애가 있을 때 
+                        robot.left()  
+                        sleep(0.03)
+                    pass
                 pass
             pass
         pass  
 
         self._running = False 
         self._thread = None 
-    pass # -- _process_signal
+    pass # -- _process_signal_imp
 
 pass # --ObstacleSensor
 
