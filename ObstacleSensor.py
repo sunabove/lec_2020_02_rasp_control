@@ -107,15 +107,15 @@ class ObstacleSensor :
 
                     if left_obstacle and right_obstacle: # 양쪽에 장애가 있을 때 
                         robot.backward() 
-                        sleep(0.01)
+                        sleep(0.1)
                         robot.left() 
-                        sleep(0.01)
+                        sleep(0.2)
                     elif left_obstacle : # 왼쪽에 장애가 있을 때 
                         robot.right() 
-                        sleep(0.02)
+                        sleep(0.1)
                     elif right_obstacle : # 오른쪽에 장애가 있을 때 
                         robot.left()  
-                        sleep(0.03)
+                        sleep(0.15)
                     pass
                 pass
             pass

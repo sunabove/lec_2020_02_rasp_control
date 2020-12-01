@@ -18,11 +18,20 @@ class AlphaBot2(object):
         self.BIN2 = bin2
         self.ENA = ena
         self.ENB = enb
+
         self.PA  = 50
         self.PB  = 50
 
         self.PA  = 30
         self.PB  = 30
+
+        self.PA  = 20
+        self.PB  = 20
+
+        self.PA  = 10
+        self.PB  = 10
+
+        log.info( f"PA = {self.PA}, PB = {self.PB}" )
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
@@ -36,7 +45,9 @@ class AlphaBot2(object):
         self.PWMB = GPIO.PWM(self.ENB,500)
         self.PWMA.start(self.PA)
         self.PWMB.start(self.PB)
+
         self.stop()
+    pass
 
     def forward(self):
         self.debug and log.info(inspect.currentframe().f_code.co_name)
@@ -69,7 +80,7 @@ class AlphaBot2(object):
         GPIO.output(self.AIN2,GPIO.LOW)
         GPIO.output(self.BIN1,GPIO.HIGH)
         GPIO.output(self.BIN2,GPIO.LOW)
-    pass
+    pass 
         
     def left(self):
         self.debug and log.info(inspect.currentframe().f_code.co_name)
