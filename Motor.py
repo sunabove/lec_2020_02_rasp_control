@@ -13,8 +13,7 @@ class Motor:
     def __init__(self, ain1=12, ain2=13, ena=6, bin1=20, bin2=21, enb=26):
         self.AIN1 = ain1; self.AIN2 = ain2; self.ENA = ena
         self.BIN1 = bin1; self.BIN2 = bin2; self.ENB = enb
-        self.PA  = 30 ; self.PB  = 30
-
+        
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         for port in [ ain1, ain2, ena, bin1, bin2, enb ] : 
@@ -24,10 +23,11 @@ class Motor:
         self.PWMA = GPIO.PWM(ena,500)
         self.PWMB = GPIO.PWM(enb,500)
 
-        self.PWMA.start(self.PA)
-        self.PWMB.start(self.PB)
-        
-        #self.stop()
+        self._speed = 10  
+
+        self.PWMA.start( self._speed )
+        self.PWMB.start( self._speed ) 
+
     pass
 
     def __del__( self ) :
@@ -36,6 +36,8 @@ class Motor:
 
     def finish(self) : 
         log.info(inspect.currentframe().f_code.co_name)
+
+        self._speed = 0 
 
         if hasattr( self, "PWMA" ) : 
             self.PWMA and self.PWMA.stop()
@@ -79,11 +81,22 @@ class Motor:
         pass 
     pass
 
-    def forward(self, left=30, right=None):
+    def speed_up(self, dv) : # 속도 증가 
+        _speed = self._speed = + dv
+        if _speed < 0 :
+            _speed = 0 
+        elif _speed > 100 :
+            _speed = 100
+        pass
+
+        self._speed = _speed
+    pass # -- speed_up
+
+    def forward(self, left=None, right=None): # 전진
         log.info(inspect.currentframe().f_code.co_name) 
 
         if left is None : 
-            left = 30 
+            left = self._speed 
         pass
 
         if right is None :
@@ -93,11 +106,11 @@ class Motor:
         self.setMotor( left, right)
     pass
 
-    def backward(self, left=30, right=None):
+    def backward(self, left=None, right=None):  # 후진
         log.info(inspect.currentframe().f_code.co_name)
         
         if left is None : 
-            left = 30 
+            left = self._speed 
         pass
 
         if right is None :
@@ -107,36 +120,35 @@ class Motor:
         self.setMotor( -left, -right)
     pass
 
-    def back(self, left=30, right=30):
-        if left is None : 
-            left = 30 
-        pass
-    
-        if right is None :
-            right = left
-        pass
-
+    def back(self, left=None, right=None): # 후진 
         self.backward(left, right)
     pass
 
     def stop(self):
         log.info(inspect.currentframe().f_code.co_name)
+
         self.setMotor( 0, 0 )
     pass
 
     def stop_motor(self):
         log.info(inspect.currentframe().f_code.co_name)
+
         self.setMotor( 0, 0 )
     pass
 
     def left(self):
         log.info(inspect.currentframe().f_code.co_name)
-        self.setMotor( -30, 30 )
+
+        speed = self._speed
+
+        self.setMotor( - speed, speed )
     pass
 
     def right(self):
         log.info(inspect.currentframe().f_code.co_name)
-        self.setMotor( 30, -30 )
+
+        speed = self._speed
+        self.setMotor( speed, - speed )
     pass
 
     def test_all(self, duration=3) :    
