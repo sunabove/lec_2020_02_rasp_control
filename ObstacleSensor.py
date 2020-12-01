@@ -76,7 +76,7 @@ class ObstacleSensor :
         robot = self.robot
         
         then = time.time()
-        interval = 0.02
+        interval = 0.04
 
         pre_state = -1
 
@@ -115,18 +115,7 @@ class ObstacleSensor :
                         # 장애물이 있을 때
                         log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
 
-                        if left_obstacle and right_obstacle: # 양쪽에 장애가 있을 때 
-                            robot.backward() 
-                            sleep(0.1)
-                            robot.left() 
-                            sleep(0.2)
-                        elif left_obstacle : # 왼쪽에 장애가 있을 때 
-                            robot.right() 
-                            sleep(0.1)
-                        elif right_obstacle : # 오른쪽에 장애가 있을 때 
-                            robot.left()  
-                            sleep(0.15)
-                        pass
+                        robot.left()
                     pass
                 pass
             pass
