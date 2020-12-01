@@ -4,6 +4,7 @@ import cv2, numpy as np, threading, logging, inspect
 import RPi.GPIO as GPIO    
 
 from time import  sleep
+from gpiozero import Buzzer
 from Motor import Motor
 from RGB_LED import RGB_LED
 from Camera import Camera, generate_frame
@@ -23,11 +24,16 @@ class Robot :
 
         robot = self 
 
+        self.buzzer     = Buzzer(4)   # 부저
         self.motor      = Motor()
         self.rgb_led    = RGB_LED()
         self.camera     = Camera()
         self.servo      = Servo()
         self.irremote   = IRRemote( robot )
+
+        # 시동 소리 내기
+        self.buzzer.beep(on_time=1, off_time=0.2, n = 1, background=False)
+        self.buzzer.beep(on_time=0.2, off_time=0.2, n = 2)
     pass
 
     def __del__(self):
@@ -37,11 +43,17 @@ class Robot :
     def finish(self) :
         log.info(inspect.currentframe().f_code.co_name) 
 
+        self.buzzer.close()
         self.motor.finish()
         self.rgb_led.finish() 
         self.camera.finish()
         self.servo.finish()
         self.irremote.finish() 
+
+        sleep( 0.5 )
+
+        GPIO.setmode(GPIO.BCM)
+        GPIO.cleanup()
     pass
 
     def stop(self) :
@@ -51,16 +63,22 @@ class Robot :
     def stop_robot(self) :
         log.info(inspect.currentframe().f_code.co_name) 
 
+        #elf.buzzer.beep(on_time=0.5, off_time=0.2, n = 1)
+
         self.motor.stop_motor()
         self.rgb_led.turn_off() # RGB LED 꺼기  
     pass
 
     def forward(self, speed = 30) :
+        self.buzzer.beep(on_time=0.2, off_time=0.2, n = 4)
+        
         self.motor.forward( speed )
         self.rgb_led.light_effect( "breath", Color(0, 255, 0) )
     pass
 
     def backward(self, speed = 30) :
+        self.buzzer.beep(on_time=0.5, off_time=0.5, n = 4)
+
         self.motor.backward( speed )
         # 후진시에는 빨간색으로 깜박인다.
         self.rgb_led.light_effect( "flash", Color(255, 0, 0) ) 
@@ -68,12 +86,16 @@ class Robot :
 
     # 좌회전
     def left(self) :
+        self.buzzer.beep(on_time=1, off_time=0.5, n = 2)
+
         self.motor.left()
         # LED 깜빡이기
     pass
 
     # 우회전 
     def right(self):
+        self.buzzer.beep(on_time=1, off_time=0.5, n = 3)
+
         self.motor.right()
         # LED 깜빡이기
     pass
@@ -134,10 +156,6 @@ if __name__=='__main__':
         log.info( 'You have pressed Ctrl-C.' ) 
         
         robot.finish()
-
-        GPIO.cleanup()
-
-        sleep( 0.5 )
 
         log.info( "Good bye!" )
 
