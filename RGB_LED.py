@@ -35,6 +35,7 @@ class RGB_LED :
         self.rgb = 0
         self.light_type = None
         self.is_off = False
+        self.duration = None 
 
         self._running = False
 
