@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO, threading, signal, time, inspect
+from random import random
 from time import sleep
 
 import logging as log
@@ -100,12 +101,7 @@ class ObstacleSensor :
                     if left_obstacle == 0 and right_obstacle == 0 :
                         # 장애물이 없을 때
                         #log.info( "forward")
-                        robot.forward()  
-                        if 0 : 
-                            sleep(0.01)
-                            robot.stop()
-                            sleep( 0.02 )
-                        pass
+                        robot.forward()
                     else :
                         # 장애물이 있을 때
                         log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
@@ -114,8 +110,8 @@ class ObstacleSensor :
 
                         robot.left()
 
-                        if turn_count % 20 == 0 : 
-                            sleep( 0.02 )
+                        if turn_count % 5 == 0 : 
+                            sleep( 0.02*random() )
                         pass
                     pass
                 pass
