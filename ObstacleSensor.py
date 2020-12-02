@@ -109,7 +109,7 @@ class ObstacleSensor :
                         robot.left()
 
                         if turn_count % 5 == 0 : 
-                            sleep( 0.02 )
+                            sleep( 0.01 )
                             sleep( 0.02*random() )
                         pass
                     pass
