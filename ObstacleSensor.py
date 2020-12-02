@@ -74,7 +74,7 @@ class ObstacleSensor :
         
         then = time.time()        
         interval = 0.04
-        pre_state = -1
+        prev_state = -1 # 이전 상태 
 
         turn_count = 0 
 
@@ -92,12 +92,10 @@ class ObstacleSensor :
 
                 state = 2*left_obstacle + right_obstacle
 
-                if state == pre_state :
+                if state == prev_state :
                     # do nothing
                     sleep( 0.01 ) 
                 else :
-                    pre_state = state
-
                     if left_obstacle == 0 and right_obstacle == 0 :
                         # 장애물이 없을 때
                         #log.info( "forward")
@@ -111,9 +109,12 @@ class ObstacleSensor :
                         robot.left()
 
                         if turn_count % 5 == 0 : 
+                            sleep( 0.02 )
                             sleep( 0.02*random() )
                         pass
                     pass
+
+                    prev_state = state
                 pass
             pass
         pass  
