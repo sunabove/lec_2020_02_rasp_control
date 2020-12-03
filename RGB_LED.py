@@ -40,7 +40,6 @@ class RGB_LED :
         self._running = False
 
         self._thread = threading.Thread(target = self._lightLoop)
-        self._thread.setDaemon(True)
         self._thread.start()
     pass
 

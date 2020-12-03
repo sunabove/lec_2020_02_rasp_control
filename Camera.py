@@ -56,7 +56,6 @@ class Camera(object):
         self.video.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc(*'X264'))
 
         self._thread = threading.Thread(target=self._start_recording_impl, args=[] )
-        self._thread.setDaemon(True)
         self._thread.start()
     pass
 
