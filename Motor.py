@@ -24,6 +24,8 @@ class Motor:
         self.PWMA = GPIO.PWM(ena,500)
         self.PWMB = GPIO.PWM(enb,500)
 
+        self._min_speed = 10
+
         self._speed_left  = 10  
         self._speed_right = 10  
 
@@ -125,8 +127,8 @@ class Motor:
 
         if left is None : 
             left = self.get_speed()
-            if left < 5 : 
-                left = 5
+            if left < self._min_speed : 
+                left = self._min_speed
             pass
         pass 
 
@@ -144,8 +146,8 @@ class Motor:
         
         if left is None : 
             left = self.get_speed()
-            if left < 5 : 
-                left = 5
+            if left < self._min_speed : 
+                left = self._min_speed
             pass
         pass
 
