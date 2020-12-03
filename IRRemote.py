@@ -21,16 +21,7 @@ class IRRemote :
 
         self._running = False 
 
-        self._thread = threading.Thread(target=self.process_signal, args=[] )
-        #self._thread.setDaemon(True)
-        self._thread.start()
-    pass
-
-    def join(self) :
-        _thread = self._thread 
-        if _thread :
-            _thread.join()
-        pass
+        self.start()
     pass
 
     def __del__(self):
@@ -50,6 +41,22 @@ class IRRemote :
         GPIO.cleanup( self.IR_GPIO_NO ) 
     pass # -- finish
 
+    def start(self):
+        self._thread = threading.Thread(target=self.process_signal, args=[] )
+        self._thread.start()
+    pass
+
+    def stop(self) :
+        self._running = False
+    pass
+
+    def join(self) :
+        _thread = self._thread 
+        if _thread :
+            _thread.join()
+        pass
+    pass
+
     def _getkey(self):
 
         gpio_no = self.IR_GPIO_NO
@@ -61,7 +68,8 @@ class IRRemote :
                 sleep(0.00006) 
             pass
 
-            if(count < 10):
+            if count < 10 :
+                log.info( f"get key count = {count}" )
                 return;
             pass
 
@@ -73,9 +81,9 @@ class IRRemote :
 
             idx = 0
             cnt = 0
-            data = [0,0,0,0]
+            data = [0, 0, 0, 0]
 
-            for i in range(0,32):
+            for i in range(0, 32):
                 count = 0
                 while GPIO.input(gpio_no) == 0 and count < 15:    #0.56ms
                     count += 1
@@ -100,8 +108,7 @@ class IRRemote :
                 pass
             pass
 
-            # print data
-            if data[0]+data[1] == 0xFF and data[2]+data[3] == 0xFF:  #check
+            if data[0]+data[1] == 0xFF and data[2]+data[3] == 0xFF:
                 self._repeat_cnt = 0 
 
                 return data[2]
@@ -131,18 +138,19 @@ class IRRemote :
         self._running = True
 
         robot = self.robot
-        n = 0 
+        key_none_count = 0 
 
         while self._running :
             key = self._getkey()
 
             if key is None :
-                n += 1
-                if n > 20_000:
-                    n = 0 
+                key_none_count += 1
+                if key_none_count > 20_000:
+                    key_none_count = 0 
                 pass
             else : 
-                n = 0                 
+                key_none_count = 0
+
                 if key == 0x18:
                     log.info( f"key: {key}, forward" )
                     robot.forward() 
