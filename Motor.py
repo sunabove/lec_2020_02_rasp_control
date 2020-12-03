@@ -62,6 +62,8 @@ class Motor:
     pass
 
     def setMotor(self, left = 0, right =0):
+        self._speed_left = left
+        self._speed_right = right
         self.setGPIO_PWM( self.AIN1, self.AIN2, self.PWMA, left )
         self.setGPIO_PWM( self.BIN1, self.BIN2, self.PWMB, right )
     pass
@@ -86,31 +88,36 @@ class Motor:
     pass
 
     def speed_up(self, dv) : # 속도 증가
-        if True : 
-            speed = self._speed_left + dv
-            
-            if speed < -100 :
-                speed = -100 
-            elif speed > 100 :
-                speed = 100
-            pass
+        
+        _speed_left = self._speed_left
 
-            self._speed_left = speed
+        if _speed_left < 0 :
+            _speed_left -= dv
+        else : 
+            _speed_left += dv 
+        pass 
+        
+        if _speed_left < -100 :
+            _speed_left = -100 
+        elif _speed_left > 100 :
+            _speed_left = 100
         pass
 
-        if True : 
-            speed = self._speed_right + dv
-            
-            if speed < -100 :
-                speed = -100 
-            elif speed > 100 :
-                speed = 100
-            pass
+        _speed_right = self._speed_right
 
-            self._speed_right = speed
+        if _speed_right < 0 :
+            _speed_right -= dv
+        else : 
+            _speed_right += dv 
+        pass 
+        
+        if _speed_right < -100 :
+            _speed_right = -100 
+        elif _speed_right > 100 :
+            _speed_right = 100
         pass
 
-        self.setMotor( self._speed_left, self._speed_right )
+        self.setMotor( _speed_left, _speed_right )
     pass # -- speed_up
 
     def forward(self, left=None, right=None): # 전진

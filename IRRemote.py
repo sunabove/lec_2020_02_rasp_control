@@ -22,7 +22,7 @@ class IRRemote :
         self._running = False 
 
         self._thread = threading.Thread(target=self.process_signal, args=[] )
-        self._thread.setDaemon(True)
+        #self._thread.setDaemon(True)
         self._thread.start()
     pass
 
@@ -59,8 +59,12 @@ class IRRemote :
             while GPIO.input(gpio_no) == 0 and count < 200:  #9ms
                 count += 1
                 sleep(0.00006) 
+            pass
+
             if(count < 10):
                 return;
+            pass
+
             count = 0
             while GPIO.input(gpio_no) == 1 and count < 80:  #4.5ms
                 count += 1
@@ -86,6 +90,8 @@ class IRRemote :
                     
                 if count > 7:
                     data[idx] |= 1 << cnt
+                pass
+            
                 if cnt == 7:
                     cnt = 0
                     idx += 1
