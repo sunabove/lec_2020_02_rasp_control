@@ -66,6 +66,10 @@ class IRRemote :
         pass
 
         count = 0
+        
+        then = time()
+        now = time()
+        
         while GPIO.input(gpio_no) == 0 and count < 201:  #9ms
             count += 1
             sleep(0.00006) 
