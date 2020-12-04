@@ -20,6 +20,7 @@ class IRRemote :
         self._repeat_cnt = 0 
 
         self._running = False 
+        self._thread = None
 
         self.start()
     pass
@@ -42,8 +43,10 @@ class IRRemote :
     pass # -- finish
 
     def start(self):
-        self._thread = threading.Thread(target=self.process_signal, args=[] )
-        self._thread.start()
+        if not self._running and self._thread is None : 
+            self._thread = threading.Thread(target=self.process_signal, args=[] )
+            self._thread.start()
+        pass
     pass
 
     def stop(self) :
@@ -68,6 +71,18 @@ class IRRemote :
         pass
     pass
 
+    def check_gpio_count(self, gpio_value, check_count = 0) :
+        gpio_no = self.IR_GPIO_NO
+        count = 0
+        interval = 0.00006
+        while GPIO.input(gpio_no) == gpio_value and count < check_count :  #9ms
+            count += 1
+            self.check_interval( interval ) 
+        pass
+
+        return count 
+    pass
+
     def _getkey(self):
 
         gpio_no = self.IR_GPIO_NO
@@ -76,14 +91,11 @@ class IRRemote :
             return 
         pass
 
-        count = 0
-        
         interval = 0.00006 
         
-        while GPIO.input(gpio_no) == 0 and count < 200:  #9ms
-            count += 1
-            self.check_interval( interval ) 
-        pass
+        count = 0
+
+        count = self.check_gpio_count( 0, 200 )
 
         if count < 10 :
             log.info( f"get key count = {count}" )
