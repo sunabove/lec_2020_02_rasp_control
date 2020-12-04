@@ -75,7 +75,7 @@ class IRRemote :
         gpio_no = self.IR_GPIO_NO
         count = 0
         interval = 0.00006
-        while GPIO.input(gpio_no) == gpio_value and count < check_count :  #9ms
+        while GPIO.input(gpio_no) == gpio_value and count < check_count :
             count += 1
             self.check_interval( interval ) 
         pass
@@ -95,19 +95,15 @@ class IRRemote :
         
         count = 0
 
-        count = self.check_gpio_count( 0, 200 )
+        count = self.check_gpio_count( 0, 200 ) #9ms
 
         if count < 10 :
             log.info( f"get key count = {count}" )
             return;
         pass
 
-        count = 0
-        while GPIO.input(gpio_no) == 1 and count < 80:  #4.5ms
-            count += 1
-            self.check_interval( interval )
-        pass
-
+        count = self.check_gpio_count( 1, 80 ) #4.5ms
+        
         idx = 0
         cnt = 0
         data = [0, 0, 0, 0]
