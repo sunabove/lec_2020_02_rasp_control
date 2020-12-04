@@ -80,7 +80,7 @@ class IRRemote :
         
         interval = 0.00006 
         
-        while GPIO.input(gpio_no) == 0 and count < 201:  #9ms
+        while GPIO.input(gpio_no) == 0 and count < 200:  #9ms
             count += 1
             self.check_interval( interval ) 
         pass
@@ -104,7 +104,7 @@ class IRRemote :
             count = 0
             while GPIO.input(gpio_no) == 0 and count < 15:    #0.56ms
                 count += 1
-                
+
                 self.check_interval( interval )
             pass
                 
