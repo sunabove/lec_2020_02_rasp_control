@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO, threading, inspect, signal
-from time import sleep
+from time import sleep, time
 
 import logging as log
 log.basicConfig(
@@ -61,63 +61,65 @@ class IRRemote :
 
         gpio_no = self.IR_GPIO_NO
 
-        if GPIO.input(gpio_no) == 0:
-            count = 0
-            while GPIO.input(gpio_no) == 0 and count < 200:  #9ms
-                count += 1
-                sleep(0.00006) 
-            pass
+        if GPIO.input(gpio_no) != 0:
+            return 
+        pass
 
-            if count < 10 :
-                log.info( f"get key count = {count}" )
-                return;
-            pass
+        count = 0
+        while GPIO.input(gpio_no) == 0 and count < 201:  #9ms
+            count += 1
+            sleep(0.00006) 
+        pass
 
+        if count < 10 :
+            log.info( f"get key count = {count}" )
+            return;
+        pass
+
+        count = 0
+        while GPIO.input(gpio_no) == 1 and count < 80:  #4.5ms
+            count += 1
+            sleep(0.00006)
+        pass
+
+        idx = 0
+        cnt = 0
+        data = [0, 0, 0, 0]
+
+        for i in range(0, 32):
             count = 0
-            while GPIO.input(gpio_no) == 1 and count < 80:  #4.5ms
+            while GPIO.input(gpio_no) == 0 and count < 15:    #0.56ms
                 count += 1
                 sleep(0.00006)
             pass
-
-            idx = 0
-            cnt = 0
-            data = [0, 0, 0, 0]
-
-            for i in range(0, 32):
-                count = 0
-                while GPIO.input(gpio_no) == 0 and count < 15:    #0.56ms
-                    count += 1
-                    sleep(0.00006)
-                pass
-                    
-                count = 0
-                while GPIO.input(gpio_no) == 1 and count < 40:   #0: 0.56mx
-                    count += 1 
-                    sleep(0.00006)
-                pass
-                    
-                if count > 7:
-                    data[idx] |= 1 << cnt
-                pass
-            
-                if cnt == 7:
-                    cnt = 0
-                    idx += 1
-                else:
-                    cnt += 1
-                pass
+                
+            count = 0
+            while GPIO.input(gpio_no) == 1 and count < 40:   #0: 0.56mx
+                count += 1 
+                sleep(0.00006)
             pass
-
-            if data[0]+data[1] == 0xFF and data[2]+data[3] == 0xFF:
-                self._repeat_cnt = 0 
-
-                return data[2]
+                
+            if count > 7:
+                data[idx] |= 1 << cnt
+            pass
+        
+            if cnt == 7:
+                cnt = 0
+                idx += 1
             else:
-                self._repeat_cnt += 1
-                log.info( f"repeat : {self._repeat_cnt}" )
-
-                return "repeat"
+                cnt += 1
             pass
+        pass
+
+        if data[0]+data[1] == 0xFF and data[2]+data[3] == 0xFF:
+            self._repeat_cnt = 0 
+
+            return data[2]
+        else:
+            self._repeat_cnt += 1
+            log.info( f"repeat : {self._repeat_cnt}" )
+
+            return "repeat"
         pass
     pass # -- _getkey
 
@@ -152,28 +154,26 @@ class IRRemote :
                 key_none_count = 0
 
                 if key == 0x18:
-                    log.info( f"key: {key}, forward" )
+                    log.info( f"key: 0x{key:02x}, forward" )
                     robot.forward() 
                 elif key == 0x52:
-                    log.info( f"key: {key}, backward" )
+                    log.info( f"key: 0x{key:02x}, backward" )
                     robot.backward() 
                 elif key == 0x08:
-                    log.info( f"key: {key}, left" )
+                    log.info( f"key: 0x{key:02x}, left" )
                     robot.left() 
                 elif key == 0x5a:
-                    log.info( f"key: {key}, right" )
+                    log.info( f"key: 0x{key:02x}, right" )
                     robot.right() 
                 elif key == 0x1c:
-                    log.info( f"key: {key}, stop" )
+                    log.info( f"key: 0x{key:02x}, stop" )
                     robot.stop() 
-                elif key in [ 0x15, 0x07 ] :
-                    if key == 0x15 : 
-                        log.info( f"key: {key}, speed up" )
-                        robot.speed_up( 5 ) 
-                    elif key == 0x07:
-                        log.info( f"key: {key}, speed down" )
-                        robot.speed_up( -5 ) 
-                    pass
+                elif key == 0x15 : 
+                    log.info( f"key: 0x{key:02x}, speed up" )
+                    robot.speed_up( 5 ) 
+                elif key == 0x07:
+                    log.info( f"key: 0x{key:02x}, speed down" )
+                    robot.speed_up( -5 ) 
                 else :
                     log.info( f"key: {key} " )
                 pass
