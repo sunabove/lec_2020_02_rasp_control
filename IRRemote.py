@@ -57,6 +57,17 @@ class IRRemote :
         pass
     pass
 
+    def check_interval(self, interval=0.00006):
+        then = time()
+        now = time()
+        duration = interval/10
+        while now - then < interval :
+            sleep( duration )
+
+            now = time()
+        pass
+    pass
+
     def _getkey(self):
 
         gpio_no = self.IR_GPIO_NO
@@ -67,12 +78,11 @@ class IRRemote :
 
         count = 0
         
-        then = time()
-        now = time()
+        interval = 0.00006 
         
         while GPIO.input(gpio_no) == 0 and count < 201:  #9ms
             count += 1
-            sleep(0.00006) 
+            self.check_interval( interval ) 
         pass
 
         if count < 10 :
@@ -83,7 +93,7 @@ class IRRemote :
         count = 0
         while GPIO.input(gpio_no) == 1 and count < 80:  #4.5ms
             count += 1
-            sleep(0.00006)
+            self.check_interval( interval )
         pass
 
         idx = 0
@@ -94,13 +104,15 @@ class IRRemote :
             count = 0
             while GPIO.input(gpio_no) == 0 and count < 15:    #0.56ms
                 count += 1
-                sleep(0.00006)
+                
+                self.check_interval( interval )
             pass
                 
             count = 0
             while GPIO.input(gpio_no) == 1 and count < 40:   #0: 0.56mx
                 count += 1 
-                sleep(0.00006)
+
+                self.check_interval( interval )
             pass
                 
             if count > 7:
