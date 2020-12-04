@@ -1,6 +1,6 @@
 #coding: utf-8
 import RPi.GPIO as GPIO, inspect
-from time import sleep
+from time import sleep, time
 from math import sqrt
 
 import logging as log
@@ -90,36 +90,24 @@ class Motor:
     pass
 
     def speed_up(self, dv) : # 속도 증가
-        
-        _speed_left = self._speed_left
 
-        if _speed_left < 0 :
-            _speed_left -= dv
-        else : 
-            _speed_left += dv 
-        pass 
+        left = self._speed_left + dv
         
-        if _speed_left < -100 :
-            _speed_left = -100 
-        elif _speed_left > 100 :
-            _speed_left = 100
+        if left < -100 :
+            left = -100 
+        elif left > 100 :
+            left = 100
         pass
 
-        _speed_right = self._speed_right
-
-        if _speed_right < 0 :
-            _speed_right -= dv
-        else : 
-            _speed_right += dv 
-        pass 
+        right = self._speed_right + dv
         
-        if _speed_right < -100 :
-            _speed_right = -100 
-        elif _speed_right > 100 :
-            _speed_right = 100
+        if right < -100 :
+            right = -100 
+        elif right > 100 :
+            right = 100
         pass
 
-        self.setMotor( _speed_left, _speed_right )
+        self.setMotor( left, right )
     pass # -- speed_up
 
     def forward(self, left=None, right=None): # 전진

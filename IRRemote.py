@@ -109,19 +109,8 @@ class IRRemote :
         data = [0, 0, 0, 0]
 
         for i in range(0, 32):
-            count = 0
-            while GPIO.input(gpio_no) == 0 and count < 15:    #0.56ms
-                count += 1
-
-                self.check_interval( interval )
-            pass
-                
-            count = 0
-            while GPIO.input(gpio_no) == 1 and count < 40:   #0: 0.56mx
-                count += 1 
-
-                self.check_interval( interval )
-            pass
+            count = self.check_gpio_count( 0, 15 ) #0.56ms
+            count = self.check_gpio_count( 1, 40 ) #0.56ms 
                 
             if count > 7:
                 data[idx] |= 1 << cnt
