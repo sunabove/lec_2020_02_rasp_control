@@ -215,7 +215,7 @@ class IRRemote :
                 elif key in [ 0x08, 0x16 ] :
                     log.info( f"left" )
                     robot.left() 
-                elif key == 0x5a:
+                elif key in [ 0x5a, 0x0d ] :
                     log.info( f"right" )
                     robot.right() 
                 elif key == 0x1c:
@@ -227,12 +227,16 @@ class IRRemote :
                 elif key == 0x07:
                     log.info( f"speed down" )
                     robot.speed_up( -5 ) 
-                elif key == 0x43:
+                elif key == 0x43 or prev_key == 0x43:
                     log.info( f"shut down" )
                     if repeat_cnt > 10 : 
                         robot.stop()
                         self.system_shutdown()
                     pass
+                pass
+
+                if type( key ) == int : 
+                    prev_key = key
                 pass
             pass
         pass # -- while
