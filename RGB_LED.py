@@ -13,7 +13,7 @@ log.basicConfig(
 
 class RGB_LED : 
 
-    def __init__(self) : 
+    def __init__(self, debug=False) : 
         # LED strip configuration:
         LED_COUNT      = 4       # Number of LED pixels.
         LED_PIN        = 18      # GPIO pin connected to the pixels (must support PWM!).
@@ -26,21 +26,14 @@ class RGB_LED :
         # Create NeoPixel object with appropriate configuration.
         # Intialize the library (must be called once before other functions).
         # run as root 
+
+        self.debug = debug
+        self.req_no = 0  
     
         self.strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
 
         self.strip.begin()
         self.strip.show()
-
-        self.rgb = 0
-        self.light_type = None
-        self.is_off = False
-        self.duration_to = None 
-
-        self._running = False
-
-        self._thread = threading.Thread(target = self._lightLoop)
-        self._thread.start()
     pass
 
     def __del__(self):
@@ -49,15 +42,12 @@ class RGB_LED :
 
     def finish( self ) :
         self.turn_off()
-        self._running = False
-
-        _thread = self._thread
-        if _thread :
-            _thread.join()
-        pass        
     pass
 
     def join(self) :
+        self.req_no += 1 
+        self.running = False 
+
         _thread = self._thread 
         if _thread is not None :
             _thread.join()
@@ -80,118 +70,175 @@ class RGB_LED :
         log.info(inspect.currentframe().f_code.co_name) 
         log.info( f"light_type: {light_type}" )
 
-        self.light_type = light_type
-        self.rgb = rgb
-        if duration is None :
-            self.duration_to = None 
-        else :
-            self.duration_to = time.time() + duration
+        time_to = None 
+        if duration is not None :
+            time_to = time.time() + duration
         pass
+
+        args = [ light_type, rgb, time_to ]
+        self._thread = threading.Thread(target = self._lightLoop, args=args)
+        self._thread.start()
     pass 
 
     def turn_off(self):
-        self.duration_to = None 
-        self.light_type = None
-        self.rgb = Color(0,0,0)
-    pass 
-
-    def _lightLoop(self):
         log.info(inspect.currentframe().f_code.co_name) 
 
-        self._running = True 
+        self.running = False  
+        self.req_no += 1 
+        
+        strip = self.strip 
+        numPixels = strip.numPixels()
+        for i in range(numPixels): 
+            strip.setPixelColor(i, Color(0, 0, 0)) 
+            strip.show()
+        pass
 
-        flashTime = [0.3, 0.2, 0.1, 0.05, 0.05, 0.1, 0.2, 0.5, 0.2]
-        flashTimeIndex = 0 
-        f = lambda x: (-1/10000.0)*x*x + (1/50.0)*x 
-        x = 0
+        sleep( 0.1 )
+    pass 
+
+    def static_light(self, req_no, rgb=Color(0,0,0) ) : 
+        log.info(inspect.currentframe().f_code.co_name)
 
         strip = self.strip 
         numPixels = strip.numPixels()
-        
-        while self._running :
-            duration_to = self.duration_to
 
-            if duration_to is not None :
+        for i in range(numPixels):
+            strip.setPixelColor(i, rgb)
+        pass
+        strip.show()
+        
+        self.running = False
+    pass # -- static_light
+
+    def breath_light(self, req_no, rgb=Color(0,0,0), x = 0 ) : 
+        debug = self.debug
+        debug and log.info(inspect.currentframe().f_code.co_name)
+
+        strip = self.strip 
+        numPixels = strip.numPixels()
+
+        f = lambda x: (-1/10000.0)*x*x + (1/50.0)*x  
+
+        fx = f(x)
+
+        red = int(((rgb & 0x00ff00)>>8) * fx)
+        green = int(((rgb & 0xff0000) >> 16) * fx)
+        blue = int((rgb & 0x0000ff) * fx )
+        _rgb = int((red << 8) | (green << 16) | blue)
+
+        for i in range(numPixels):
+            strip.setPixelColor(i, _rgb)     
+            strip.show()
+        pass
+
+        x += 1
+        
+        if x > 200:
+            x = 0 
+            for i in range(numPixels):
+                strip.setPixelColor(i, 0)     
+                strip.show()
+            pass
+        pass
+
+        sleep(0.02)
+
+        return x 
+    pass # -- breath_light
+
+    def flash_light(self, req_no, rgb=Color(0,0,0), flashTimeIndex = 0 ) : 
+        debug = self.debug
+        debug and log.info(inspect.currentframe().f_code.co_name)
+
+        strip = self.strip 
+        numPixels = strip.numPixels()
+
+        flashTime = [0.3, 0.2, 0.1, 0.05, 0.05, 0.1, 0.2, 0.5, 0.2] 
+
+        for i in range(numPixels):
+            strip.setPixelColor(i, rgb)     
+            strip.show()
+        pass
+
+        sleep(flashTime[flashTimeIndex])
+
+        if self.running and req_no == self.req_no : 
+            for i in range(numPixels):
+                strip.setPixelColor(i, 0)     
+                strip.show()
+            pass
+            sleep(flashTime[flashTimeIndex])
+        pass
+
+        flashTimeIndex += 1
+
+        if flashTimeIndex >= len(flashTime):
+            flashTimeIndex = 0
+        pass
+
+        return flashTimeIndex
+
+    pass # -- flash_light
+
+    def _lightLoop(self, light_type="", rgb=Color(0,0,0), time_to=None):
+        log.info(inspect.currentframe().f_code.co_name) 
+
+        self.req_no += 1 
+
+        req_no = self.req_no
+
+        x = 0
+        flashTimeIndex = 0 
+
+        strip = self.strip 
+        numPixels = strip.numPixels()
+
+        is_off = False 
+
+        self.running = True
+        
+        while req_no == self.req_no and self.running : 
+
+            if time_to is not None :
                 # 일정 시간이 지나면, LED를 끈다.
                 now = time.time()
-                if now > duration_to and self.light_type is not None :
-                    self.duration_to = None 
-                    self.turn_off()
+
+                if now > time_to and self.light_type is not None :
+                    time_to = None 
+                    light_type = None
+                    rgb = Color( 0, 0, 0 ) 
+
+                    self.running = False 
                 else :
                     sleep( 0.1 )
                 pass
-            pass
-
-            light_type = self.light_type
-            rgb = self.rgb 
+            pass 
 
             if light_type is None :
-                if not self.is_off :
+                if is_off is False :
                     x = 0 
-                    self.is_off = True
+                    is_off = True
 
-                    for i in range( strip.numPixels() ) : 
+                    for i in range(numPixels): 
                         strip.setPixelColor(i, Color(0, 0, 0)) 
                         strip.show()
                     pass
                 pass
             else : 
-                self.is_off = False
+                is_off = False
             pass
             
             if light_type == 'static': 
-                for i in range(numPixels):
-                    strip.setPixelColor(i, rgb)
-                pass
-                strip.show()
-                sleep(0.05)
+                self.static_light( rgb )
             elif light_type == 'breath':  
-                fx = f(x)
-
-                red = int(((rgb & 0x00ff00)>>8) * fx)
-                green = int(((rgb & 0xff0000) >> 16) * fx)
-                blue = int((rgb & 0x0000ff) * fx )
-                _rgb = int((red << 8) | (green << 16) | blue)
-
-                for i in range(numPixels):
-                    strip.setPixelColor(i, _rgb)     
-                    strip.show()
-                pass
-
-                x += 1
-                
-                if x > 200:
-                    x = 0 
-                    for i in range(numPixels):
-                        strip.setPixelColor(i, 0)     
-                        strip.show()
-                    pass
-                pass
-
-                sleep(0.02)
+                x = self.breath_light( rgb, x )
             elif light_type == 'flash':
-                for i in range(numPixels):
-                    strip.setPixelColor(i, rgb)     
-                    strip.show()
-                pass
-                sleep(flashTime[flashTimeIndex])
-
-                for i in range(numPixels):
-                    strip.setPixelColor(i, 0)     
-                    strip.show()
-                pass
-                sleep(flashTime[flashTimeIndex])
-                
-                flashTimeIndex += 1
-                if flashTimeIndex >= len(flashTime):
-                    flashTimeIndex = 0
-                pass
+                flashTimeIndex = self.flash_light( rgb, flashTimeIndex )
             pass
         pass # loop
 
-        log.info( "End loop" )
+        log.info( "end light_loop" )
         
-        self._running = False
         self._thread = None 
     pass # -- _lightLoop
     
@@ -207,8 +254,6 @@ if __name__ == "__main__":
         log.info('You have pressed Ctrl-C.')
 
         rgb_led.finish()
-
-        sleep( 0.5 ) 
     pass
 
     signal.signal(signal.SIGINT, handler)

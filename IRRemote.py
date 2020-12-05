@@ -51,7 +51,7 @@ class IRRemote :
     pass # -- finish
 
     def start(self):
-        if not self._running and self._thread is None : 
+        if not self._running and self._thread is None :
             self._thread = threading.Thread(target=self.process_signal, args=[] )
             self._thread.start()
         pass
