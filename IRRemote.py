@@ -227,7 +227,7 @@ class IRRemote :
                 elif key == 0x07:
                     log.info( f"speed down" )
                     robot.speed_up( -5 ) 
-                elif key == 0x43 or prev_key == 0x43:
+                elif key == 0x47 or prev_key == 0x47:
                     log.info( f"shut down" )
                     if repeat_cnt > 10 : 
                         robot.stop()
