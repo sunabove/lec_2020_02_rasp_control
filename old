@@ -1,7 +1,9 @@
-import RPi.GPIO as GPIO, threading, inspect, signal
-from time import sleep, time
+# coding: utf-8
 
-from gpiozero import Buzzer
+import signal, time, threading, inspect
+
+from time import sleep
+from rpi_ws281x import Adafruit_NeoPixel, Color
 
 import logging as log
 log.basicConfig(
@@ -9,277 +11,237 @@ log.basicConfig(
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
     )
 
-class IRRemote : 
+class RGB_LED : 
 
-    IR_GPIO_NO = 17
+    def __init__(self) : 
+        # LED strip configuration:
+        LED_COUNT      = 4       # Number of LED pixels.
+        LED_PIN        = 18      # GPIO pin connected to the pixels (must support PWM!).
+        LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
+        LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
+        LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
+        LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
+        LED_CHANNEL    = 0
 
-    def __init__(self, robot, buzzer=None) : 
-        self.robot = robot
-        
-        if buzzer is None : 
-            self.buzzer = Buzzer(4)
-        elif buzzer is not None : 
-            self.buzzer = buzzer
-        pass
+        # Create NeoPixel object with appropriate configuration.
+        # Intialize the library (must be called once before other functions).
+        # run as root 
+    
+        self.strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
 
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.IR_GPIO_NO, GPIO.IN)
+        self.strip.begin()
+        self.strip.show()
 
-        self._repeat_cnt = 0 
+        self.rgb = 0
+        self.light_type = None
+        self.is_off = False
+        self.duration_to = None 
 
-        self._running = False 
-        self._thread = None
+        self._running = False
 
-        self.start()
+        self._thread = threading.Thread(target = self._lightLoop)
+        self._thread.start()
     pass
 
     def __del__(self):
         self.finish()
     pass
 
-    def finish(self) :
-        self._running = False 
-        _thread = self._thread 
-        if _thread is not None :
-            _thread.join()
-
-            self._thread = None 
-        pass
-
-        GPIO.setmode(GPIO.BCM)
-        GPIO.cleanup( self.IR_GPIO_NO ) 
-    pass # -- finish
-
-    def start(self):
-        if not self._running and self._thread is None : 
-            self._thread = threading.Thread(target=self.process_signal, args=[] )
-            self._thread.start()
-        pass
-    pass
-
-    def stop(self) :
+    def finish( self ) :
+        self.turn_off()
         self._running = False
+
+        _thread = self._thread
+        if _thread :
+            _thread.join()
+        pass        
     pass
 
     def join(self) :
         _thread = self._thread 
-        if _thread :
+        if _thread is not None :
             _thread.join()
         pass
     pass
 
-    def check_interval(self, interval=0.00006):
-        then = time()
-        now = time()
-        duration = interval/10
-        while now - then < interval :
-            sleep( duration )
-
-            now = time()
-        pass
+    def begin(self):
+        self.strip.begin()
     pass
 
-    def check_gpio_count(self, gpio_value, check_count = 0) :
-        gpio_no = self.IR_GPIO_NO
-        count = 0
-        interval = 0.00006
-        while GPIO.input(gpio_no) == gpio_value and count < check_count :
-            count += 1
-            self.check_interval( interval ) 
-        pass
-
-        return count 
+    def show(self):
+        self.strip.show()
     pass
 
-    def _getkey(self):
+    def setPixelColor(self, led_no, rgb):
+        self.strip.setPixelColor(led_no, rgb)
+    pass
 
-        gpio_no = self.IR_GPIO_NO
+    def light_effect(self, light_type="", rgb=Color(0,0,0), duration=None):
+        log.info(inspect.currentframe().f_code.co_name) 
+        log.info( f"light_type: {light_type}" )
 
-        if GPIO.input(gpio_no) != 0:
-            return 
+        self.light_type = light_type
+        self.rgb = rgb
+        if duration is None :
+            self.duration_to = None 
+        else :
+            self.duration_to = time.time() + duration
         pass
+    pass 
 
-        interval = 0.00006 
-        
-        count = 0
+    def turn_off(self):
+        self.duration_to = None 
+        self.light_type = None
+        self.rgb = Color(0,0,0)
+    pass 
 
-        count = self.check_gpio_count( 0, 200 ) #9ms
-
-        if count < 10 :
-            log.info( f"get key count = {count}" )
-            return;
-        pass
-
-        count = self.check_gpio_count( 1, 80 ) #4.5ms
-        
-        idx = 0
-        cnt = 0
-        data = [0, 0, 0, 0]
-
-        for i in range(0, 32):
-            count = self.check_gpio_count( 0, 15 ) #0.56ms
-            count = self.check_gpio_count( 1, 40 ) #0.56ms 
-                
-            if count > 7:
-                data[idx] |= 1 << cnt
-            pass
-        
-            if cnt == 7:
-                cnt = 0
-                idx += 1
-            else:
-                cnt += 1
-            pass
-        pass
-
-        if data[0]+data[1] == 0xFF and data[2]+data[3] == 0xFF:
-            self._repeat_cnt = 0 
-
-            return data[2]
-        else:
-            self._repeat_cnt += 1
-            log.info( f"repeat : {self._repeat_cnt}" )
-
-            return "repeat"
-        pass
-    pass # -- _getkey
-
-    def process_signal(self) :
-        try:
-            self._process_signal()
-        except Exception as e :
-            self._running = False 
-            self._thread = None 
-
-            log.info( e )
-        finally:
-            pass
-        pass
-    pass # -- process_signal
-
-    def system_shutdown(self) :
+    def _lightLoop(self):
         log.info(inspect.currentframe().f_code.co_name) 
 
-        # 시스템 셧다운
-        # 경고음
-        buzzer = self.buzzer
+        self._running = True 
+
+        flashTime = [0.3, 0.2, 0.1, 0.05, 0.05, 0.1, 0.2, 0.5, 0.2]
+        flashTimeIndex = 0 
+        f = lambda x: (-1/10000.0)*x*x + (1/50.0)*x 
+        x = 0
+
+        strip = self.strip 
+        numPixels = strip.numPixels()
         
-        for frq in range( 1, 6 + 1 ) : 
-            t = 1/frq
-            buzzer.beep(on_time=t, off_time=t/2, n = int(frq), background=False)
-            sleep( 1 )
-        pass
-
-        buzzer.beep(on_time=2, off_time=1, n = 1, background=False)
-
-        from subprocess import check_call
-
-        check_call(['sudo', 'poweroff'])
-    pass # system_shutdown
-
-    def _process_signal(self) :
-        self._running = True
-
-        robot = self.robot
-        key_none_count = 0 
-
-        prev_key = None
-        repeat_cnt = 0 
-
         while self._running :
-            key = self._getkey()
+            duration_to = self.duration_to
 
-            if key == "repeat" or ( key and prev_key == key ):
-                repeat_cnt += 1
-            elif key :
-                repeat_cnt = 0 
+            if duration_to is not None :
+                # 일정 시간이 지나면, LED를 끈다.
+                now = time.time()
+                if now > duration_to and self.light_type is not None :
+                    self.duration_to = None 
+                    self.turn_off()
+                else :
+                    sleep( 0.1 )
+                pass
             pass
 
-            if key is None :
-                key_none_count += 1
-                if key_none_count > 20_000:
-                    key_none_count = 0 
+            light_type = self.light_type
+            rgb = self.rgb 
+
+            if light_type is None :
+                if not self.is_off :
+                    x = 0 
+                    self.is_off = True
+
+                    for i in range( strip.numPixels() ) : 
+                        strip.setPixelColor(i, Color(0, 0, 0)) 
+                        strip.show()
+                    pass
                 pass
             else : 
-                key_none_count = 0
+                self.is_off = False
+            pass
+            
+            if light_type == 'static': 
+                for i in range(numPixels):
+                    strip.setPixelColor(i, rgb)
+                pass
+                strip.show()
+                sleep(0.05)
+            elif light_type == 'breath':  
+                fx = f(x)
 
-                if type( key )  == int : 
-                    log.info( f"key: 0x{key:02x}, repeat_cnt={repeat_cnt}" )
-                else :
-                    log.info( f"key: {key}, repeat_cnt={repeat_cnt}" )
+                red = int(((rgb & 0x00ff00)>>8) * fx)
+                green = int(((rgb & 0xff0000) >> 16) * fx)
+                blue = int((rgb & 0x0000ff) * fx )
+                _rgb = int((red << 8) | (green << 16) | blue)
+
+                for i in range(numPixels):
+                    strip.setPixelColor(i, _rgb)     
+                    strip.show()
                 pass
 
-                if key in [ 0x18, 0x19 ] :
-                    log.info( f"forward" )
-                    robot.forward() 
-                elif key == 0x52:
-                    log.info( f"backward" )
-                    robot.backward() 
-                elif key in [ 0x08, 0x16, 0x0c ] :
-                    log.info( f"left" )
-                    robot.left() 
-                elif key in [ 0x5a, 0x0d, 0x5e ] :
-                    log.info( f"right" )
-                    robot.right() 
-                elif key == 0x1c:
-                    log.info( f"stop" )
-                    robot.stop() 
-                elif key == 0x15 : 
-                    log.info( f"speed up" )
-                    robot.speed_up( 5 ) 
-                elif key == 0x07:
-                    log.info( f"speed down" )
-                    robot.speed_up( -5 ) 
-                elif key == 0x47 or prev_key == 0x47:
-                    log.info( f"shut down" )
-                    if repeat_cnt > 10 : 
-                        robot.stop()
-                        self.system_shutdown()
+                x += 1
+                
+                if x > 200:
+                    x = 0 
+                    for i in range(numPixels):
+                        strip.setPixelColor(i, 0)     
+                        strip.show()
                     pass
                 pass
 
-                if type( key ) == int : 
-                    prev_key = key
+                sleep(0.02)
+            elif light_type == 'flash':
+                for i in range(numPixels):
+                    strip.setPixelColor(i, rgb)     
+                    strip.show()
+                pass
+                sleep(flashTime[flashTimeIndex])
+
+                for i in range(numPixels):
+                    strip.setPixelColor(i, 0)     
+                    strip.show()
+                pass
+                sleep(flashTime[flashTimeIndex])
+                
+                flashTimeIndex += 1
+                if flashTimeIndex >= len(flashTime):
+                    flashTimeIndex = 0
                 pass
             pass
-        pass # -- while
+        pass # loop
 
-        self._running = False 
+        log.info( "End loop" )
+        
+        self._running = False
         self._thread = None 
-    pass # -- _process_signal
+    pass # -- _lightLoop
+    
+pass
 
-pass # --IRRemote
+if __name__ == "__main__":
+    rgb_led = RGB_LED()
+    #rgb_led.begin()
 
-if __name__ == '__main__':
-    log.info( "Hello..." )
-    log.info( 'IRremote Test Start ...' )
-
-    GPIO.setwarnings(False)
-
-    from AlphaBot2 import AlphaBot2 
-    from Motor import Motor
-
-    robot = Motor()
-
-    irremote = IRRemote( robot )
-
-    def signal_handler(signal, frame):
+    def handler(signal, frame):
         print( "", flush=True) 
 
         log.info('You have pressed Ctrl-C.')
 
-        irremote.finish()
+        rgb_led.finish()
 
         sleep( 0.5 ) 
     pass
 
-    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGINT, handler)
 
-    irremote.join()
+    # turn on
+    rgb_led.setPixelColor(0, Color(255, 0, 0))       #Red
+    rgb_led.setPixelColor(1, Color(0, 255, 0))       #Green
+    rgb_led.setPixelColor(2, Color(0, 0, 255))       #Blue
+    rgb_led.setPixelColor(3, Color(255, 255, 0))     #Yellow
+    rgb_led.show()
 
-    robot.stop() 
+    sleep(2)
 
-    GPIO.cleanup();
+    rgb_led.light_effect( "static", Color(255, 255, 0) )
+    sleep( 3 )
 
-    log.info( "Good bye!")
+    rgb_led.light_effect( "breath", Color(255, 0, 0) )
+    sleep( 3 )
+
+    rgb_led.light_effect( "flash", Color(0, 255, 0) )
+    sleep( 3 )
+
+    # remove light_effect 
+    rgb_led.turn_off()
+
+    # turn off 
+    rgb_led.setPixelColor(0, Color(0, 0, 0))       #Red
+    rgb_led.setPixelColor(1, Color(0, 0, 0))       #Green
+    rgb_led.setPixelColor(2, Color(0, 0, 0))       #Blue
+    rgb_led.setPixelColor(3, Color(0, 0, 0))       #Yellow
+    rgb_led.show() 
+
+    input( "Enter to quit!")
 pass
+
+
