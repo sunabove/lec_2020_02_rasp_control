@@ -89,7 +89,7 @@ class RGB_LED :
 
     def light_effect(self, light_type="", rgb=Color(0,0,0), duration=None):
         log.info(inspect.currentframe().f_code.co_name) 
-        log.info( f"light_type: {light_type}" )
+        log.info( f"light_type: {light_type}, rgb={rgb}, duration={duration}" )
 
         time_to = None 
         if duration is not None :
@@ -269,7 +269,8 @@ if __name__ == "__main__":
 
         log.info('You have pressed Ctrl-C.')
 
-        rgb_led.finish()
+        import sys
+        sys.exit()
     pass
 
     signal.signal(signal.SIGINT, handler)
@@ -283,7 +284,7 @@ if __name__ == "__main__":
 
     sleep(2)
 
-    if 0 : 
+    if 1 : 
         rgb_led.light_effect( "static", Color(255, 255, 0) )
         sleep( 3 )
     pass
@@ -291,7 +292,7 @@ if __name__ == "__main__":
     rgb_led.light_effect( "breath", Color(0, 255, 0) )
     sleep( 3 )
 
-    if 0 : 
+    if 1 : 
         rgb_led.light_effect( "flash", Color(0, 255, 0) )
         sleep( 3 )
     pass
@@ -305,6 +306,8 @@ if __name__ == "__main__":
     rgb_led.setPixelColor(2, Color(0, 0, 0))       #Blue
     rgb_led.setPixelColor(3, Color(0, 0, 0))       #Yellow
     rgb_led.show() 
+
+    sleep( 1 )
 
     input( "Enter to quit!")
 pass
