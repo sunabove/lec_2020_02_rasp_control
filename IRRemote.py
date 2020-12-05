@@ -212,10 +212,10 @@ class IRRemote :
                 elif key == 0x52:
                     log.info( f"backward" )
                     robot.backward() 
-                elif key in [ 0x08, 0x16 ] :
+                elif key in [ 0x08, 0x16, 0x0c ] :
                     log.info( f"left" )
                     robot.left() 
-                elif key in [ 0x5a, 0x0d ] :
+                elif key in [ 0x5a, 0x0d, 0x5e ] :
                     log.info( f"right" )
                     robot.right() 
                 elif key == 0x1c:
