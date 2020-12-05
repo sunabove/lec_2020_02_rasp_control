@@ -186,7 +186,7 @@ class IRRemote :
         while self._running :
             key = self._getkey()
 
-            if key and prev_key == key :
+            if key == "repeat" or ( key and prev_key == key ):
                 repeat_cnt += 1
             elif key :
                 repeat_cnt = 0 
