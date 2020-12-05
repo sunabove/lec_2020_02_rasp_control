@@ -1,6 +1,8 @@
 import RPi.GPIO as GPIO, threading, inspect, signal
 from time import sleep, time
 
+from gpiozero import Buzzer
+
 import logging as log
 log.basicConfig(
     format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
@@ -11,8 +13,14 @@ class IRRemote :
 
     IR_GPIO_NO = 17
 
-    def __init__(self, robot) : 
-        self.robot = robot 
+    def __init__(self, robot, buzzer=None) : 
+        self.robot = robot
+        
+        if buzzer is None : 
+            self.buzzer = Buzzer(4)
+        elif buzzer is not None : 
+            self.buzzer = buzzer
+        pass
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.IR_GPIO_NO, GPIO.IN)
@@ -149,14 +157,40 @@ class IRRemote :
         pass
     pass # -- process_signal
 
+    def system_shutdown(self) :
+        log.info(inspect.currentframe().f_code.co_name) 
+
+        # 시스템 셧다운
+        from subprocess import check_call
+
+        for frq in range( 1, 6 + 1 ) : 
+            t = 1/frq
+            buzzer.beep(on_time=t, off_time=t/2, n = int(frq), background=False)
+            sleep( 1 )
+        pass
+
+        buzzer.beep(on_time=2, off_time=1, n = 1, background=False)
+
+        check_call(['sudo', 'poweroff'])
+    pass # system_shutdown
+
     def _process_signal(self) :
         self._running = True
 
         robot = self.robot
         key_none_count = 0 
 
+        prev_key = None
+        repeat_cnt = 0 
+
         while self._running :
             key = self._getkey()
+
+            if key and prev_key == key :
+                repeat_cnt += 1
+            else :
+                repeat_cnt = 0 
+            pass
 
             if key is None :
                 key_none_count += 1
@@ -166,29 +200,39 @@ class IRRemote :
             else : 
                 key_none_count = 0
 
-                if key == 0x18:
-                    log.info( f"key: 0x{key:02x}, forward" )
+                if type( key )  == int : 
+                    log.info( f"key: 0x{key:02x}, repeat_cnt={repeat_cnt}" )
+                else :
+                    log.info( f"key: {key}, repeat_cnt={repeat_cnt}" )
+                pass
+
+                if key in [ 0x18, 0x19 ] :
+                    log.info( f"forward" )
                     robot.forward() 
                 elif key == 0x52:
-                    log.info( f"key: 0x{key:02x}, backward" )
+                    log.info( f"backward" )
                     robot.backward() 
-                elif key == 0x08:
-                    log.info( f"key: 0x{key:02x}, left" )
+                elif key in [ 0x08, 0x16 ] :
+                    log.info( f"left" )
                     robot.left() 
                 elif key == 0x5a:
-                    log.info( f"key: 0x{key:02x}, right" )
+                    log.info( f"right" )
                     robot.right() 
                 elif key == 0x1c:
-                    log.info( f"key: 0x{key:02x}, stop" )
+                    log.info( f"stop" )
                     robot.stop() 
                 elif key == 0x15 : 
-                    log.info( f"key: 0x{key:02x}, speed up" )
+                    log.info( f"speed up" )
                     robot.speed_up( 5 ) 
                 elif key == 0x07:
-                    log.info( f"key: 0x{key:02x}, speed down" )
+                    log.info( f"speed down" )
                     robot.speed_up( -5 ) 
-                else :
-                    log.info( f"key: {key} " )
+                elif key == 0x47:
+                    log.info( f"shut down" )
+                    if repeat_cnt > 10 : 
+                        robot.stop()
+                        self.system_shutdown()
+                    pass
                 pass
             pass
         pass # -- while
