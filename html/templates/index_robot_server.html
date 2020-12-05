@@ -46,41 +46,69 @@
 	<h4>AlphaBot Control v1.0</h4>
 
 	<center><img src="{{ url_for('video_feed') }}" /></center>
-	<br/> 
-	
-	<table align="center">
-		<tr>
-			<td align="center"><b>Motor Contrl</b></td>
-			<!-- td align="center"><b>Servo Contrl</b></td -->
-		</tr>
-		<tr>
-			<td>
-				<div align="center">
-					<button id="forward" class="btn btn-lg btn-primary">&uuarr;</button>
+	<br/>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-sm">
+				<div class="container">
+					<div class="row">
+						<div class="col-sm">
+							<b>Motor Contrl</b>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<button id="forward" class="btn btn-lg btn-primary">&uuarr;</button>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<button id='turnleft' class="btn btn-lg btn-primary">&llarr;</button>
+							<button id='turnright' class="btn btn-lg btn-primary">&rrarr;</button>	
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<button id='backward' class="btn btn-lg btn-primary">&ddarr;</button>
+						</div>
+					</div> 
+					<div class="row">
+						<div class="col-sm">
+							<input id="speed" type="range" min="20" max="100", value="50" style="width:300px"; >
+						</div>
+					</div> 
 				</div>
-				<div align="center">
-					<button id='turnleft' class="btn btn-lg btn-primary">&llarr;</button>
-					<button id='turnright' class="btn btn-lg btn-primary">&rrarr;</button>
+			</div>
+			<!--
+			<div class="col-sm">
+				<div class="container">
+					<div class="row">
+						<div class="col-sm">
+							<b>Servo Contrl</b> 
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<button id="up" class="btn btn-lg btn-primary">&uuarr;</button>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<button id='left' class="btn btn-lg btn-primary">&llarr;</button>
+							<button id='right' class="btn btn-lg btn-primary">&rrarr;</button>	
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<button id='down' class="btn btn-lg btn-primary">&ddarr;</button>
+						</div>
+					</div>
 				</div>
-				<div align="center">
-					<button id='backward' class="btn btn-lg btn-primary">&ddarr;</button>
-				</div>
-			</td>
-			<!--td>
-				<div align="center">
-					<button id="up" class="btn btn-lg btn-primary ">&uuarr;</button>
-				</div>
-				<div align="center">
-					<button id='left' class="btn btn-lg btn-primary ">&llarr;</button>
-					<button id='right' class="btn btn-lg btn-primary ">&rrarr;</button>
-				</div align="center">
-				<div align="center">
-					<button id='down' class="btn btn-lg btn-primary ">&ddarr;</button>
-				</div>
-			</td -->
-		</tr>
-	</table>
-	<input id="speed" type="range" min="20" max="100", value="50" style="width:300px"; >
+			</div>
+			-->
+		</div> 
+	</div> 
 </div>
 </body>
 </html>

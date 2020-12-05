@@ -29,7 +29,7 @@ class Robot :
         self.rgb_led    = RGB_LED()
         self.camera     = Camera()
         self.servo      = Servo()
-        self.irremote   = IRRemote( robot, buzzer=self.buzzer )
+        #self.irremote   = IRRemote( robot, buzzer=self.buzzer )
 
         # 시동 소리 내기
         self.rgb_led.light_effect( "flash", Color(0, 255, 0), duration=6 ) 
