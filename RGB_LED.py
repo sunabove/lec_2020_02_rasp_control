@@ -115,11 +115,9 @@ class RGB_LED :
         debug and log.info(inspect.currentframe().f_code.co_name)
 
         strip = self.strip 
-        numPixels = strip.numPixels()
+        numPixels = strip.numPixels() 
 
-        f = lambda x: (-1/10000.0)*x*x + (1/50.0)*x  
-
-        fx = f(x)
+        fx = (-1/10000.0)*x*x + (1/50.0)*x 
 
         red = int(((rgb & 0x00ff00)>>8) * fx)
         green = int(((rgb & 0xff0000) >> 16) * fx)
@@ -203,7 +201,7 @@ class RGB_LED :
                 # 일정 시간이 지나면, LED를 끈다.
                 now = time.time()
 
-                if now > time_to and self.light_type is not None :
+                if now > time_to and light_type is not None :
                     time_to = None 
                     light_type = None
                     rgb = Color( 0, 0, 0 ) 
@@ -229,11 +227,11 @@ class RGB_LED :
             pass
             
             if light_type == 'static': 
-                self.static_light( rgb )
+                self.static_light( req_no, rgb )
             elif light_type == 'breath':  
-                x = self.breath_light( rgb, x )
+                x = self.breath_light( req_no, rgb, x )
             elif light_type == 'flash':
-                flashTimeIndex = self.flash_light( rgb, flashTimeIndex )
+                flashTimeIndex = self.flash_light( req_no, rgb, flashTimeIndex )
             pass
         pass # loop
 
@@ -267,14 +265,16 @@ if __name__ == "__main__":
 
     sleep(2)
 
-    rgb_led.light_effect( "static", Color(255, 255, 0) )
+    if 0 : 
+        rgb_led.light_effect( "static", Color(255, 255, 0) )
+        sleep( 3 )
+
+    rgb_led.light_effect( "breath", Color(0, 255, 0) )
     sleep( 3 )
 
-    rgb_led.light_effect( "breath", Color(255, 0, 0) )
-    sleep( 3 )
-
-    rgb_led.light_effect( "flash", Color(0, 255, 0) )
-    sleep( 3 )
+    if 0 : 
+        rgb_led.light_effect( "flash", Color(0, 255, 0) )
+        sleep( 3 )
 
     # remove light_effect 
     rgb_led.turn_off()

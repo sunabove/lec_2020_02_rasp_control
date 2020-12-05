@@ -50,7 +50,10 @@ class Robot :
         self.rgb_led.finish() 
         self.camera.finish()
         self.servo.finish()
-        self.irremote.finish() 
+
+        if hasattr( self, "irremote" ) : 
+            self.irremote.finish()
+        pass
 
         sleep( 0.5 )
 
