@@ -156,11 +156,18 @@ class RGB_LED :
             elif light_type == 'flash':
                 flashTimeIndex = self.flash_light( req_no, rgb, flashTimeIndex )
             pass
+
+            if req_no == self.req_no and self.running :
+                sleep( 0.5 )
+            pass
+
         pass # loop
 
         log.info( "end light_loop" )
-        
-        self._thread = None 
+
+        if req_no == self.req_no and self.running :        
+            self._thread = None 
+        pass
     pass # -- _lightLoop
 
     def static_light(self, req_no, rgb=Color(0,0,0) ) : 
@@ -310,6 +317,4 @@ if __name__ == "__main__":
     sleep( 1 )
 
     input( "Enter to quit!")
-pass
-
-
+pass # -- main
