@@ -24,6 +24,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import RPi.GPIO as GPIO
 import time, threading 
+from time import sleep
+
+import logging as log
+log.basicConfig(
+    format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
+    datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
+    )
 
 class IRRemote:    
 
@@ -32,15 +39,31 @@ class IRRemote:
         self.decoding = False
         self.pList = []
         self.timer = time.time()
+        
         if callback == 'DECODE':
             self.callback = self.print_ir_code
         else:
             self.callback = callback
+        pass
+
         self.checkTime = 150  # time in milliseconds
         self.verbose = False
         self.repeatCodeOn = True
         self.lastIRCode = 0
         self.maxPulseListLength = 70
+
+        self.running = True 
+        self.thread = False
+    pass
+
+    def __del__(self):
+        self.running = False 
+
+        thread = self.thread
+        if thread is not None :
+            thread.join()
+        pass
+    pass
 
     def pWidth(self, pin):
         """pWidth, function to record the width of the highs and lows
@@ -50,11 +73,11 @@ class IRRemote:
         self.pList.append(time.time()-self.timer)
         self.timer = time.time()        
 
-        if self.decoding == False:
+        if self.decoding == False and self.running :
             self.decoding = True
-            check_loop = threading.Thread(name='self.pulse_checker',target=self.pulse_checker)
-            check_loop.start()           
-            
+
+            self.thread = threading.Thread(name='self.pulse_checker',target=self.pulse_checker)
+            self.thread.start()
         return
     pass
 
@@ -71,8 +94,9 @@ class IRRemote:
 
         timer = time.time()
 
-        while True:                
+        while self.running :                
             check = (time.time()-timer)*1000
+
             if check > self.checkTime:                    
                 self.verbose and print(check, len(self.pList))
                 break
@@ -83,7 +107,7 @@ class IRRemote:
                 break
             pass
 
-            time.sleep(0.001)
+            sleep(0.001)
         pass
 
         if len(self.pList) > self.maxPulseListLength:
@@ -107,7 +131,7 @@ class IRRemote:
         self.pList = []
         self.decoding = False
 
-        if self.callback != None:
+        if self.callback != None and self.running :
             self.callback(decode)
         pass
         
@@ -128,13 +152,18 @@ class IRRemote:
         for p in range(0,len(pList)):
             try:
                 pList[p]=float(pList[p])*1000
+
                 if self.verbose == True:
                     print(pList[p])
                 if pList[p]<11:
                     if sIndex == -1:
                         sIndex = p
-            except:            
+                    pass
                 pass
+            except:
+                pass
+            pass
+        pass
 
         # if no acceptable start is found return -1
 
@@ -169,9 +198,13 @@ class IRRemote:
                     break
                 else:
                     break
+                pass
+            pass
+        pass
 
         if self.verbose == True:
-            print(bitList)
+            log.info( f"bitList = {bitList}" )
+        pass
 
         # convert the list of 1s and 0s into a
         # binary number
@@ -208,7 +241,7 @@ class IRRemote:
     def print_ir_code(self, code):
         """print_ir_code, function to display IR code received"""
 
-        print(hex(code))
+        log.info( f"ir_code = {hex(code)}" )
 
         return
     pass
@@ -231,8 +264,8 @@ class IRRemote:
 
         return
     pass
-pass
 
+pass
 
 if __name__ == "__main__":
 
@@ -284,15 +317,11 @@ if __name__ == "__main__":
     ir.set_callback(remote_callback)
     ir.set_repeat(True)
 
-    try:
-        while True:
-            time.sleep(1)
-        pass
-    except:
-        print('Removing callback and cleaning up GPIO')
-        ir.remove_callback()
-        GPIO.setmode(GPIO.BCM)
-        GPIO.cleanup(16)
-    pass
+    input( "Enter to quit..." )
+
+    print('Removing callback and cleaning up GPIO')
+    ir.remove_callback()
+    GPIO.setmode(GPIO.BCM)
+    GPIO.cleanup(16)
 
 pass # -- main
