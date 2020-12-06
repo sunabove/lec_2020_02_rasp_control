@@ -90,11 +90,11 @@ class Motor:
         pass 
     pass
 
-    def speed_down(self, dv) : # 속도 증가
+    def speed_down(self, dv = 5) : # 속도 증가
         self.speed_up( -dv )
     pass
 
-    def speed_up(self, dv) : # 속도 증가
+    def speed_up(self, dv = 5) : # 속도 증가
 
         left = self._speed_left + dv
         

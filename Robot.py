@@ -72,14 +72,27 @@ class Robot :
         #self.rgb_led.turn_off() # RGB LED 꺼기
     pass
 
+    def speed_up( self, dv = 5 ) : # 속도 증가
+        self.motor.speed_up( dv )
+    pass
+
+    def speed_down( self, dv = 5) : # 속도 감소 
+        self.motor.speed_down( dv )
+    pass
+
     def forward(self, speed = 30) :
+        # 전진
+        # 전진 경고음
         self.buzzer.beep(on_time=0.2, off_time=0.2, n = 4)
+        # 전진 라이트 
         self.rgb_led.light_effect( "breath", Color(0, 255, 0) )
         
         self.motor.forward( speed )
     pass
 
     def backward(self, speed = 30) :
+        # 후진 
+        # 후진시 경고음 
         self.buzzer.beep(on_time=0.5, off_time=0.5, n = 4)
         # 후진시에는 빨간색으로 깜박인다.
         self.rgb_led.light_effect( "flash", Color(255, 0, 0) ) 
@@ -87,24 +100,19 @@ class Robot :
         self.motor.backward( speed )
     pass
 
-    # 좌회전
-    def left(self) :
+    def left(self) : # 좌회전
+        # 경고음 
         self.buzzer.beep(on_time=1, off_time=0.5, n = 2)
 
         self.motor.left()
         # LED 깜빡이기
     pass
 
-    # 우회전 
-    def right(self):
+    def right(self): # 우회전 
+        # 경고음 
         self.buzzer.beep(on_time=1, off_time=0.5, n = 3)
 
         self.motor.right()
-        # LED 깜빡이기
-    pass
-
-    def speed_up(self, speed = 10 ) :
-        pass
     pass
 
     # servo control
