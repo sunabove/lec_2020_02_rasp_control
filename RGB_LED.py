@@ -96,6 +96,8 @@ class RGB_LED :
             time_to = time.time() + duration
         pass
 
+        self.req_no += 1 
+
         args = [ light_type, rgb, time_to ]
         self._thread = threading.Thread(target = self._lightLoop, args=args)
         self._thread.start()

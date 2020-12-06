@@ -69,7 +69,7 @@ class Robot :
         log.info(inspect.currentframe().f_code.co_name) 
 
         self.motor.stop_motor()
-        #self.rgb_led.turn_off() # RGB LED 꺼기
+        self.rgb_led.turn_off() # RGB LED 꺼기
     pass
 
     def speed_up( self, dv = 5 ) : # 속도 증가
@@ -163,6 +163,8 @@ if __name__=='__main__':
 
         log.info( "Good bye!" )
 
+        GPIO.setmode(GPIO.BCM) 
+        
         import sys
         sys.exit(0)
     pass
