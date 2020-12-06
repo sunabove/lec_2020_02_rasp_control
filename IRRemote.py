@@ -39,11 +39,18 @@ class IRRemote :
 
     def finish(self) :
         self._running = False 
+
         _thread = self._thread 
         if _thread is not None :
             _thread.join()
 
             self._thread = None 
+        pass
+
+        buzzer = self.buzzer
+        if buzzer is not None :
+            buzzer.close()
+            self.buzzer = None
         pass
 
         GPIO.setmode(GPIO.BCM)
@@ -157,26 +164,6 @@ class IRRemote :
         pass
     pass # -- process_signal
 
-    def system_shutdown(self) :
-        log.info(inspect.currentframe().f_code.co_name) 
-
-        # 시스템 셧다운
-        # 경고음
-        buzzer = self.buzzer
-        
-        for frq in range( 1, 6 + 1 ) : 
-            t = 1/frq
-            buzzer.beep(on_time=t, off_time=t/2, n = int(frq), background=False)
-            sleep( 1 )
-        pass
-
-        buzzer.beep(on_time=2, off_time=1, n = 1, background=False)
-
-        from subprocess import check_call
-
-        check_call(['sudo', 'poweroff'])
-    pass # system_shutdown
-
     def _process_signal(self) :
         self._running = True
 
@@ -200,7 +187,7 @@ class IRRemote :
                 if key_none_count > 20_000:
                     key_none_count = 0 
                 pass
-            else : 
+            elif key is not None : 
                 key_none_count = 0
 
                 if type( key )  == int : 
@@ -229,7 +216,7 @@ class IRRemote :
                     robot.speed_up( 5 ) 
                 elif key == 0x07:
                     log.info( f"speed down" )
-                    robot.speed_up( -5 ) 
+                    robot.speed_down( 5 ) 
                 elif key == 0x47 or prev_key == 0x47:
                     log.info( f"shut down" )
                     if repeat_cnt > 10 : 
@@ -240,13 +227,35 @@ class IRRemote :
 
                 if type( key ) == int : 
                     prev_key = key
+
+                    sleep( 0.4 ) 
                 pass
-            pass
+            pass  
         pass # -- while
 
         self._running = False 
         self._thread = None 
     pass # -- _process_signal
+
+    def system_shutdown(self) :
+        log.info(inspect.currentframe().f_code.co_name) 
+
+        # 시스템 셧다운
+        # 경고음
+        buzzer = self.buzzer
+        
+        for frq in range( 1, 6 + 1 ) : 
+            t = 1/frq
+            buzzer.beep(on_time=t, off_time=t/2, n = int(frq), background=False)
+            sleep( 1 )
+        pass
+
+        buzzer.beep(on_time=2, off_time=1, n = 1, background=False)
+
+        from subprocess import check_call
+
+        check_call(['sudo', 'poweroff'])
+    pass # system_shutdown
 
 pass # --IRRemote
 
@@ -277,9 +286,7 @@ if __name__ == '__main__':
 
     irremote.join()
 
-    robot.stop() 
-
-    GPIO.cleanup();
+    robot.stop()
 
     log.info( "Good bye!")
 pass

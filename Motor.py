@@ -59,6 +59,7 @@ class Motor:
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         for port in [ self.AIN1, self.AIN2, self.ENA, self.BIN1, self.BIN2, self.ENB ] : 
+            GPIO.setmode(GPIO.BCM)
             GPIO.cleanup(port)
         pass
     pass
@@ -87,6 +88,10 @@ class Motor:
             GPIO.output(ain1,GPIO.LOW)
             GPIO.output(ain2,GPIO.LOW)
         pass 
+    pass
+
+    def speed_down(self, dv) : # 속도 증가
+        self.speed_up( -dv )
     pass
 
     def speed_up(self, dv) : # 속도 증가
