@@ -135,11 +135,11 @@ class ObstacleSensor :
                 # 장애물이 있을 때
                 log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
 
-                turn_count += 1
+                self.turn_count += 1
 
                 robot.left()
 
-                if turn_count % 5 == 0 : 
+                if self.turn_count % 5 == 0 : 
                     sleep( 0.01 )
                     sleep( 0.02*random() )
                 pass
