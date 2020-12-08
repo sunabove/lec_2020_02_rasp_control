@@ -21,7 +21,7 @@ class ObstacleSensor :
 
         self.turn_count = 0
         self.then = time()
-        self.min_duration = 0.1
+        self.min_duration = 0.04
 
         self.start()
     pass
