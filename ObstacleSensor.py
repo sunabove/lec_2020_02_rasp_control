@@ -1,9 +1,9 @@
 # coding: utf-8
 
-import RPi.GPIO as GPIO, threading, signal, time, inspect
+import RPi.GPIO as GPIO, threading, signal,  inspect
 from gpiozero import Button
 from random import random
-from time import sleep
+from time import sleep, time()
 
 import logging as log
 log.basicConfig(
@@ -18,7 +18,10 @@ class ObstacleSensor :
 
     def __init__(self, robot):
         self.robot = robot
+
         self.turn_count = 0
+        self.then = time()
+        self.min_duration = 0.05
 
         self.start()
     pass
@@ -54,50 +57,61 @@ class ObstacleSensor :
     def left_pressed(self) :
         log.info(inspect.currentframe().f_code.co_name)
         # 왼쪽 장애물이 있을 때,
-
-        if self.robot.mode not in ( "left", "right" ) :
-            self.turn_count += 1
-
-            robot.left()
-
-            if self.turn_count % 5 == 0 : 
-                sleep( 0.01 )
-                sleep( 0.02*random() )
-            pass
-        pass
+        self.turn( "left" )
     pass
-
+    
     def left_released(self) :
         log.info(inspect.currentframe().f_code.co_name)
         # 오른쪽 장애물이 사라졌을 때,
 
-        if self.robot.mode is not "forward" : 
-            self.robot.forward()
-        pass
+        self.forward()
     pass
 
     def right_pressed(self) :
         log.info(inspect.currentframe().f_code.co_name)
         # 오르쪽 장애물이 있을 때
-        if self.robot.mode not in ( "left", "right" ) :
-
-            self.turn_count += 1
-
-            robot.left()
-
-            if self.turn_count % 5 == 0 : 
-                sleep( 0.01 )
-                sleep( 0.02*random() )
-            pass
-        pass
+        self.turn( "right" )
     pass
 
     def right_released(self) :
         log.info(inspect.currentframe().f_code.co_name)
         # 오르쪽 장애물이 사라졌을 때
 
-        if self.robot.mode is not "forward" : 
-            self.robot.forward()
+        self.forward()
+    pass
+
+    def turn(self, direction) :
+        log.info(inspect.currentframe().f_code.co_name)
+
+        now = time()
+
+        if now - self.then < self.min_duration :
+            pass
+        elif self.robot.mode not in ( "left", "right" ) :
+            self.then = now
+            
+            self.turn_count += 1
+
+            robot.left()
+
+            if self.turn_count % 5 == 0 : 
+                sleep( 0.01 )
+                sleep( 0.02*random() )
+            pass
+        pass
+    pass
+
+    def forward(self) : 
+        log.info(inspect.currentframe().f_code.co_name)
+
+        now = time()
+
+        if now - self.then < self.min_duration :
+            pass
+        elif self.robot.mode is not "forward" : 
+            self.then = now
+
+            self.robot.forward()            
         pass
     pass
 
