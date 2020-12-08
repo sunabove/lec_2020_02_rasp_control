@@ -239,6 +239,7 @@ if __name__=='__main__':
     
     sleep( 0.5 )
 
+    GPIO.setmode(GPIO.BCM)
     GPIO.cleanup()
 
     log.info( "Good bye!" )
