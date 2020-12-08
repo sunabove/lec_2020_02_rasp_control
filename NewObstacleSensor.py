@@ -19,13 +19,9 @@ class ObstacleSensor :
     def __init__(self, robot):
         self.robot = robot
 
+        self.event_no = 0 
         self.turn_count = 0
-        self.min_duration = 0.04
-
-        self.left_obstacle = 0 
-        self.right_obstacle = 0 
-        self.prev_state = 0 
-
+        self.prev_state = 0
         self.then = time()
 
         self.start()
@@ -36,86 +32,44 @@ class ObstacleSensor :
     pass
 
     def finish(self) :
-        self.left.close()
-        self.right.close()
+        log.info(inspect.currentframe().f_code.co_name)
+
+        self.robot.stop()
+
+        GPIO.setmode(GPIO.BCM)  # uses numbering outside circles
+        GPIO.cleanup( self.LEFT_GPIO )
+        GPIO.cleanup( self.RIGHT_GPIO )
     pass
 
     def join(self) :
-        self.finish()
+        pass
     pass
 
     def start(self):
         log.info(inspect.currentframe().f_code.co_name)
 
         GPIO.setmode(GPIO.BCM)  # uses numbering outside circles
-        GPIO.setup(  self.LEFT_GPIO, GPIO.IN, GPIO.PUD_UP) 
+        
+        GPIO.setup( self.LEFT_GPIO, GPIO.IN, GPIO.PUD_UP) 
         GPIO.setup( self.RIGHT_GPIO, GPIO.IN, GPIO.PUD_UP) 
-        GPIO.add_event_detect(17, GPIO.BOTH, callback=ir.pWidth)
 
-        self.left = Button( self.RIGHT_GPIO )
-        self.right = Button( self.LEFT_GPIO ) 
-
-        self.left.when_pressed = self.left_pressed
-        self.left.when_released = self.left_released
-
-        self.right.when_pressed = self.right_pressed
-        self.right.when_released = self.right_released
+        GPIO.add_event_detect( self.LEFT_GPIO, GPIO.BOTH, callback=self.event_detect) 
+        GPIO.add_event_detect( self.RIGHT_GPIO, GPIO.BOTH, callback=self.event_detect) 
 
         self.robot.forward()
     pass
 
-    def pWidth(self, pin):
-        self.pList.append(time.time()-self.timer)
-        self.timer = time.time()        
+    def event_detect(self, pin):
+        log.info(inspect.currentframe().f_code.co_name)
 
-        if self.decoding == False and self.running :
-            self.decoding = True
+        self.event_no += 1
 
-            self.thread = threading.Thread(name='self.pulse_checker',target=self.pulse_checker)
+        log.info( f"event_no = {self.event_no}, pin = {pin}" )
+        
+        if 0 :
+            self.thread = threading.Thread(name='self.pulse_checker', target=self.move)
             self.thread.start()
         return
-    pass
-
-    def left_pressed(self) :
-        log.info(inspect.currentframe().f_code.co_name)
-        # 왼쪽 장애물이 있을 때,
-        now = time()
-        if now - self.then < self.min_duration :
-            pass
-        else :
-            then = now
-            self.left_obstacle = 1
-
-            self.move()
-        pass
-    pass
-    
-    def left_released(self) :
-        log.info(inspect.currentframe().f_code.co_name)
-        # 오른쪽 장애물이 사라졌을 때,
-        now = time()
-        if now - self.then < self.min_duration :
-            pass
-        else :
-            then = now
-            self.left_obstacle = 0
-
-            self.move()
-        pass
-    pass
-
-    def right_pressed(self) :
-        log.info(inspect.currentframe().f_code.co_name)
-        # 오르쪽 장애물이 있을 때
-        now = time()
-        if now - self.then < self.min_duration :
-            pass
-        else :
-            then = now
-            self.right_obstacle = 1
-
-            self.move()
-        pass
     pass
 
     def right_released(self) :
@@ -135,8 +89,13 @@ class ObstacleSensor :
     def move(self) :
         log.info(inspect.currentframe().f_code.co_name)
 
-        left_obstacle = self.left_obstacle
-        right_obstacle = self.right_obstacle
+        now = time()
+        if now - self.then < 0.04 :
+            return 
+        pass
+
+        left_obstacle = GPIO.input( self.LEFT_GPIO ) == 0 
+        right_obstacle = GPIO.input( self.RIGHT_GPIO ) == 0 
 
         state = 2*left_obstacle + right_obstacle
 
@@ -144,6 +103,8 @@ class ObstacleSensor :
             # do nothing
             sleep( 0.01 ) 
         else :
+            self.then = now 
+
             if left_obstacle == 0 and right_obstacle == 0 :
                 # 장애물이 없을 때
                 #log.info( "forward")
