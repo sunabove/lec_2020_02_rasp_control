@@ -26,8 +26,8 @@ class Motor:
 
         self._min_speed = 10
 
-        self._speed_left  = 10  
-        self._speed_right = 10  
+        self._speed_left  = self._min_speed  
+        self._speed_right = self._min_speed  
 
         self.mode = "stop"
 

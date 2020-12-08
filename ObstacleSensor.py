@@ -3,7 +3,7 @@
 import RPi.GPIO as GPIO, threading, signal,  inspect
 from gpiozero import Button
 from random import random
-from time import sleep, time()
+from time import sleep, time
 
 import logging as log
 log.basicConfig(
@@ -21,7 +21,7 @@ class ObstacleSensor :
 
         self.turn_count = 0
         self.then = time()
-        self.min_duration = 0.05
+        self.min_duration = 0.1
 
         self.start()
     pass
@@ -88,16 +88,18 @@ class ObstacleSensor :
         if now - self.then < self.min_duration :
             pass
         elif self.robot.mode not in ( "left", "right" ) :
-            self.then = now
-            
             self.turn_count += 1
 
             robot.left()
+
+            sleep( 0.1 )
 
             if self.turn_count % 5 == 0 : 
                 sleep( 0.01 )
                 sleep( 0.02*random() )
             pass
+
+            self.then = time()
         pass
     pass
 
@@ -109,9 +111,9 @@ class ObstacleSensor :
         if now - self.then < self.min_duration :
             pass
         elif self.robot.mode is not "forward" : 
-            self.then = now
+            self.robot.forward()
 
-            self.robot.forward()            
+            self.then = time()
         pass
     pass
 
