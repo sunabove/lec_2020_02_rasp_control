@@ -123,8 +123,6 @@ class ObstacleSensor :
 
         state = 2*left_obstacle + right_obstacle
 
-        log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
-
         if state == self.prev_state :
             # do nothing
             sleep( 0.01 ) 
