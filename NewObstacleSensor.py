@@ -13,8 +13,8 @@ log.basicConfig(
 
 class ObstacleSensor : 
 
-    RIGHT_GPIO = 16   # 오른 쪽 센서 GPIO 번호
-    LEFT_GPIO = 19    # 왼쪽 센서 GPIO 번호 
+    LEFT_GPIO  = 19    # 왼 쪽 센서 GPIO 번호 
+    RIGHT_GPIO = 16    # 오른 쪽 센서 GPIO 번호    
 
     def __init__(self, robot):
         self.robot = robot
@@ -47,6 +47,11 @@ class ObstacleSensor :
     def start(self):
         log.info(inspect.currentframe().f_code.co_name)
 
+        GPIO.setmode(GPIO.BCM)  # uses numbering outside circles
+        GPIO.setup(  self.LEFT_GPIO, GPIO.IN, GPIO.PUD_UP) 
+        GPIO.setup( self.RIGHT_GPIO, GPIO.IN, GPIO.PUD_UP) 
+        GPIO.add_event_detect(17, GPIO.BOTH, callback=ir.pWidth)
+
         self.left = Button( self.RIGHT_GPIO )
         self.right = Button( self.LEFT_GPIO ) 
 
@@ -57,6 +62,18 @@ class ObstacleSensor :
         self.right.when_released = self.right_released
 
         self.robot.forward()
+    pass
+
+    def pWidth(self, pin):
+        self.pList.append(time.time()-self.timer)
+        self.timer = time.time()        
+
+        if self.decoding == False and self.running :
+            self.decoding = True
+
+            self.thread = threading.Thread(name='self.pulse_checker',target=self.pulse_checker)
+            self.thread.start()
+        return
     pass
 
     def left_pressed(self) :
