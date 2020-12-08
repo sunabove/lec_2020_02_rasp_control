@@ -137,6 +137,8 @@ class Motor:
     def backward(self, left=None, right=None):  # 후진
         log.info(inspect.currentframe().f_code.co_name)
         
+        self.mode = "backward"
+    
         if left is None : 
             left = self.get_speed()
             if left < self._min_speed : 
@@ -148,8 +150,6 @@ class Motor:
             right = left
         pass
 
-        self.mode = "backward"
-    
         self.setMotor( -left, -right )
     pass
 
