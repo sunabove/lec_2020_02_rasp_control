@@ -66,7 +66,7 @@ class ObstacleSensor :
 
         log.info( f"event_no = {self.event_no}, pin = {pin}" )
         
-        if 0 :
+        if True :
             self.thread = threading.Thread(name='self.pulse_checker', target=self.move)
             self.thread.start()
         return
@@ -99,7 +99,9 @@ class ObstacleSensor :
 
         state = 2*left_obstacle + right_obstacle
 
-        if state == self.prev_state :
+        log.info( f"state={state}, prev={self.prev_state}, LEFT={left_obstacle:d}, RIGHT={right_obstacle:d}" )
+
+        if state == self.prev_state : 
             # do nothing
             sleep( 0.01 ) 
         else :
@@ -111,8 +113,6 @@ class ObstacleSensor :
                 robot.forward()
             else :
                 # 장애물이 있을 때
-                log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
-
                 self.turn_count += 1
 
                 robot.left()
