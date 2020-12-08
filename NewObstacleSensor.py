@@ -20,8 +20,13 @@ class ObstacleSensor :
         self.robot = robot
 
         self.turn_count = 0
-        self.then = time()
         self.min_duration = 0.04
+
+        self.left_obstacle = 0 
+        self.right_obstacle = 0 
+        self.prev_state = 0 
+
+        self.then = time()
 
         self.start()
     pass
@@ -57,67 +62,84 @@ class ObstacleSensor :
     def left_pressed(self) :
         log.info(inspect.currentframe().f_code.co_name)
         # 왼쪽 장애물이 있을 때,
-        self.turn( "left" )
+        now = time()
+        if now - self.then < self.min_duration :
+            pass
+        else :
+            then = now
+            self.left_obstacle = 1
+        pass
     pass
     
     def left_released(self) :
         log.info(inspect.currentframe().f_code.co_name)
         # 오른쪽 장애물이 사라졌을 때,
-
-        self.forward()
+        now = time()
+        if now - self.then < self.min_duration :
+            pass
+        else :
+            then = now
+            self.left_obstacle = 0
+        pass
     pass
 
     def right_pressed(self) :
         log.info(inspect.currentframe().f_code.co_name)
         # 오르쪽 장애물이 있을 때
-        self.turn( "right" )
+        now = time()
+        if now - self.then < self.min_duration :
+            pass
+        else :
+            then = now
+            self.right_obstacle = 1
+        pass
     pass
 
     def right_released(self) :
         log.info(inspect.currentframe().f_code.co_name)
         # 오르쪽 장애물이 사라졌을 때
-
-        self.forward()
-    pass
-
-    def turn(self, direction) :
-        log.info(inspect.currentframe().f_code.co_name)
-
         now = time()
-
         if now - self.then < self.min_duration :
             pass
-        elif self.robot.mode not in ( "left", "right" ) :
-            self.turn_count += 1
-
-            robot.left()
-
-            sleep( 0.1 )
-
-            if self.turn_count % 5 == 0 : 
-                sleep( 0.01 )
-                sleep( 0.02*random() )
-            pass
-
-            self.then = time()
+        else :
+            then = now
+            self.right_obstacle = 0
         pass
     pass
 
-    def forward(self) : 
+    def move(self) :
         log.info(inspect.currentframe().f_code.co_name)
 
-        now = time()
+        left_obstacle = self.left_obstacle
+        right_obstacle = self.right_obstacle
 
-        if now - self.then < self.min_duration :
+        state = 2*left_obstacle + right_obstacle
+
+        if state == self.prev_state :
+            # do nothing
+            sleep( 0.01 ) 
+        else :
+            if left_obstacle == 0 and right_obstacle == 0 :
+                # 장애물이 없을 때
+                #log.info( "forward")
+                robot.forward()
+            else :
+                # 장애물이 있을 때
+                log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
+
+                turn_count += 1
+
+                robot.left()
+
+                if turn_count % 5 == 0 : 
+                    sleep( 0.01 )
+                    sleep( 0.02*random() )
+                pass
             pass
-        elif self.robot.mode is not "forward" : 
-            self.robot.forward()
 
-            sleep( 0.1 )
-
-            self.then = time()
+            self.prev_state = state
         pass
-    pass
+    pass 
 
 pass
 
