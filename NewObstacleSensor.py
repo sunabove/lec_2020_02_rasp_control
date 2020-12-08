@@ -68,6 +68,8 @@ class ObstacleSensor :
         else :
             then = now
             self.left_obstacle = 1
+
+            self.move()
         pass
     pass
     
@@ -80,6 +82,8 @@ class ObstacleSensor :
         else :
             then = now
             self.left_obstacle = 0
+
+            self.move()
         pass
     pass
 
@@ -92,6 +96,8 @@ class ObstacleSensor :
         else :
             then = now
             self.right_obstacle = 1
+
+            self.move()
         pass
     pass
 
@@ -104,6 +110,8 @@ class ObstacleSensor :
         else :
             then = now
             self.right_obstacle = 0
+
+            self.move()
         pass
     pass
 
@@ -114,6 +122,8 @@ class ObstacleSensor :
         right_obstacle = self.right_obstacle
 
         state = 2*left_obstacle + right_obstacle
+
+        log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
 
         if state == self.prev_state :
             # do nothing
