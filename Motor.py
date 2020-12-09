@@ -11,7 +11,9 @@ log.basicConfig(
 
 class Motor:
 
-    def __init__(self, ain1=12, ain2=13, ena=6, bin1=20, bin2=21, enb=26):
+    def __init__(self, ain1=12, ain2=13, ena=6, bin1=20, bin2=21, enb=26, debug=False):
+        self.debug = debug
+
         self.AIN1 = ain1; self.AIN2 = ain2; self.ENA = ena
         self.BIN1 = bin1; self.BIN2 = bin2; self.ENB = enb
         
@@ -76,20 +78,20 @@ class Motor:
         value = -100 if value < -100 else value 
 
         if value > 0 :
-            pwma.ChangeDutyCycle(value)
-
             GPIO.output(ain1,GPIO.LOW)
             GPIO.output(ain2,GPIO.HIGH)
-        elif value < 0 :
-            pwma.ChangeDutyCycle( - value)
 
+            pwma.ChangeDutyCycle(value)
+        elif value < 0 :
             GPIO.output(ain1,GPIO.HIGH)
             GPIO.output(ain2,GPIO.LOW)
+
+            pwma.ChangeDutyCycle( abs(value) )
         elif value == 0 :
-            pwma.ChangeDutyCycle( 0 )
-            
             GPIO.output(ain1,GPIO.LOW)
             GPIO.output(ain2,GPIO.LOW)
+
+            pwma.ChangeDutyCycle( 0 ) 
         pass 
     pass
 
@@ -118,85 +120,63 @@ class Motor:
         self.setMotor( left, right )
     pass # -- speed_up
 
-    def forward(self, left=None, right=None): # 전진
-        log.info(inspect.currentframe().f_code.co_name) 
+    def forward(self):
+        self.debug and log.info(inspect.currentframe().f_code.co_name)
 
-        if left is None : 
-            left = self._speed_left
-        pass 
-
-        if right is None :
-            right = left
-        pass
-
-        self.mode = "forward"
-
-        self.setMotor( left, right )
-    pass
-
-    def backward(self, left=None, right=None):  # 후진
-        log.info(inspect.currentframe().f_code.co_name)
-        
-        self.mode = "backward"
-    
-        if left is None : 
-            left = self._speed_left
-        pass 
-
-        if right is None :
-            right = left
-        pass
-
-        self.setMotor( -left, -right )
-    pass
-
-    def back(self, left=None, right=None): # 후진 
-        self.backward( left, right )
+        self.PWMA.ChangeDutyCycle(self.PA)
+        self.PWMB.ChangeDutyCycle(self.PB)
+        GPIO.output(self.AIN1,GPIO.LOW)
+        GPIO.output(self.AIN2,GPIO.HIGH)
+        GPIO.output(self.BIN1,GPIO.LOW)
+        GPIO.output(self.BIN2,GPIO.HIGH)
     pass
 
     def stop(self):
-        log.info(inspect.currentframe().f_code.co_name)
+        self.debug and log.info(inspect.currentframe().f_code.co_name)
 
-        self.stop_motor()
+        self.PWMA.ChangeDutyCycle(0)
+        self.PWMB.ChangeDutyCycle(0)
+        GPIO.output(self.AIN1,GPIO.LOW)
+        GPIO.output(self.AIN2,GPIO.LOW)
+        GPIO.output(self.BIN1,GPIO.LOW)
+        GPIO.output(self.BIN2,GPIO.LOW)
     pass
 
-    def stop_motor(self):
-        log.info(inspect.currentframe().f_code.co_name)
-
-        self.mode = "stop"
-
-        self._speed_left = 5
-        self._speed_right = 5
-
-        self.setMotor( 0, 0 )
+    def back(self) :
+        self.backward()
     pass
 
+    def backward(self):
+        self.debug and log.info(inspect.currentframe().f_code.co_name)
+
+        self.PWMA.ChangeDutyCycle(self.PA)
+        self.PWMB.ChangeDutyCycle(self.PB)
+        GPIO.output(self.AIN1,GPIO.HIGH)
+        GPIO.output(self.AIN2,GPIO.LOW)
+        GPIO.output(self.BIN1,GPIO.HIGH)
+        GPIO.output(self.BIN2,GPIO.LOW)
+    pass 
+        
     def left(self):
-        log.info(inspect.currentframe().f_code.co_name)
+        self.debug and log.info(inspect.currentframe().f_code.co_name)
 
-        self.mode = "left"
-
-        speed = self._speed_left
-
-        if speed < 5 :
-            speed = 5
-        pass
-
-        self.setMotor( - abs( speed ), abs( speed ) )
-    pass
+        self.PWMA.ChangeDutyCycle(30)
+        self.PWMB.ChangeDutyCycle(30)
+        GPIO.output(self.AIN1,GPIO.HIGH)
+        GPIO.output(self.AIN2,GPIO.LOW)
+        GPIO.output(self.BIN1,GPIO.LOW)
+        GPIO.output(self.BIN2,GPIO.HIGH)
+    pass 
 
     def right(self):
-        log.info(inspect.currentframe().f_code.co_name)
+        self.debug and log.info(inspect.currentframe().f_code.co_name)
 
-        self.mode = "right"
-        
-        speed = self._speed_left
-
-        if speed < 5 :
-            speed = 5
-        pass
-    
-        self.setMotor( abs( speed ), - abs( speed ) )
+        self.PWMA.ChangeDutyCycle(30)
+        self.PWMB.ChangeDutyCycle(30)
+        GPIO.output(self.AIN1,GPIO.LOW)
+        GPIO.output(self.AIN2,GPIO.HIGH)
+        GPIO.output(self.BIN1,GPIO.HIGH)
+        GPIO.output(self.BIN2,GPIO.LOW)
     pass
 
     def test_all(self, duration=3) :    
@@ -218,7 +198,7 @@ if __name__=='__main__':
 
     GPIO.setwarnings(False)
     
-    motor = Motor()
+    motor = Motor(debug=True)
 
     try:
         motor.test_all(duration=3)        
