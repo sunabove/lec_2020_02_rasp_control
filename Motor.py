@@ -123,6 +123,10 @@ class Motor:
         self.mode = "forward"
         min_speed = self.min_speed 
 
+        if left is not None and right is None :
+            right = left
+        pass
+
         self.PA = self.PA if left is None else left
         self.PB = self.PB if right is None else right
 
@@ -143,6 +147,10 @@ class Motor:
 
         self.mode = "backward"
         min_speed = self.min_speed
+
+        if left is not None and right is None :
+            right = left
+        pass
 
         self.PA = self.PA if left is None else left
         self.PB = self.PB if right is None else right

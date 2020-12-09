@@ -115,7 +115,7 @@ class ObstacleSensor :
             if left_obstacle == 0 and right_obstacle == 0 :
                 # 장애물이 없을 때
                 #log.info( "forward")
-                robot.forward()
+                robot.forward( 10 )
             else :
                 # 장애물이 있을 때
                 self.turn_count += 1
