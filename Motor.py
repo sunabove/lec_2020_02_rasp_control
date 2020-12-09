@@ -26,15 +26,15 @@ class Motor:
         self.PWMA = GPIO.PWM(ena, 500)
         self.PWMB = GPIO.PWM(enb, 500)
 
-        self._min_speed = 10
+        self.min_speed = 10
 
-        self._speed_left  = self._min_speed  
-        self._speed_right = self._min_speed  
+        self.PA = self.min_speed  
+        self.PB = self.min_speed  
 
         self.mode = "stop"
 
-        self.PWMA.start( self._speed_left )
-        self.PWMB.start( self._speed_right ) 
+        self.PWMA.start( self.PA )
+        self.PWMB.start( self.PA ) 
 
     pass
 
