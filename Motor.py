@@ -21,8 +21,8 @@ class Motor:
             GPIO.setup(port,GPIO.OUT)
         pass
 
-        self.PWMA = GPIO.PWM(ena,500)
-        self.PWMB = GPIO.PWM(enb,500)
+        self.PWMA = GPIO.PWM(ena, 500)
+        self.PWMB = GPIO.PWM(enb, 500)
 
         self._min_speed = 10
 
@@ -76,15 +76,18 @@ class Motor:
         value = -100 if value < -100 else value 
 
         if value > 0 :
+            pwma.ChangeDutyCycle(value)
+
             GPIO.output(ain1,GPIO.LOW)
             GPIO.output(ain2,GPIO.HIGH)
-            pwma.ChangeDutyCycle(value)
         elif value < 0 :
+            pwma.ChangeDutyCycle( - value)
+
             GPIO.output(ain1,GPIO.HIGH)
             GPIO.output(ain2,GPIO.LOW)
-            pwma.ChangeDutyCycle( - value)
-        else :
+        elif value == 0 :
             pwma.ChangeDutyCycle( 0 )
+            
             GPIO.output(ain1,GPIO.LOW)
             GPIO.output(ain2,GPIO.LOW)
         pass 
@@ -119,10 +122,7 @@ class Motor:
         log.info(inspect.currentframe().f_code.co_name) 
 
         if left is None : 
-            left = self.get_speed()
-            if left < self._min_speed : 
-                left = self._min_speed
-            pass
+            left = self._speed_left
         pass 
 
         if right is None :
@@ -140,11 +140,8 @@ class Motor:
         self.mode = "backward"
     
         if left is None : 
-            left = self.get_speed()
-            if left < self._min_speed : 
-                left = self._min_speed
-            pass
-        pass
+            left = self._speed_left
+        pass 
 
         if right is None :
             right = left
@@ -174,19 +171,12 @@ class Motor:
         self.setMotor( 0, 0 )
     pass
 
-    def get_speed(self) :
-        speed = sqrt( self._speed_left**2 + self._speed_right**2 )/2
-        speed = int( speed )
-
-        return speed
-    pass
-
     def left(self):
         log.info(inspect.currentframe().f_code.co_name)
 
         self.mode = "left"
 
-        speed = self.get_speed()
+        speed = self._speed_left
 
         if speed < 5 :
             speed = 5
@@ -199,7 +189,8 @@ class Motor:
         log.info(inspect.currentframe().f_code.co_name)
 
         self.mode = "right"
-        speed = self.get_speed()
+        
+        speed = self._speed_left
 
         if speed < 5 :
             speed = 5

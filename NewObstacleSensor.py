@@ -90,7 +90,12 @@ class ObstacleSensor :
         log.info(inspect.currentframe().f_code.co_name)
 
         now = time()
-        if now - self.then < 0.04 :
+        interval = 0.04
+        elapsed = now - self.then 
+        if elapsed < interval :
+            log.info( f"sleep({interval - elapsed})" )
+            sleep( interval - elapsed )
+            
             return 
         pass
 
@@ -135,9 +140,11 @@ if __name__ == '__main__':
 
     GPIO.setwarnings(False)
 
+    from AlphaBot2 import AlphaBot2 
     from Motor import Motor 
 
     robot = Motor()
+    #robot = AlphaBot2()
 
     obstacleSensor = ObstacleSensor( robot )
 
