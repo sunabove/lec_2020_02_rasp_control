@@ -26,7 +26,7 @@ class Motor:
         self.PWMA = GPIO.PWM(ena, 500)
         self.PWMB = GPIO.PWM(enb, 500)
 
-        self.min_speed = 10
+        self.min_speed = 5
 
         self.PA = self.min_speed  
         self.PB = self.min_speed  
@@ -66,88 +66,89 @@ class Motor:
         pass
     pass
 
-    def setMotor(self, left = 0, right =0):
-        self._speed_left = left
-        self._speed_right = right
-        self.setGPIO_PWM( self.AIN1, self.AIN2, self.PWMA, left )
-        self.setGPIO_PWM( self.BIN1, self.BIN2, self.PWMB, right )
-    pass
-
-    def setGPIO_PWM( self, ain1, ain2, pwma, value ) : 
-        value = 100 if value > 100 else value 
-        value = -100 if value < -100 else value 
-
-        if value > 0 :
-            GPIO.output(ain1,GPIO.LOW)
-            GPIO.output(ain2,GPIO.HIGH)
-
-            pwma.ChangeDutyCycle(value)
-        elif value < 0 :
-            GPIO.output(ain1,GPIO.HIGH)
-            GPIO.output(ain2,GPIO.LOW)
-
-            pwma.ChangeDutyCycle( abs(value) )
-        elif value == 0 :
-            GPIO.output(ain1,GPIO.LOW)
-            GPIO.output(ain2,GPIO.LOW)
-
-            pwma.ChangeDutyCycle( 0 ) 
-        pass 
-    pass
-
     def speed_down(self, dv = 5) : # 속도 증가
         self.speed_up( -dv )
     pass
 
     def speed_up(self, dv = 5) : # 속도 증가
 
-        left = self._speed_left + dv
+        mode = self.mode
+
+        log.info( f"before PA = {self.PA}, right={self.PB}, dv={dv}")
+
+        if mode == "stop" :
+            return 
+        pass
+
+        left = self.PA + dv
         
-        if left < -100 :
-            left = -100 
+        if left < 0 :
+            left = 0 
         elif left > 100 :
             left = 100
         pass
 
-        right = self._speed_right + dv
+        self.PA = left
+
+        right = self.PB + dv
         
-        if right < -100 :
-            right = -100 
+        if right < 0 :
+            right = 0 
         elif right > 100 :
             right = 100
         pass
 
-        self.setMotor( left, right )
+        self.PB = right
+
+        log.info( f"after PA = {self.PA}, right={self.PB}, dv={dv}")
+
+        if self.PA == 0 and self.PB == 0 :
+            self.stop()
+        elif mode =="forward" :
+            self.forward()
+        elif mode == "backward" :
+            self.backward()
+        elif mode == "left" :
+            self.left()
+        elif mode == "right" :
+            self.right()
+        elif mode == "stop" :
+            self.stop()
+        pass
     pass # -- speed_up
 
-    def forward(self):
+    def forward(self, left = None, right=None):
         self.debug and log.info(inspect.currentframe().f_code.co_name)
+
+        self.mode = "forward"
+        min_speed = self.min_speed 
+
+        self.PA = self.PA if left is None else left
+        self.PB = self.PB if right is None else right
+
+        self.PA = self.PA if self.PA > min_speed else min_speed 
+        self.PB = self.PB if self.PB > min_speed else min_speed  
 
         self.PWMA.ChangeDutyCycle(self.PA)
         self.PWMB.ChangeDutyCycle(self.PB)
+
         GPIO.output(self.AIN1,GPIO.LOW)
         GPIO.output(self.AIN2,GPIO.HIGH)
         GPIO.output(self.BIN1,GPIO.LOW)
         GPIO.output(self.BIN2,GPIO.HIGH)
     pass
 
-    def stop(self):
+    def backward(self, left=None, right=None):
         self.debug and log.info(inspect.currentframe().f_code.co_name)
 
-        self.PWMA.ChangeDutyCycle(0)
-        self.PWMB.ChangeDutyCycle(0)
-        GPIO.output(self.AIN1,GPIO.LOW)
-        GPIO.output(self.AIN2,GPIO.LOW)
-        GPIO.output(self.BIN1,GPIO.LOW)
-        GPIO.output(self.BIN2,GPIO.LOW)
-    pass
+        self.mode = "backward"
+        min_speed = self.min_speed
 
-    def back(self) :
-        self.backward()
-    pass
+        self.PA = self.PA if left is None else left
+        self.PB = self.PB if right is None else right
 
-    def backward(self):
-        self.debug and log.info(inspect.currentframe().f_code.co_name)
+        self.PA = self.PA if self.PA > min_speed else min_speed 
+        self.PB = self.PB if self.PB > min_speed else min_speed  
 
         self.PWMA.ChangeDutyCycle(self.PA)
         self.PWMB.ChangeDutyCycle(self.PB)
@@ -160,6 +161,8 @@ class Motor:
     def left(self):
         self.debug and log.info(inspect.currentframe().f_code.co_name)
 
+        self.mode = "left"
+
         self.PWMA.ChangeDutyCycle(30)
         self.PWMB.ChangeDutyCycle(30)
         GPIO.output(self.AIN1,GPIO.HIGH)
@@ -171,6 +174,8 @@ class Motor:
     def right(self):
         self.debug and log.info(inspect.currentframe().f_code.co_name)
 
+        self.mode = "right"
+
         self.PWMA.ChangeDutyCycle(30)
         self.PWMB.ChangeDutyCycle(30)
         GPIO.output(self.AIN1,GPIO.LOW)
@@ -178,6 +183,23 @@ class Motor:
         GPIO.output(self.BIN1,GPIO.HIGH)
         GPIO.output(self.BIN2,GPIO.LOW)
     pass
+
+    def stop(self):
+        self.debug and log.info(inspect.currentframe().f_code.co_name)
+
+        self.mode = "stop"
+
+        self.PWMA.ChangeDutyCycle(0)
+        self.PWMB.ChangeDutyCycle(0)
+        GPIO.output(self.AIN1,GPIO.LOW)
+        GPIO.output(self.AIN2,GPIO.LOW)
+        GPIO.output(self.BIN1,GPIO.LOW)
+        GPIO.output(self.BIN2,GPIO.LOW)
+    pass
+
+    def back(self) :
+        self.backward()
+    pass 
 
     def test_all(self, duration=3) :    
         self.forward()
