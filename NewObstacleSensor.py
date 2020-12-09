@@ -140,12 +140,10 @@ if __name__ == '__main__':
 
     GPIO.setwarnings(False)
 
-    from AlphaBot2 import AlphaBot2 
     from Motor import Motor 
 
     robot = Motor()
-    #robot = AlphaBot2()
-
+    
     obstacleSensor = ObstacleSensor( robot )
 
     def signal_handler(signal, frame):
