@@ -76,7 +76,8 @@ Ab.stop()
 print(TR.calibratedMin)
 print(TR.calibratedMax)
 
-while (GPIO.input(Button) != 0):
+#while (GPIO.input(Button) != 0):
+for i in range( 100 ) :
 	position,Sensors = TR.readLine()
 	print(position,Sensors)
 	time.sleep(0.05)
