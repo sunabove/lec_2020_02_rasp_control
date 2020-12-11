@@ -1,6 +1,9 @@
-import RPi.GPIO as GPIO, threading, signal, time, inspect
+# coding: utf-8
+
+import RPi.GPIO as GPIO, threading, signal,  inspect
+from gpiozero import Button
 from random import random
-from time import sleep
+from time import sleep, time
 
 import logging as log
 log.basicConfig(
@@ -10,29 +13,18 @@ log.basicConfig(
 
 class ObstacleSensor : 
 
-    RIGHT_GPIO = 16   # 오른 쪽 센서 GPIO 번호
-    LEFT_GPIO = 19    # 왼쪽 센서 GPIO 번호 
+    LEFT_GPIO  = 19    # 왼 쪽 센서 GPIO 번호 
+    RIGHT_GPIO = 16    # 오른 쪽 센서 GPIO 번호    
 
-    def __init__(self, robot) : 
-        self.robot = robot 
+    def __init__(self, robot):
+        self.robot = robot
 
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup( self.RIGHT_GPIO, GPIO.IN, GPIO.PUD_UP)
-        GPIO.setup( self.LEFT_GPIO, GPIO.IN, GPIO.PUD_UP)
+        self.event_no = 0 
+        self.turn_count = 0
+        self.prev_state = 0
+        self.then = time()
 
-        self._repeat_cnt = 0 
-
-        self._running = False 
-
-        self._thread = threading.Thread(target=self._process_signal, args=[] )
-        self._thread.start()
-    pass
-
-    def join(self) :
-        _thread = self._thread 
-        if _thread :
-            _thread.join()
-        pass
+        self.start()
     pass
 
     def __del__(self):
@@ -40,89 +32,107 @@ class ObstacleSensor :
     pass
 
     def finish(self) :
-        self._running = False 
-        _thread = self._thread 
-        if _thread is not None :
-            _thread.join()
+        log.info(inspect.currentframe().f_code.co_name)
 
-            self._thread = None 
+        self.robot.stop()
+
+        GPIO.setmode(GPIO.BCM)  # uses numbering outside circles
+        GPIO.cleanup( self.LEFT_GPIO )
+        GPIO.cleanup( self.RIGHT_GPIO )
+    pass
+
+    def join(self) :
         pass
+    pass
 
-        GPIO.setmode(GPIO.BCM)
-        GPIO.cleanup( self.RIGHT_GPIO ) 
-        GPIO.cleanup( self.LEFT_GPIO ) 
-    pass # -- finish 
+    def start(self):
+        log.info(inspect.currentframe().f_code.co_name)
 
-    def _process_signal(self) :
-        try:
-            self._process_signal_imp()
-        except Exception as e :
-            self._running = False 
-            self._thread = None 
-
-            log.info( e )
-        finally:
-            pass
-        pass
-    pass # -- process_signal
-
-    def _process_signal_imp(self) :
-        self._running = True
-
-        robot = self.robot
+        GPIO.setmode(GPIO.BCM)  # uses numbering outside circles
         
-        then = time.time()        
+        GPIO.setup( self.LEFT_GPIO, GPIO.IN, GPIO.PUD_UP) 
+        GPIO.setup( self.RIGHT_GPIO, GPIO.IN, GPIO.PUD_UP) 
+
+        GPIO.add_event_detect( self.LEFT_GPIO, GPIO.BOTH, callback=self.event_detect) 
+        GPIO.add_event_detect( self.RIGHT_GPIO, GPIO.BOTH, callback=self.event_detect) 
+
+        self.robot.forward()
+    pass
+
+    def event_detect(self, pin):
+        log.info(inspect.currentframe().f_code.co_name)
+
+        self.event_no += 1
+
+        log.info( f"event_no = {self.event_no}, pin = {pin}" )
+        
+        if True :
+            self.thread = threading.Thread(name='self.pulse_checker', target=self.move)
+            self.thread.start()
+        return
+    pass
+
+    def right_released(self) :
+        log.info(inspect.currentframe().f_code.co_name)
+        # 오르쪽 장애물이 사라졌을 때
+        now = time()
+        if now - self.then < self.min_duration :
+            pass
+        else :
+            then = now
+            self.right_obstacle = 0
+
+            self.move()
+        pass
+    pass
+
+    def move(self) :
+        log.info(inspect.currentframe().f_code.co_name)
+
+        now = time()
         interval = 0.04
-        prev_state = -1 # 이전 상태 
+        elapsed = now - self.then 
+        if elapsed < interval :
+            log.info( f"sleep({interval - elapsed})" )
+            sleep( interval - elapsed )
+            
+            return 
+        pass
 
-        turn_count = 0 
+        left_obstacle = GPIO.input( self.LEFT_GPIO ) == 0 
+        right_obstacle = GPIO.input( self.RIGHT_GPIO ) == 0 
 
-        while self._running :
-            now = time.time()
-            elapsed = now - then             
+        state = 2*left_obstacle + right_obstacle
 
-            if elapsed < interval : 
-                sleep( interval - elapsed )
+        log.info( f"state={state}, prev={self.prev_state}, LEFT={left_obstacle:d}, RIGHT={right_obstacle:d}" )
+
+        if state == self.prev_state : 
+            # do nothing
+            sleep( 0.01 ) 
+        else :
+            self.then = now 
+
+            if left_obstacle == 0 and right_obstacle == 0 :
+                # 장애물이 없을 때
+                #log.info( "forward")
+                robot.forward( 10 )
             else :
-                then = now 
+                # 장애물이 있을 때
+                self.turn_count += 1
 
-                left_obstacle = GPIO.input( self.LEFT_GPIO ) == 0 
-                right_obstacle = GPIO.input( self.RIGHT_GPIO ) == 0 
+                robot.left()
 
-                state = 2*left_obstacle + right_obstacle
-
-                if state == prev_state :
-                    # do nothing
-                    sleep( 0.01 ) 
-                else :
-                    if left_obstacle == 0 and right_obstacle == 0 :
-                        # 장애물이 없을 때
-                        #log.info( "forward")
-                        robot.forward()
-                    else :
-                        # 장애물이 있을 때
-                        log.info( f"LEFT = {left_obstacle:d}, RIGHT = {right_obstacle:d}" )
-
-                        turn_count += 1
-
-                        robot.left()
-
-                        if turn_count % 5 == 0 : 
-                            sleep( 0.01 )
-                            sleep( 0.02*random() )
-                        pass
-                    pass
-
-                    prev_state = state
+                if self.turn_count % 5 == 0 : 
+                    sleep( 0.01 )
+                    sleep( 0.02*random() )
                 pass
             pass
-        pass  
 
-        self._running = False 
-        self._thread = None 
-    pass # -- _process_signal_imp
+            self.prev_state = state
+        pass
+    pass 
 
-pass # --ObstacleSensor
+pass
 
 if __name__ == '__main__':
     log.info( "Hello..." )
@@ -130,11 +140,10 @@ if __name__ == '__main__':
 
     GPIO.setwarnings(False)
 
-    from AlphaBot2 import AlphaBot2 
     from Motor import Motor 
 
-    robot = AlphaBot2()
-
+    robot = Motor()
+    
     obstacleSensor = ObstacleSensor( robot )
 
     def signal_handler(signal, frame):
@@ -145,16 +154,19 @@ if __name__ == '__main__':
         obstacleSensor.finish()
 
         sleep( 0.5 ) 
+
+        import sys
+        sys.exit( 0 )
     pass
 
     import signal
     signal.signal(signal.SIGINT, signal_handler)
 
-    obstacleSensor.join()
+    signal.pause()
 
-    robot.stop() 
-
+    GPIO.setmode(GPIO.BCM)
     GPIO.cleanup();
 
     log.info( "Good bye!")
 pass
+
