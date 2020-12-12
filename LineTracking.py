@@ -138,7 +138,7 @@ while True :
         '''
         power_difference = proportional/30  + integral/10000 + derivative*2;  
 
-        print( int(position), power_difference)
+        log.info( f"{position:d}, {power_difference}" )
 
         power = maximum - abs( power_difference )
         power = min( 30, power )
