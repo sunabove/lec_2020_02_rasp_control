@@ -10,7 +10,9 @@ log.basicConfig(
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
     )
 
-class IRSensor :    
+class IRSensor :
+
+    GPIO_NO = 17
 
     def __init__(self):        
 
@@ -28,6 +30,14 @@ class IRSensor :
 
         self.running = True 
         self.thread = False
+
+        self.set_verbose()
+
+        GPIO.setwarnings(False)
+
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.GPIO_NO,GPIO.IN)
+        GPIO.add_event_detect(17,GPIO.BOTH,callback=self.pWidth)    
     pass
 
     def __del__(self):
@@ -37,6 +47,9 @@ class IRSensor :
         if thread is not None :
             thread.join()
         pass
+
+        GPIO.setmode(GPIO.BCM)
+        GPIO.cleanup(16)
     pass
 
     def pWidth(self, pin):
@@ -73,10 +86,7 @@ class IRSensor :
         if len(self.pList) > self.maxPulseListLength:
             decode = self.decode_pulse(self.pList)
             self.lastIRCode = decode
-        elif len(self.pList) < 10:
-            # if the length of self.pList is less than 10
-            # assume repeat code found
-        
+        elif len(self.pList) < 10:        
             if self.repeatCodeOn == True:
                 decode = self.lastIRCode
             else:
@@ -91,20 +101,17 @@ class IRSensor :
         self.pList = []
         self.decoding = False
 
-        if self.callback != None and self.running :
-            self.callback(decode)
+        if self.callback is not None and self.running :
+            self.callback( decode )
         pass
         
         return
     pass
 
-    def decode_pulse(self,pList):
+    def decode_pulse(self, pList):
 
         bitList = []
         sIndex = -1
-
-        # convert the timespans in seconds to milli-seconds
-        # look for the start of the IR remote signal
         
         for p in range(0,len(pList)):
             try:
@@ -122,19 +129,15 @@ class IRSensor :
             pass
         pass
 
-        # if no acceptable start is found return -1
-
         if sIndex == -1:
             return -1
-
-        if sIndex+1 >= len(pList):
+        elif sIndex+1 >= len(pList):
+            return -1        
+        elif (pList[sIndex]<4 or pList[sIndex]>11):
             return -1
-        
-        if (pList[sIndex]<4 or pList[sIndex]>11):
+        elif (pList[sIndex+1]<2 or pList[sIndex+1]>6):
             return -1
-
-        if (pList[sIndex+1]<2 or pList[sIndex+1]>6):
-            return -1
+        pass
 
         for i in range(sIndex+2,len(pList),2):
             if i+1 < len(pList):
@@ -207,59 +210,48 @@ class IRSensor :
         return
     pass
 
+    def remote_callback(self, code):
+        log.info( f"code = {hex(code)}" )
+
+        if code == 0x10EFD827:
+            log.info("Power")
+        elif code == 0x10EFF807:
+            log.info('A')
+        elif code == 0x10EF7887:
+            log.info('B')
+        elif code == 0x10EF58A7:
+            log.info('C')
+        elif code == 0x10EFA05F:
+            log.info('Up Arrow')
+        elif code == 0x10EF00FF:
+            log.info('Down Arrow')
+        elif code == 0x10EF10EF:
+            log.info('Left Arrow')
+        elif code == 0x10EF807F:
+            log.info('Right Arrow')
+        elif code == 0x10EF20DF:
+            log.info('Select')
+        pass 
+    pass
+
 pass
 
 if __name__ == "__main__":
 
-    def remote_callback(code):
-        print( f"code = {hex(code)}" )
-
-        if code == 0x10EFD827:
-            print("Power")
-        elif code == 0x10EFF807:
-            print('A')
-        elif code == 0x10EF7887:
-            print('B')
-        elif code == 0x10EF58A7:
-            print('C')
-        elif code == 0x10EFA05F:
-            print('Up Arrow')
-        elif code == 0x10EF00FF:
-            print('Down Arrow')
-        elif code == 0x10EF10EF:
-            print('Left Arrow')
-        elif code == 0x10EF807F:
-            print('Right Arrow')
-        elif code == 0x10EF20DF:
-            print('Select')
-        else:
-            print('.')  # unknown code
-        pass
-
-        return
-    pass
-
     ir = IRSensor( )  
             
-    GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.BCM)  # uses numbering outside circles
-    GPIO.setup(17,GPIO.IN)   # set pin 16 to input
-    GPIO.add_event_detect(17,GPIO.BOTH,callback=ir.pWidth)
-
-    ir.set_verbose()
-    print('Starting IR remote sensing using DECODE function')
+    log.info('Starting IR remote sensing using DECODE function')
 
     time.sleep(5)
-    print('Setting up callback')
+    log.info('Setting up callback')
+    
     ir.set_verbose(False)
-    ir.set_callback(remote_callback)
+    ir.set_callback( ir.remote_callback )
     ir.set_repeat(True)
 
     input( "Enter to quit..." )
 
-    print('Removing callback and cleaning up GPIO')
-    ir.remove_callback()
-    GPIO.setmode(GPIO.BCM)
-    GPIO.cleanup(16)
+    log.info('Removing callback and cleaning up GPIO')
+    ir.remove_callback() 
 
 pass # -- main
