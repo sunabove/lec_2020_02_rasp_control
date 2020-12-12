@@ -88,14 +88,13 @@ if do_calibrate :
     print(TR.calibratedMax)
 pass
 
-LINE = "#"*40
+LINE = "#"*80
 
 while GPIO.input(Button) :
     position, sensors = TR.readLine()
     
     print( LINE )
-    print( f"Press the Joystick Button to start tracking a line : {position:.0f}, {sensors}" )
-    print( LINE )
+    print( f"Press the Joystick Button to start : {position:.0f}, {sensors}" ) 
 
     time.sleep(2)
 pass
