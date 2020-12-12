@@ -20,9 +20,6 @@ LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
 LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)    
 
-maximum = 100
-maximum = 50
-
 j = 0
 integral = 0
 last_proportional = 0
@@ -63,7 +60,7 @@ time.sleep(0.5)
 
 speed = 10
 
-do_calibrate = False 
+do_calibrate = True 
 
 if do_calibrate : 
     for i in range(0, 10):
@@ -95,15 +92,17 @@ pass
 
 ab.forward()
 
+maximum = 100
+
 while True:
     position, sensors = TR.readLine()
     #print(position)
     #if(sensors[0] > 900 and sensors[1] >900 and sensors[2] >900 and sensors[3] >900 and sensors[4] >900 ):
     if all( x > 900 for x in sensors ) :
         print( "stop area" )
-        #ab.setPWMA(0)
-        #ab.setPWMB(0)
-        ab.stop()
+        ab.setPWMA(0)
+        ab.setPWMB(0)
+        #ab.stop()
     else:
         # The "proportional" term should be 0 when we are on the line.
         proportional = position - 2000
@@ -132,7 +131,7 @@ while True:
             power_difference = - maximum
         pass
 
-        print(position, power_difference)
+        print( int(position), power_difference)
 
         if power_difference < 0 :
             ab.setPWMA(maximum + power_difference)

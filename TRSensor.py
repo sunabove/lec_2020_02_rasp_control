@@ -10,6 +10,7 @@ DataOut = 23
 Button = 7
 
 class TRSensor(object):
+    
     def __init__(self,numSensors = 5):
         self.numSensors = numSensors
         self.calibratedMin = [0] * self.numSensors
