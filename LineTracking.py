@@ -94,9 +94,7 @@ while GPIO.input(Button) :
     position, sensors = TR.readLine()
     
     print( LINE )
-    print( int(position), sensors)
-    print( LINE )    
-    print( "Press Joystick Button To track a line " )
+    print( f"Press Joystick Button To track a line, {position:d}, {sensors}" )
     print( LINE )
 
     time.sleep(0.05)
@@ -142,7 +140,7 @@ while True :
 
         power = maximum - abs( power_difference )
         power = min( 30, power )
-        power = max( -30, power )
+        power = max( 0, power )
 
         if power_difference < 0 : 
             ab.setPWMA( power )
