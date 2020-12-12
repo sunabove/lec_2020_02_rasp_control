@@ -94,7 +94,7 @@ while GPIO.input(Button) :
     position, sensors = TR.readLine()
     
     print( LINE )
-    print( f"Press the Joystick Button to start tracking a line : {position:d}, {sensors}" )
+    print( f"Press the Joystick Button to start tracking a line : {position:.0f}, {sensors}" )
     print( LINE )
 
     time.sleep(0.05)
@@ -136,7 +136,7 @@ while True :
         '''
         power_difference = proportional/30  + integral/10000 + derivative*2;  
 
-        log.info( f"{position:d}, {power_difference}" )
+        log.info( f"{position:.0f}, {power_difference}" )
 
         power = maximum - abs( power_difference )
         power = min( 30, power )
