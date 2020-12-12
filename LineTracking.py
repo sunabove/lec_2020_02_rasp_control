@@ -92,11 +92,11 @@ pass
 
 ab.forward()
 
-maximum = 100
+maximum = 60
 
 while True:
     position, sensors = TR.readLine()
-    #print(position)
+    print( sensors )
     #if(sensors[0] > 900 and sensors[1] >900 and sensors[2] >900 and sensors[3] >900 and sensors[4] >900 ):
     if all( x > 900 for x in sensors ) :
         print( "stop area" )
@@ -140,6 +140,7 @@ while True:
             ab.setPWMA(maximum);
             ab.setPWMB(maximum - power_difference)
         pass
+    pass
         
     for i in range(0,strip.numPixels()):
         strip.setPixelColor(i, Wheel(int((i * 256 / strip.numPixels()) + j) & 255))
