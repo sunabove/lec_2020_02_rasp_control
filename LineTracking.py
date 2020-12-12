@@ -53,49 +53,57 @@ strip.setPixelColor(3, Color(100, 100, 0))     #Yellow
 strip.show()
 
 TR = TRSensor()
-Ab = AlphaBot2()
+ab = AlphaBot2()
 
-Ab.stop()
+ab.stop()
 
 print("Line follow Example")
 
 time.sleep(0.5)
 
 speed = 10
-for i in range(0, 10):
-    if(i<25 or i>= 75):
-        Ab.right()
-        Ab.setPWMA(speed)
-        Ab.setPWMB(speed)
-    else:
-        Ab.left()
-        Ab.setPWMA(speed)
-        Ab.setPWMB(speed)
+
+do_calibrate = False 
+
+if do_calibrate : 
+    for i in range(0, 10):
+        if(i<25 or i>= 75):
+            ab.right()
+            ab.setPWMA(speed)
+            ab.setPWMB(speed)
+        else:
+            ab.left()
+            ab.setPWMA(speed)
+            ab.setPWMB(speed)
+        pass
+
+        TR.calibrate()
     pass
 
-    TR.calibrate()
+    ab.stop()
+
+    print(TR.calibratedMin)
+    print(TR.calibratedMax)
 pass
 
-Ab.stop()
-
-print(TR.calibratedMin)
-print(TR.calibratedMax)
-
 #while (GPIO.input(Button) != 0):
-for i in range( 100 ) :
+for i in range( 10 ) :
     position, sensors = TR.readLine()
-    print(position, sensors)
+    print( int(position), sensors)
     time.sleep(0.05)
 pass
 
-Ab.forward()
+ab.forward()
 
 while True:
     position, sensors = TR.readLine()
     #print(position)
-    if(sensors[0] >900 and sensors[1] >900 and sensors[2] >900 and sensors[3] >900 and sensors[4] >900):
-        Ab.setPWMA(0)
-        Ab.setPWMB(0)
+    #if(sensors[0] > 900 and sensors[1] >900 and sensors[2] >900 and sensors[3] >900 and sensors[4] >900 ):
+    if all( x > 900 for x in sensors ) :
+        print( "stop area" )
+        #ab.setPWMA(0)
+        #ab.setPWMB(0)
+        ab.stop()
     else:
         # The "proportional" term should be 0 when we are on the line.
         proportional = position - 2000
@@ -124,14 +132,14 @@ while True:
             power_difference = - maximum
         pass
 
-        print(position,power_difference)
+        print(position, power_difference)
 
-        if (power_difference < 0):
-            Ab.setPWMA(maximum + power_difference)
-            Ab.setPWMB(maximum);
+        if power_difference < 0 :
+            ab.setPWMA(maximum + power_difference)
+            ab.setPWMB(maximum);
         else:
-            Ab.setPWMA(maximum);
-            Ab.setPWMB(maximum - power_difference)
+            ab.setPWMA(maximum);
+            ab.setPWMB(maximum - power_difference)
         pass
         
     for i in range(0,strip.numPixels()):
