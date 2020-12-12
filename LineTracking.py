@@ -28,7 +28,6 @@ LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
 LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)    
 
-j = 0
 integral = 0
 last_proportional = 0
 
@@ -49,12 +48,13 @@ pass
 
 # Create NeoPixel object with appropriate configuration.
 strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
+
 # Intialize the library (must be called once before other functions).
 strip.begin()
-strip.setPixelColor(0, Color(100, 0, 0))       #Red
-strip.setPixelColor(1, Color(0, 100, 0))       #Blue
-strip.setPixelColor(2, Color(0, 0, 100))       #Green
-strip.setPixelColor(3, Color(100, 100, 0))     #Yellow
+strip.setPixelColor(0, Color(0, 0, 0))       #Red
+strip.setPixelColor(1, Color(0, 0, 0))       #Blue
+strip.setPixelColor(2, Color(0, 0, 0))       #Green
+strip.setPixelColor(3, Color(0, 0, 0))     #Yellow
 strip.show()
 
 TR = TRSensor()
@@ -155,17 +155,5 @@ while True :
         log.info( f"left = {left}, right = {right}" )
     pass
         
-    for i in range(0,strip.numPixels()):
-        strip.setPixelColor(i, Wheel(int((i * 256 / strip.numPixels()) + j) & 255))
-    pass
-
-    strip.show();
-    j += 1
-
-    if(j > 256*4): 
-        j= 0
-    pass
-
     sleep( 0.02)
-
 pass
