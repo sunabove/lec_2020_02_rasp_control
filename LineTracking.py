@@ -94,7 +94,7 @@ pass
 LINE = "#"*80
 
 idx = 0 
-while GPIO.input(Button) and idx < 10 :
+while GPIO.input(Button) and idx < 3 :
     idx += 1
     position, sensors = TR.readLine()
     
@@ -111,7 +111,8 @@ maximum = 20
 
 while True :
     position, sensors = TR.readLine()
-    log.info( sensors )
+    
+    #log.info( sensors )
     
     if all( x > 900 for x in sensors ) :
         log.info( "Stop Area" )
