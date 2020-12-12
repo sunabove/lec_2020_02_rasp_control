@@ -1,10 +1,13 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 import RPi.GPIO as GPIO
+import time
+
 from AlphaBot2 import AlphaBot2
 from rpi_ws281x import Adafruit_NeoPixel, Color
 from TRSensor import TRSensor
-import time
+from time import sleep
+
 import logging as log
 log.basicConfig(
     format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
@@ -90,7 +93,9 @@ pass
 
 LINE = "#"*80
 
-while GPIO.input(Button) :
+idx = 0 
+while GPIO.input(Button) and idx < 10 :
+    idx += 1
     position, sensors = TR.readLine()
     
     print( LINE )
