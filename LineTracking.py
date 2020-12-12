@@ -97,7 +97,7 @@ while GPIO.input(Button) :
     print( f"Press the Joystick Button to start tracking a line : {position:.0f}, {sensors}" )
     print( LINE )
 
-    time.sleep(0.05)
+    time.sleep(2)
 pass
 
 ab.forward()
