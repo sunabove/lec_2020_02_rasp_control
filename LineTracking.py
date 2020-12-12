@@ -135,19 +135,19 @@ while True :
         '''
         power_difference = proportional/30  + integral/10000 + derivative*2;  
 
-        log.info( f"{position:.0f}, {power_difference}" )
+        #log.info( f"{position:.0f}, {power_difference}" )
 
         power = maximum - abs( power_difference )
         power = min( 30, power )
         power = max( 0, power )
 
-        if power_difference < 0 : 
-            ab.setPWMA( power )
-            ab.setPWMB( maximum )
-        else :
-            ab.setPWMA( maximum )
-            ab.setPWMB( power )
-        pass
+        left = power if power_difference < 0 else maximum
+        right = maximum if power_difference < 0 else power 
+
+        ab.setPWMA( left )
+        ab.setPWMB( right )
+
+        log.info( f"left = {left}, right = {right}" )
     pass
         
     for i in range(0,strip.numPixels()):
@@ -160,5 +160,7 @@ while True :
     if(j > 256*4): 
         j= 0
     pass
+
+    sleep( 0.02)
 
 pass
