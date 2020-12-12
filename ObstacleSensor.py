@@ -155,6 +155,9 @@ if __name__ == '__main__':
 
         sleep( 0.5 ) 
 
+        GPIO.setmode(GPIO.BCM)
+        GPIO.cleanup();
+
         import sys
         sys.exit( 0 )
     pass
@@ -162,10 +165,7 @@ if __name__ == '__main__':
     import signal
     signal.signal(signal.SIGINT, signal_handler)
 
-    signal.pause()
-
-    GPIO.setmode(GPIO.BCM)
-    GPIO.cleanup();
+    input( "Enter to quit......" )
 
     log.info( "Good bye!")
 pass
