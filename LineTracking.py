@@ -94,7 +94,7 @@ while GPIO.input(Button) :
     position, sensors = TR.readLine()
     
     print( LINE )
-    print( f"Press Joystick Button To track a line, {position:d}, {sensors}" )
+    print( f"Press the Joystick Button to start tracking a line : {position:d}, {sensors}" )
     print( LINE )
 
     time.sleep(0.05)
