@@ -106,12 +106,11 @@ pass
 
 ab.forward()
 
-maximum = 60
-maximum = 20
+maximum = 40
 
 while True :
     position, sensors = TR.readLine()
-    
+
     #log.info( sensors )
     
     if all( x > 900 for x in sensors ) :
