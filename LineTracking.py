@@ -31,7 +31,7 @@ LED_INVERT     = False   # True to invert the signal (when using NPN transistor 
 integral = 0
 last_proportional = 0
 
-def Wheel(pos):
+def wheel(pos):
     pos = int( pos )
     
     # """Generate rainbow colors across 0-255 positions."""
@@ -51,11 +51,11 @@ strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, 
 
 # Intialize the library (must be called once before other functions).
 strip.begin()
-strip.setPixelColor(0, Color(0, 0, 0))       #Red
-strip.setPixelColor(1, Color(0, 0, 0))       #Blue
-strip.setPixelColor(2, Color(0, 0, 0))       #Green
-strip.setPixelColor(3, Color(0, 0, 0))     #Yellow
-strip.show()
+
+for i in range(strip.numPixels()): 
+    strip.setPixelColor(i, Color(0, 0, 0)) 
+    strip.show()
+pass 
 
 TR = TRSensor()
 ab = AlphaBot2()
