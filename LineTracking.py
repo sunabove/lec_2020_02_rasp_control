@@ -20,11 +20,11 @@ LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
 LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)    
 
-maximum = 100;
-maximum = 50;
+maximum = 100
+maximum = 50
 
 j = 0
-integral = 0;
+integral = 0
 last_proportional = 0
 
 def Wheel(pos):
@@ -61,15 +61,16 @@ print("Line follow Example")
 
 time.sleep(0.5)
 
+speed = 10
 for i in range(0, 10):
     if(i<25 or i>= 75):
         Ab.right()
-        Ab.setPWMA(30)
-        Ab.setPWMB(30)
+        Ab.setPWMA(speed)
+        Ab.setPWMB(speed)
     else:
         Ab.left()
-        Ab.setPWMA(30)
-        Ab.setPWMB(30)
+        Ab.setPWMA(speed)
+        Ab.setPWMB(speed)
     pass
 
     TR.calibrate()
@@ -82,19 +83,19 @@ print(TR.calibratedMax)
 
 #while (GPIO.input(Button) != 0):
 for i in range( 100 ) :
-    position,Sensors = TR.readLine()
-    print(position,Sensors)
+    position, sensors = TR.readLine()
+    print(position, sensors)
     time.sleep(0.05)
 pass
 
 Ab.forward()
 
 while True:
-    position,Sensors = TR.readLine()
+    position, sensors = TR.readLine()
     #print(position)
-    if(Sensors[0] >900 and Sensors[1] >900 and Sensors[2] >900 and Sensors[3] >900 and Sensors[4] >900):
+    if(sensors[0] >900 and sensors[1] >900 and sensors[2] >900 and sensors[3] >900 and sensors[4] >900):
         Ab.setPWMA(0)
-        Ab.setPWMB(0);
+        Ab.setPWMB(0)
     else:
         # The "proportional" term should be 0 when we are on the line.
         proportional = position - 2000
