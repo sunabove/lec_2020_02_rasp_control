@@ -5,6 +5,11 @@ from AlphaBot2 import AlphaBot2
 from rpi_ws281x import Adafruit_NeoPixel, Color
 from TRSensor import TRSensor
 import time
+import logging as log
+log.basicConfig(
+    format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
+    datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
+    )
 
 Button = 7
 
@@ -54,7 +59,7 @@ ab = AlphaBot2()
 
 ab.stop()
 
-print("Line follow Example")
+log.info("Line follow Example")
 
 time.sleep(0.5)
 
@@ -83,23 +88,31 @@ if do_calibrate :
     print(TR.calibratedMax)
 pass
 
-#while (GPIO.input(Button) != 0):
-for i in range( 10 ) :
+LINE = "#"*40
+
+while GPIO.input(Button) :
     position, sensors = TR.readLine()
+    
+    print( LINE )
     print( int(position), sensors)
+    print( LINE )    
+    print( "Press Joystick Button To track a line " )
+    print( LINE )
+
     time.sleep(0.05)
 pass
 
 ab.forward()
 
 maximum = 60
+maximum = 20
 
-while True:
+while True :
     position, sensors = TR.readLine()
-    print( sensors )
-    #if(sensors[0] > 900 and sensors[1] >900 and sensors[2] >900 and sensors[3] >900 and sensors[4] >900 ):
+    log.info( sensors )
+    
     if all( x > 900 for x in sensors ) :
-        print( "stop area" )
+        log.info( "Stop Area" )
         ab.setPWMA(0)
         ab.setPWMB(0)
         #ab.stop()
@@ -125,20 +138,18 @@ while True:
         '''
         power_difference = proportional/30  + integral/10000 + derivative*2;  
 
-        if (power_difference > maximum):
-            power_difference = maximum
-        elif (power_difference < - maximum):
-            power_difference = - maximum
-        pass
-
         print( int(position), power_difference)
 
-        if power_difference < 0 :
-            ab.setPWMA(maximum + power_difference)
-            ab.setPWMB(maximum);
-        else:
-            ab.setPWMA(maximum);
-            ab.setPWMB(maximum - power_difference)
+        power = maximum - abs( power_difference )
+        power = min( 30, power )
+        power = max( -30, power )
+
+        if power_difference < 0 : 
+            ab.setPWMA( power )
+            ab.setPWMB( maximum )
+        else :
+            ab.setPWMA( maximum )
+            ab.setPWMB( power )
         pass
     pass
         
