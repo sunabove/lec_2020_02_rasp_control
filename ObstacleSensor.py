@@ -53,8 +53,8 @@ class ObstacleSensor :
         GPIO.setup( self.LEFT_GPIO, GPIO.IN, GPIO.PUD_UP) 
         GPIO.setup( self.RIGHT_GPIO, GPIO.IN, GPIO.PUD_UP) 
 
-        GPIO.add_event_detect( self.LEFT_GPIO, GPIO.BOTH, callback=self.event_detect) 
-        GPIO.add_event_detect( self.RIGHT_GPIO, GPIO.BOTH, callback=self.event_detect) 
+        GPIO.add_event_detect( self.LEFT_GPIO, GPIO.BOTH, callback=self.event_detect)
+        GPIO.add_event_detect( self.RIGHT_GPIO, GPIO.BOTH, callback=self.event_detect)
 
         self.robot.forward()
     pass
@@ -93,7 +93,7 @@ class ObstacleSensor :
         interval = 0.04
         elapsed = now - self.then 
         if elapsed < interval :
-            log.info( f"sleep({interval - elapsed})" )
+            #log.info( f"sleep({interval - elapsed})" )
             sleep( interval - elapsed )
             
             return 
