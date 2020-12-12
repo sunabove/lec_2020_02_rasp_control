@@ -146,17 +146,21 @@ if __name__ == '__main__':
     
     obstacleSensor = ObstacleSensor( robot )
 
+    def exit( result ) :
+        obstacleSensor.finish()
+        sleep( 0.5 ) 
+
+        GPIO.setmode(GPIO.BCM)
+        GPIO.cleanup();
+    pass
+
+
     def signal_handler(signal, frame):
         print("", flush=True) 
         
         log.info('You have pressed Ctrl-C.')
 
-        obstacleSensor.finish()
-
-        sleep( 0.5 ) 
-
-        GPIO.setmode(GPIO.BCM)
-        GPIO.cleanup();
+        exit()
 
         import sys
         sys.exit( 0 )
@@ -166,6 +170,8 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
 
     input( "Enter to quit......" )
+
+    exit( 0 )
 
     log.info( "Good bye!")
 pass
