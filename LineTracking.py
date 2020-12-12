@@ -21,6 +21,8 @@ LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)    
 
 maximum = 100;
+maximum = 50;
+
 j = 0
 integral = 0;
 last_proportional = 0
@@ -132,7 +134,7 @@ while True:
         pass
         
     for i in range(0,strip.numPixels()):
-        strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255))
+        strip.setPixelColor(i, Wheel(int((i * 256 / strip.numPixels()) + j) & 255))
     pass
 
     strip.show();
