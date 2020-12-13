@@ -124,7 +124,7 @@ class ObstacleSensor :
 
                 if self.turn_count % 5 == 0 : 
                     sleep( 0.01 )
-                    sleep( 0.05*random() )
+                    sleep( 0.005*random() )
                 pass
             pass
 
