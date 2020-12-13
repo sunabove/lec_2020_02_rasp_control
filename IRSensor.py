@@ -226,7 +226,7 @@ class IRSensor :
 
         if key in [ 0xff9867, 0xff18e7 ]:
             log.info( f"forward" )
-        elif key == 0xff4ab5:
+        elif key in [ 0xff4ab5 , 0xff42bd, 0xff52ad ]:
             log.info( f'backward' )
         elif key in [ 0xff10ef, 0xff30cf, 0xff6897 ]:
             log.info( f'left' )
