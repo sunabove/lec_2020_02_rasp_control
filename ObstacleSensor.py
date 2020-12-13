@@ -22,6 +22,8 @@ class ObstacleSensor :
         self.event_no = 0 
         self.turn_count = 0
         self.prev_state = 0
+        self.move_delay = 0.01
+
         self.then = time()
 
         self.start()
@@ -122,9 +124,9 @@ class ObstacleSensor :
 
                 robot.left()
 
-                if self.turn_count % 5 == 0 : 
-                    sleep( 0.01 )
-                    sleep( 0.005*random() )
+                if self.turn_count % 10 == 0 : 
+                    move_delay = self.move_delay
+                    sleep( move_delay*(1 + random()/2) )
                 pass
             pass
 
