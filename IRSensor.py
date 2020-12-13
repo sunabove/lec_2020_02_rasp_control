@@ -23,7 +23,7 @@ class IRSensor :
         self.callback = self.print_ir_code
 
         self.checkTime = 150  # time in milliseconds
-        self.verbose = False
+        
         self.repeatCodeOn = True
         self.lastIRCode = 0
         self.maxPulseListLength = 70
@@ -31,13 +31,19 @@ class IRSensor :
         self.running = True 
         self.thread = False
 
-        self.set_verbose()
-
         GPIO.setwarnings(False)
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.GPIO_NO,GPIO.IN)
-        GPIO.add_event_detect(17,GPIO.BOTH,callback=self.pWidth)    
+        GPIO.add_event_detect(17,GPIO.BOTH,callback=self.detect_gpio)
+
+        time.sleep( 0.1 )
+
+        log.info('Setting up callback')
+        
+        self.callback = self.remote_callback
+        self.set_repeat(True) 
+    
     pass
 
     def __del__(self):
@@ -52,7 +58,7 @@ class IRSensor :
         GPIO.cleanup(16)
     pass
 
-    def pWidth(self, pin):
+    def detect_gpio(self, pin):
         self.pList.append(time.time()-self.timer)
         self.timer = time.time()        
 
@@ -66,17 +72,16 @@ class IRSensor :
 
     def pulse_checker(self):
         timer = time.time()
+        debug = False 
 
         while self.running :                
             check = (time.time()-timer)*1000
 
             if check > self.checkTime:                    
-                self.verbose and print(check, len(self.pList))
+                debug and log.info( f"check={check}, pList len={len(self.pList)}" )
                 break
-            pass
-
-            if len(self.pList) > self.maxPulseListLength:
-                self.verbose and print(check, len(self.pList))
+            elif len(self.pList) > self.maxPulseListLength:
+                debug and log.info( f"check={check}, pList len={len(self.pList)}" )
                 break
             pass
 
@@ -117,8 +122,6 @@ class IRSensor :
             try:
                 pList[p]=float(pList[p])*1000
 
-                if self.verbose == True:
-                    print(pList[p])
                 if pList[p]<11:
                     if sIndex == -1:
                         sIndex = p
@@ -154,10 +157,6 @@ class IRSensor :
             pass
         pass
 
-        if self.verbose == True:
-            log.info( f"bitList = {bitList}" )
-        pass
-
         # convert the list of 1s and 0s into a
         # binary number
 
@@ -172,34 +171,8 @@ class IRSensor :
         return pulse
     pass
 
-    def set_callback(self, callback = None):
-        """set_callback, function to allow the user to set
-        or change the callback function used at any time"""
-
-        self.callback = callback
-
-        return
-    pass
-
-    def remove_callback(self):
-        """remove_callback, function to allow the user to remove
-        the callback function used at any time"""
-
-        self.callback = None
-
-        return
-    pass
-
     def print_ir_code(self, code):
-        """print_ir_code, function to display IR code received"""
-
         log.info( f"ir_code = {hex(code)}" )
-
-        return
-    pass
-
-    def set_verbose(self, verbose = True):
-        self.verbose = verbose
 
         return
     pass
@@ -238,20 +211,12 @@ pass
 
 if __name__ == "__main__":
 
-    ir = IRSensor( )  
-            
-    log.info('Starting IR remote sensing using DECODE function')
-
-    time.sleep(5)
-    log.info('Setting up callback')
+    log.info('Starting IR remote senssor ...')
     
-    ir.set_verbose(False)
-    ir.set_callback( ir.remote_callback )
-    ir.set_repeat(True)
-
+    ir = IRSensor()  
+            
     input( "Enter to quit..." )
 
-    log.info('Removing callback and cleaning up GPIO')
-    ir.remove_callback() 
+    log.info('Removing callback and cleaning up GPIO') 
 
 pass # -- main
