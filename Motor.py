@@ -27,7 +27,7 @@ class Motor:
         self.PWMB = GPIO.PWM(enb, 500)
 
         self.min_speed = 5
-        self.turn_speed = 10
+        self.turn_speed = 15
 
         self.PA = self.min_speed  
         self.PB = self.min_speed  
