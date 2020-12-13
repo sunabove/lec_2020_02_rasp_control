@@ -160,7 +160,7 @@ if __name__ == '__main__':
         
         log.info('You have pressed Ctrl-C.')
 
-        exit()
+        exit( 0 )
 
         import sys
         sys.exit( 0 )
