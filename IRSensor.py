@@ -1,8 +1,9 @@
 # coding: utf-8
 
 import RPi.GPIO as GPIO
-import time, threading 
+import time, threading , inspect
 from time import sleep
+from gpiozero import Buzzer
 
 import logging as log
 log.basicConfig(
@@ -14,7 +15,15 @@ class IRSensor :
 
     GPIO_NO = 17
 
-    def __init__(self):        
+    def __init__(self, robot, buzzer=None):
+
+        self.robot = robot
+        
+        if buzzer is None : 
+            self.buzzer = Buzzer(4)
+        elif buzzer is not None : 
+            self.buzzer = buzzer
+        pass
 
         self.decoding = False
         self.pList = []
@@ -183,6 +192,26 @@ class IRSensor :
         return
     pass
 
+    def system_shutdown(self) :
+        log.info(inspect.currentframe().f_code.co_name) 
+
+        # 시스템 셧다운
+        # 경고음
+        buzzer = self.buzzer
+        
+        for frq in range( 1, 6 + 1 ) : 
+            t = 1/frq
+            buzzer.beep(on_time=t, off_time=t/2, n = int(frq), background=False)
+            sleep( 1 )
+        pass
+
+        buzzer.beep(on_time=2, off_time=1, n = 1, background=False)
+
+        from subprocess import check_call
+
+        check_call(['sudo', 'poweroff'])
+    pass # system_shutdown
+
     def remote_callback(self, code):
         log.info( f"code = {hex(code)}" )
 
@@ -212,8 +241,12 @@ pass
 if __name__ == "__main__":
 
     log.info('Starting IR remote senssor ...')
+
+    from Motor import Motor
+
+    robot = Motor()
     
-    ir = IRSensor()  
+    ir = IRSensor( robot )  
             
     input( "Enter to quit..." )
 
