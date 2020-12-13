@@ -25,6 +25,9 @@ class IRSensor :
             self.buzzer = buzzer
         pass
 
+        self.prev_key = 0 
+        self.repeat_cnt = 0 
+
         self.decoding = False
         self.pList = []
         self.timer = time.time()
@@ -212,28 +215,39 @@ class IRSensor :
         check_call(['sudo', 'poweroff'])
     pass # system_shutdown
 
-    def remote_callback(self, code):
-        log.info( f"code = {hex(code)}" )
+    def remote_callback(self, key ):
+        log.info( f"key = {hex(key)}" )
 
-        if code == 0x10EFD827:
-            log.info("Power")
-        elif code == 0x10EFF807:
-            log.info('A')
-        elif code == 0x10EF7887:
-            log.info('B')
-        elif code == 0x10EF58A7:
-            log.info('C')
-        elif code == 0x10EFA05F:
-            log.info('Up Arrow')
-        elif code == 0x10EF00FF:
-            log.info('Down Arrow')
-        elif code == 0x10EF10EF:
-            log.info('Left Arrow')
-        elif code == 0x10EF807F:
-            log.info('Right Arrow')
-        elif code == 0x10EF20DF:
-            log.info('Select')
-        pass 
+        if key and self.prev_key == key :
+            self.repeat_cnt += 1
+        elif key :
+            self.repeat_cnt = 0 
+        pass
+
+        if key in [ 0xff9867, 0xff18e7 ]:
+            log.info( f"forward" )
+        elif key == 0xff4ab5:
+            log.info( f'backward' )
+        elif key in [ 0xff10ef, 0xff30cf, 0xff6897 ]:
+            log.info( f'left' )
+        elif key in [ 0xff5aa5, 0xff7a85, 0xffb04f ]:
+            log.info( f'right' )
+        elif key == 0xff38c7 :
+            log.info( f'stop')
+        elif key == 0xffa857 :
+            log.info( f"speed up" )
+        elif key == 0xffe01f:
+            log.info( f'speed down')
+        elif key == 0x47 :
+            log.info( f"shut down" )
+            if self.repeat_cnt > 10 : 
+                self.system_shutdown()
+            pass
+        pass
+
+        if type( key ) == int : 
+            self.prev_key = key 
+        pass
     pass
 
 pass
