@@ -126,7 +126,7 @@ class ObstacleSensor :
 
                 if self.turn_count % 10 == 0 : 
                     move_delay = self.move_delay
-                    sleep( move_delay*(1 + random()/2) )
+                    sleep( move_delay*random() )
                 pass
             pass
 
