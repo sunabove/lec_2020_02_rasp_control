@@ -233,7 +233,11 @@ class IRSensor :
 
         robot = self.robot
 
-        if key in [ 0xff9867, 0xff18e7 ]:
+        obstacleSensor = self.obstacleSensor
+
+        if obstacleSensor.is_running() :
+            log.info( "Obstacle Sensor is running......" )
+        elif key in [ 0xff9867, 0xff18e7 ]:
             log.info( f"forward" ) 
             robot.forward()
         elif key in [ 0xff4ab5 , 0xff42bd, 0xff52ad ]:
@@ -259,6 +263,9 @@ class IRSensor :
             if self.repeat_cnt > 10 : 
                 self.system_shutdown()
             pass
+        elif key == 0xffe01f:
+            log.info( f'Obstacle Sensor')
+            obstacleSensor.start()
         pass
 
         if type( key ) == int : 
