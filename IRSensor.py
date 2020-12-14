@@ -276,6 +276,7 @@ class IRSensor :
             else :
                 log.info( "Obstacle Sensor start" )
                 obstacleSensor.start()
+                robot.forward()
             pass
         pass
 
