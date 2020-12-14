@@ -62,6 +62,10 @@ class ObstacleSensor :
         log.info(inspect.currentframe().f_code.co_name)
 
         GPIO.setmode(GPIO.BCM)  # uses numbering outside circles
+        
+        GPIO.remove_event_detect( self.LEFT_GPIO )
+        GPIO.remove_event_detect( self.RIGHT_GPIO )
+
         GPIO.cleanup( self.LEFT_GPIO )
         GPIO.cleanup( self.RIGHT_GPIO )
     pass
