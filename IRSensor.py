@@ -224,22 +224,31 @@ class IRSensor :
             self.repeat_cnt = 0 
         pass
 
+        robot = self.robot
+
         if key in [ 0xff9867, 0xff18e7 ]:
-            log.info( f"forward" )
+            log.info( f"forward" ) 
+            robot.forward()
         elif key in [ 0xff4ab5 , 0xff42bd, 0xff52ad ]:
             log.info( f'backward' )
+            robot.backward()
         elif key in [ 0xff10ef, 0xff30cf, 0xff6897 ]:
             log.info( f'left' )
+            robot.left()
         elif key in [ 0xff5aa5, 0xff7a85, 0xffb04f ]:
             log.info( f'right' )
+            robot.right()
         elif key == 0xff38c7 :
             log.info( f'stop')
+            robot.stop()
         elif key == 0xffa857 :
             log.info( f"speed up" )
+            robot.speed_up( 5 )
         elif key == 0xffe01f:
             log.info( f'speed down')
-        elif key == 0x47 :
-            log.info( f"shut down" )
+            robot.speed_down( 5 )
+        elif key == 0xffe21d :
+            log.info( f"shut down, repeat_cnt={self.repeat_cnt}" )
             if self.repeat_cnt > 10 : 
                 self.system_shutdown()
             pass

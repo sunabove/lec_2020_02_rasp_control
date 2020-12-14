@@ -1,28 +1,50 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 import RPi.GPIO as GPIO
-import time
+import time, inspect
 
-CS = 5
-Clock = 25
-Address = 24
-DataOut = 23
-Button = 7
+from time import sleep
+
+import logging as log
+log.basicConfig(
+    format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
+    datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
+    )
 
 class TRSensor(object):
-    
+
+    CS = 5
+    Clock = 25
+    Address = 24
+    DataOut = 23
+    Button = 7
+
     def __init__(self,numSensors = 5):
         self.numSensors = numSensors
         self.calibratedMin = [0] * self.numSensors
         self.calibratedMax = [1023] * self.numSensors
         self.last_value = 0
-        GPIO.setmode(GPIO.BCM)
+        
         GPIO.setwarnings(False)
-        GPIO.setup(Clock,GPIO.OUT)
-        GPIO.setup(Address,GPIO.OUT)
-        GPIO.setup(CS,GPIO.OUT)
-        GPIO.setup(DataOut,GPIO.IN,GPIO.PUD_UP)
-        GPIO.setup(Button,GPIO.IN,GPIO.PUD_UP)
+        GPIO.setmode(GPIO.BCM)
+
+        GPIO.setup(self.Clock,GPIO.OUT)
+        GPIO.setup(self.Address,GPIO.OUT)
+        GPIO.setup(self.CS,GPIO.OUT)
+        GPIO.setup(self.DataOut,GPIO.IN,GPIO.PUD_UP)
+        GPIO.setup(self.Button,GPIO.IN,GPIO.PUD_UP)
+    pass
+
+    def __del__(self):
+        self.finish()
+    pass
+
+    def finish(self):
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BCM)
+        for port in [ self.Clock, self.Address, self.CS, self.DataOut, self.Button ] :             
+            GPIO.cleanup(port)
+        pass
     pass
         
     """
@@ -35,34 +57,42 @@ class TRSensor(object):
     with higher values corresponding to lower reflectance (e.g. a black
     surface or a void).
     """
-    def AnalogRead(self):
+    def analogRead(self):
         value = [0]*(self.numSensors+1)
         #Read Channel0~channel6 AD value
+        
+        cs = self.CS
+        address = self.Address
+        dataOut = self.DataOut
+        clock = self.Clock
+
         for j in range(0,self.numSensors+1):
-            GPIO.output(CS, GPIO.LOW)
+            GPIO.output( cs, GPIO.LOW)
             for i in range(0,4):
                 #sent 4-bit Address
                 if(((j) >> (3 - i)) & 0x01):
-                    GPIO.output(Address,GPIO.HIGH)
+                    GPIO.output(address,GPIO.HIGH)
                 else:
-                    GPIO.output(Address,GPIO.LOW)
+                    GPIO.output(address,GPIO.LOW)
                 #read MSB 4-bit data
                 value[j] <<= 1
-                if(GPIO.input(DataOut)):
+                if(GPIO.input(dataOut)):
                     value[j] |= 0x01
-                GPIO.output(Clock,GPIO.HIGH)
-                GPIO.output(Clock,GPIO.LOW)
-            for i in range(0,6):
+                GPIO.output(clock,GPIO.HIGH)
+                GPIO.output(clock,GPIO.LOW)
+            pass
+
+            for i in range(0, 6):
                 #read LSB 8-bit data
                 value[j] <<= 1
-                if(GPIO.input(DataOut)):
+                if(GPIO.input(dataOut)):
                     value[j] |= 0x01
-                GPIO.output(Clock,GPIO.HIGH)
-                GPIO.output(Clock,GPIO.LOW)
+                GPIO.output(clock,GPIO.HIGH)
+                GPIO.output(clock,GPIO.LOW)
             pass
 
             time.sleep(0.0001)
-            GPIO.output(CS,GPIO.HIGH)
+            GPIO.output(cs,GPIO.HIGH)
             # print value[1:]
         pass
 
@@ -80,7 +110,7 @@ class TRSensor(object):
         min_sensor_values = [0]*self.numSensors
         for j in range(0,10):
         
-            sensor_values = self.AnalogRead();
+            sensor_values = self.analogRead();
             
             for i in range(0,self.numSensors):
             
@@ -118,7 +148,7 @@ class TRSensor(object):
     def readCalibrated(self):
         value = 0
         #read the needed values
-        sensor_values = self.AnalogRead();
+        sensor_values = self.analogRead();
 
         for i in range (0,self.numSensors):
 
@@ -205,12 +235,35 @@ pass
 
 # Simple example prints accel/mag data once per second:
 if __name__ == '__main__':
-    TR = TRSensor()
-    print("TRSensor Example")
+    log.info("TRSensor Example")    
+    tr = TRSensor()
+
+    def exit( result ) :
+        tr.finish()
+        sleep( 0.5 )  
+    pass
+
+
+    def signal_handler(signal, frame):
+        print("", flush=True) 
+        
+        log.info('You have pressed Ctrl-C.')
+
+        exit( 0 )
+
+        import sys
+        sys.exit( 0 )
+    pass
+
+    import signal
+    signal.signal(signal.SIGINT, signal_handler)
+
     idx = 0 
     while True:
-        print( f"[{idx:04d}] ", TR.AnalogRead() )
+        analog = tr.analogRead()
+        log.info( f"[{idx:04d}] analog={analog}" )
         time.sleep(0.2)
         idx += 1
     pass
+
 pass
