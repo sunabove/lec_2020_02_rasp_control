@@ -145,7 +145,7 @@ class ObstacleSensor :
 
                 robot.left()
 
-                if self.turn_count % 10 == 0 : 
+                if False and self.turn_count % 10 == 0 : 
                     move_delay = self.move_delay
                     if move_delay > 0 : 
                         sleep( move_delay*random() )
