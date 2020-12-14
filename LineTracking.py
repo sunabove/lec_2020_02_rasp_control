@@ -57,7 +57,7 @@ for i in range(strip.numPixels()):
     strip.show()
 pass 
 
-TR = TRSensor()
+tr = TRSensor()
 ab = AlphaBot2()
 
 ab.stop()
@@ -68,7 +68,7 @@ time.sleep(0.5)
 
 speed = 10
 
-do_calibrate = True 
+do_calibrate = False 
 
 if do_calibrate : 
     for i in range(0, 10):
@@ -82,13 +82,13 @@ if do_calibrate :
             ab.setPWMB(speed)
         pass
 
-        TR.calibrate()
+        True.calibrate()
     pass
 
     ab.stop()
 
-    print(TR.calibratedMin)
-    print(TR.calibratedMax)
+    print(tr.calibratedMin)
+    print(tr.calibratedMax)
 pass
 
 LINE = "#"*80
@@ -96,7 +96,7 @@ LINE = "#"*80
 idx = 0 
 while GPIO.input(Button) and idx < 3 :
     idx += 1
-    position, sensors = TR.readLine()
+    position, sensors = tr.readLine()
     
     print( LINE )
     print( f"Press the Joystick Button to start : {position:.0f}, {sensors}" ) 
@@ -109,7 +109,7 @@ ab.forward()
 maximum = 40
 
 while True :
-    position, sensors = TR.readLine()
+    position, sensors = tr.readLine()
 
     #log.info( sensors )
     

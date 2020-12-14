@@ -193,19 +193,22 @@ class TRSensor(object):
     """
     def readLine(self, white_line = 0):
 
-        sensor_values = self.readCalibrated()
+        sensros = self.readCalibrated()
 
         avg = 0
         sum = 0
         on_line = 0
 
         for i in range(0,self.numSensors):
-            value = sensor_values[i]
+            value = sensros[i]
             if(white_line):
                 value = 1000-value
+            pass
+
             # keep track of whether we see the line at all
             if(value > 200):
                 on_line = 1
+            pass
                 
             # only average in values that are above a noise threshold
             if(value > 50):
@@ -228,7 +231,7 @@ class TRSensor(object):
             self.last_value = avg/sum
         pass
         
-        return self.last_value, sensor_values
+        return self.last_value, sensros
     pass
 
 pass
