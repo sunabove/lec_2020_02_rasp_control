@@ -235,8 +235,16 @@ class IRSensor :
 
         obstacleSensor = self.obstacleSensor
 
-        if obstacleSensor.is_running() :
-            log.info( "Obstacle Sensor is running......" )
+        if key == 0xff38c7 :
+            log.info( f'stop')
+            
+            robot.stop()
+
+            if obstacleSensor.is_running() : 
+                obstacleSensor.stop()
+            pass
+
+            robot.stop()
         elif key in [ 0xff9867, 0xff18e7 ]:
             log.info( f"forward" ) 
             robot.forward()
@@ -249,9 +257,6 @@ class IRSensor :
         elif key in [ 0xff5aa5, 0xff7a85, 0xffb04f ]:
             log.info( f'right' )
             robot.right()
-        elif key == 0xff38c7 :
-            log.info( f'stop')
-            robot.stop()
         elif key == 0xffa857 :
             log.info( f"speed up" )
             robot.speed_up( 5 )
@@ -263,9 +268,15 @@ class IRSensor :
             if self.repeat_cnt > 10 : 
                 self.system_shutdown()
             pass
-        elif key == 0xffe01f:
+        elif key == 0xffa25d :
             log.info( f'Obstacle Sensor')
-            obstacleSensor.start()
+
+            if not obstacleSensor.is_running() :
+                log.info( "Obstacle Sensor is running already." )
+            else :
+                log.info( "Obstacle Sensor start" )
+                obstacleSensor.start()
+            pass
         pass
 
         if type( key ) == int : 
