@@ -37,8 +37,6 @@ class ObstacleSensor :
     def finish(self) :
         log.info(inspect.currentframe().f_code.co_name)
 
-        self.robot.stop()
-
         GPIO.setmode(GPIO.BCM)  # uses numbering outside circles
         GPIO.cleanup( self.LEFT_GPIO )
         GPIO.cleanup( self.RIGHT_GPIO )
@@ -60,6 +58,10 @@ class ObstacleSensor :
         GPIO.add_event_detect( self.RIGHT_GPIO, GPIO.BOTH, callback=self.event_detect)
 
         self.robot.forward()
+    pass
+
+    def stop( self ) :
+        pass
     pass
 
     def event_detect(self, pin):

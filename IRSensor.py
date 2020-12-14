@@ -4,6 +4,7 @@ import RPi.GPIO as GPIO
 import time, threading , inspect
 from time import sleep
 from gpiozero import Buzzer
+from ObstacleSensor import ObstacleSensor
 
 import logging as log
 log.basicConfig(
@@ -15,7 +16,7 @@ class IRSensor :
 
     GPIO_NO = 17
 
-    def __init__(self, robot, buzzer=None):
+    def __init__(self, robot, buzzer=None, obtacleSensor=None):
 
         self.robot = robot
         
@@ -23,6 +24,12 @@ class IRSensor :
             self.buzzer = Buzzer(4)
         elif buzzer is not None : 
             self.buzzer = buzzer
+        pass
+
+        if obstacleSensor is None :
+            self.obstacleSensor = ObstacleSensor( robot )
+        else :
+            self.obstacleSensor = ObstacleSensor
         pass
 
         self.prev_key = 0 
