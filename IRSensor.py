@@ -29,7 +29,7 @@ class IRSensor :
         if obstacleSensor is None :
             self.obstacleSensor = ObstacleSensor( robot )
         else :
-            self.obstacleSensor = ObstacleSensor
+            self.obstacleSensor = obstacleSensor
         pass
 
         self.prev_key = 0 
@@ -276,7 +276,7 @@ class IRSensor :
             else :
                 log.info( "Obstacle Sensor start" )
                 obstacleSensor.start()
-                robot.forward()
+                #robot.forward()
             pass
         pass
 
