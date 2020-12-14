@@ -271,12 +271,11 @@ class IRSensor :
         elif key == 0xffa25d :
             log.info( f'Obstacle Sensor')
 
-            if not obstacleSensor.is_running() :
+            if obstacleSensor.is_running() :
                 log.info( "Obstacle Sensor is running already." )
             else :
                 log.info( "Obstacle Sensor start" )
-                obstacleSensor.start()
-                #robot.forward()
+                obstacleSensor.start() 
             pass
         pass
 
