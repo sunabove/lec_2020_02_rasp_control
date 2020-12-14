@@ -25,6 +25,8 @@ class ObstacleSensor :
         self.move_delay = 0.01
         self.move_delay = 0
 
+        self._running = False 
+
         self.then = time() 
     pass
 
@@ -45,6 +47,8 @@ class ObstacleSensor :
     def start(self):
         log.info(inspect.currentframe().f_code.co_name)
 
+        self._running = True
+
         GPIO.setmode(GPIO.BCM)  # uses numbering outside circles
         
         GPIO.setup( self.LEFT_GPIO, GPIO.IN, GPIO.PUD_UP) 
@@ -56,10 +60,12 @@ class ObstacleSensor :
         self.then = time()
 
         self.robot.forward()
-    pass
+    pass 
 
     def stop( self ) :
         log.info(inspect.currentframe().f_code.co_name)
+
+        self._running = False
 
         GPIO.setmode(GPIO.BCM)  # uses numbering outside circles
 
@@ -68,6 +74,10 @@ class ObstacleSensor :
 
         GPIO.cleanup( self.LEFT_GPIO )
         GPIO.cleanup( self.RIGHT_GPIO )
+    pass
+
+    def is_running(self):
+        return self._running
     pass
 
     def event_detect(self, pin):
