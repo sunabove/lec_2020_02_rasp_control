@@ -25,9 +25,7 @@ class ObstacleSensor :
         self.move_delay = 0.01
         self.move_delay = 0
 
-        self.then = time()
-
-        self.start()
+        self.then = time() 
     pass
 
     def __del__(self):
@@ -54,6 +52,8 @@ class ObstacleSensor :
 
         GPIO.add_event_detect( self.LEFT_GPIO, GPIO.BOTH, callback=self.event_detect)
         GPIO.add_event_detect( self.RIGHT_GPIO, GPIO.BOTH, callback=self.event_detect)
+
+        self.then = time()
 
         self.robot.forward()
     pass
@@ -153,10 +153,12 @@ if __name__ == '__main__':
 
     robot = Motor()
     
-    obstacleSensor = ObstacleSensor( robot )
+    os = ObstacleSensor( robot )
+
+    os.start()
 
     def exit( result ) :
-        obstacleSensor.finish()
+        os.stop()
         sleep( 0.5 ) 
 
         GPIO.setmode(GPIO.BCM)
