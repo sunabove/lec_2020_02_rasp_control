@@ -143,14 +143,7 @@ class ObstacleSensor :
                 # 장애물이 있을 때
                 self.turn_count += 1
 
-                robot.left() 
-
-                if False and self.turn_count % 10 == 0 : 
-                    move_delay = self.move_delay
-                    if move_delay > 0 : 
-                        sleep( move_delay*random() )
-                    pass
-                pass
+                robot.left()
             pass
 
             self.prev_state = state
