@@ -35,7 +35,7 @@ class ObstacleSensor :
     def finish(self) :
         log.info(inspect.currentframe().f_code.co_name)
 
-        self.finish()
+        self.stop()
     pass
 
     def join(self) :
@@ -62,7 +62,7 @@ class ObstacleSensor :
         log.info(inspect.currentframe().f_code.co_name)
 
         GPIO.setmode(GPIO.BCM)  # uses numbering outside circles
-        
+
         GPIO.remove_event_detect( self.LEFT_GPIO )
         GPIO.remove_event_detect( self.RIGHT_GPIO )
 
