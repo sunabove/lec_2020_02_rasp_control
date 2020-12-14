@@ -254,6 +254,8 @@ if __name__ == '__main__':
 
         exit( 0 )
 
+        log.info( "Goood bye!")
+
         import sys
         sys.exit( 0 )
     pass
