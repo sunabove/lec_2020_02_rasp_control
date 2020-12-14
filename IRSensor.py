@@ -27,7 +27,7 @@ class IRSensor :
         pass
 
         if obstacleSensor is None :
-            self.obstacleSensor = ObstacleSensor( robot )
+            self.obstacleSensor = ObstacleSensor( self.robot ) 
         else :
             self.obstacleSensor = obstacleSensor
         pass
