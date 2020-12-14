@@ -16,7 +16,7 @@ class IRSensor :
 
     GPIO_NO = 17
 
-    def __init__(self, robot, buzzer=None, obtacleSensor=None):
+    def __init__(self, robot, buzzer=None, obstacleSensor=None):
 
         self.robot = robot
         
