@@ -110,6 +110,8 @@ class ObstacleSensor :
     def move(self) :
         log.info(inspect.currentframe().f_code.co_name)
 
+        robot = self.robot
+
         now = time()
         interval = 0.04
         elapsed = now - self.then 
