@@ -202,20 +202,27 @@ class IRSensor :
         return
     pass
 
+    def beep_warning(self) :
+        buzzer = self.buzzer
+
+        cnt = 9 
+        for frq in range( 1, cnt ) : 
+            frq = cnt - frq
+            t = 1/frq
+            buzzer.beep(on_time=t, off_time=t/4, n = int(frq), background=False)
+            sleep( 1 )
+        pass
+
+        buzzer.beep(on_time=5, off_time=1, n = 1, background=False)
+        sleep( 1 )
+    pass
+
     def system_shutdown(self) :
         log.info(inspect.currentframe().f_code.co_name) 
 
         # 시스템 셧다운
         # 경고음
-        buzzer = self.buzzer
-        
-        for frq in range( 1, 6 + 1 ) : 
-            t = 1/frq
-            buzzer.beep(on_time=t, off_time=t/2, n = int(frq), background=False)
-            sleep( 1 )
-        pass
-
-        buzzer.beep(on_time=2, off_time=1, n = 1, background=False)
+        self.beep_warning()
 
         from subprocess import check_call
 
