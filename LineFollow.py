@@ -15,8 +15,16 @@ class LineTracker :
 
     JOY_STICK  = 7 # 조이스틱
 
-    def __init__(self, robot):
-        self.robot = robot 
+    def __init__(self, robot, joystick = None):
+        self.robot = robot
+
+        if joystick is None :
+            joystick = Button( JOY_STICK )
+        pass
+
+        joystick.when_pressed = self.joystick_pressed
+
+        self.joystick = joystick        
 
         self._running = False 
 
@@ -27,8 +35,14 @@ class LineTracker :
         self.finish()
     pass
 
+    def joystick_pressed(self) :
+        log.info(inspect.currentframe().f_code.co_name)
+    pass
+
     def finish(self) :
         log.info(inspect.currentframe().f_code.co_name)
+
+        self.joystick and self.joystick.clear()
 
         self.stop()
     pass
