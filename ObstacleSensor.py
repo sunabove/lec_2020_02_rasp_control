@@ -88,26 +88,12 @@ class ObstacleSensor :
         log.info( f"event_no = {self.event_no}, pin = {pin}" )
         
         if True :
-            self.thread = threading.Thread(name='self.pulse_checker', target=self.move)
+            self.thread = threading.Thread(name='self.pulse_checker', target=self.robot_move )
             self.thread.start()
         return
     pass
 
-    def right_released(self) :
-        log.info(inspect.currentframe().f_code.co_name)
-        # 오르쪽 장애물이 사라졌을 때
-        now = time()
-        if now - self.then < self.min_duration :
-            pass
-        else :
-            then = now
-            self.right_obstacle = 0
-
-            self.move()
-        pass
-    pass
-
-    def move(self) :
+    def robot_move(self) :
         log.info(inspect.currentframe().f_code.co_name)
 
         robot = self.robot
