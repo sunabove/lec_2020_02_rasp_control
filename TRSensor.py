@@ -58,21 +58,24 @@ class TRSensor(object):
     """
     def read_analog(self):
         value = [0]*(self.num_sensors+1)
-        #Read Channel0~channel6 AD value
+        #Read Channel 0~channel 6 AD value
         
         cs = self.CS
         address = self.Address
         dataOut = self.DataOut
         clock = self.Clock
 
-        for j in range(0,self.num_sensors+1):
-            GPIO.output( cs, GPIO.LOW)
-            for i in range(0,4):
+        for j in range(0, self.num_sensors+1):
+            GPIO.output( cs, GPIO.LOW )
+            
+            for i in range(0, 4):
                 #sent 4-bit Address
                 if(((j) >> (3 - i)) & 0x01):
                     GPIO.output(address,GPIO.HIGH)
                 else:
                     GPIO.output(address,GPIO.LOW)
+                pass
+
                 #read MSB 4-bit data
                 value[j] <<= 1
                 if(GPIO.input(dataOut)):
@@ -86,17 +89,18 @@ class TRSensor(object):
                 value[j] <<= 1
                 if(GPIO.input(dataOut)):
                     value[j] |= 0x01
+                pass
+
                 GPIO.output(clock,GPIO.HIGH)
                 GPIO.output(clock,GPIO.LOW)
             pass
 
             time.sleep(0.0001)
             GPIO.output(cs,GPIO.HIGH)
-            # print value[1:]
         pass
 
         return value[1:]
-    pass
+    pass # -- read_analog
 
     """
     Reads the sensors 10 times and uses the results for
