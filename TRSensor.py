@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 import RPi.GPIO as GPIO
-import time, inspect
+import time, inspect, numpy as np
 
 from time import sleep
 
@@ -65,30 +65,34 @@ class TRSensor(object):
         dataOut = self.DataOut
         clock = self.Clock
 
-        for j in range(0, self.num_sensors+1):
+        for s in range(0, self.num_sensors+1):
             GPIO.output( cs, GPIO.LOW )
-            
+
             for i in range(0, 4):
                 #sent 4-bit Address
-                if(((j) >> (3 - i)) & 0x01):
+                if ((s) >> (3 - i)) & 0x01 :
                     GPIO.output(address,GPIO.HIGH)
                 else:
                     GPIO.output(address,GPIO.LOW)
                 pass
 
                 #read MSB 4-bit data
-                value[j] <<= 1
+                value[s] <<= 1
+
                 if(GPIO.input(dataOut)):
-                    value[j] |= 0x01
+                    value[s] |= 0x01
+                pass
+
                 GPIO.output(clock,GPIO.HIGH)
                 GPIO.output(clock,GPIO.LOW)
             pass
 
             for i in range(0, 6):
                 #read LSB 8-bit data
-                value[j] <<= 1
-                if(GPIO.input(dataOut)):
-                    value[j] |= 0x01
+                value[s] <<= 1
+
+                if GPIO.input(dataOut) :
+                    value[s] |= 0x01
                 pass
 
                 GPIO.output(clock,GPIO.HIGH)
@@ -99,7 +103,7 @@ class TRSensor(object):
             GPIO.output(cs,GPIO.HIGH)
         pass
 
-        return value[1:]
+        return np.array( value[1:] )
     pass # -- read_analog
 
     """
