@@ -10,37 +10,23 @@ log.basicConfig(
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
     )
 
-class LineTracker : 
-
-    JOY_STICK  = 7 # 조이스틱
+class LineTracker :
 
     def __init__(self, robot, joystick = None):
         self.robot = robot
 
         self._running = False 
 
-        self.then = time() 
-
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
-        GPIO.setup( self.JOY_STICK, GPIO.IN, GPIO.PUD_UP)
-        GPIO.add_event_detect( self.JOY_STICK, GPIO.BOTH, callback=self.joystick_pressed)
+        self.then = time()  
     pass
 
     def __del__(self):
         self.finish()
     pass
 
-    def joystick_pressed(self) :
-        log.info(inspect.currentframe().f_code.co_name)
-    pass
-
     def finish(self) :
         log.info(inspect.currentframe().f_code.co_name)
-
-        #GPIO.setmode(GPIO.BCM)
-        #GPIO.cleanup( self.JOY_STICK )
-
+        
         self.stop()
     pass
 
