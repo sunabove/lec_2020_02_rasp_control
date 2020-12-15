@@ -26,11 +26,14 @@ if True :
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
 
-    for i in range(21):
+    for i in range(30):
         ax.set_xlim(0, 20)
 
         ax.plot(i, 1, marker='x')
 
-        plt.pause(0.5)
+        plt.pause(0.1)
     pass
 pass
+
+import signal
+signal.pause()
