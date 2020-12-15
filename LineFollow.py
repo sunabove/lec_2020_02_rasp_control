@@ -1,7 +1,6 @@
 # -*- coding:utf-8 -*-
 
 import RPi.GPIO as GPIO, threading, signal,  inspect
-from gpiozero import Button
 from random import random
 from time import sleep, time
 
