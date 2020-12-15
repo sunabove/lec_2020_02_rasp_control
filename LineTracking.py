@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding:utf-8 -*-
 import RPi.GPIO as GPIO
 import time
@@ -71,8 +70,8 @@ speed = 10
 do_calibrate = False 
 
 if do_calibrate : 
-    for i in range(0, 10):
-        if(i<25 or i>= 75):
+    for i in range(0, 100):
+        if i < 25 or i>= 75 :
             ab.right()
             ab.setPWMA(speed)
             ab.setPWMB(speed)
@@ -82,7 +81,7 @@ if do_calibrate :
             ab.setPWMB(speed)
         pass
 
-        True.calibrate()
+        tr.calibrate()
     pass
 
     ab.stop()
@@ -96,7 +95,7 @@ LINE = "#"*80
 idx = 0 
 while GPIO.input(Button) and idx < 3 :
     idx += 1
-    position, sensors = tr.readLine()
+    position, sensors = tr.read_line()
     
     print( LINE )
     print( f"Press the Joystick Button to start : {position:.0f}, {sensors}" ) 
@@ -109,7 +108,7 @@ ab.forward()
 maximum = 40
 
 while True :
-    position, sensors = tr.readLine()
+    position, sensors = tr.read_line()
 
     #log.info( sensors )
     

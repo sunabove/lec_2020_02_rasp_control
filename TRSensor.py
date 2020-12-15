@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding:utf-8 -*-
 import RPi.GPIO as GPIO
 import time, inspect
@@ -19,10 +18,10 @@ class TRSensor(object):
     DataOut = 23
     Button = 7
 
-    def __init__(self,numSensors = 5):
-        self.numSensors = numSensors
-        self.calibratedMin = [0] * self.numSensors
-        self.calibratedMax = [1023] * self.numSensors
+    def __init__(self, num_sensors = 5):
+        self.num_sensors = num_sensors
+        self.calibratedMin = [0] * num_sensors
+        self.calibratedMax = [1023] * num_sensors
         self.last_value = 0
         
         GPIO.setwarnings(False)
@@ -57,8 +56,8 @@ class TRSensor(object):
     with higher values corresponding to lower reflectance (e.g. a black
     surface or a void).
     """
-    def analogRead(self):
-        value = [0]*(self.numSensors+1)
+    def read_analog(self):
+        value = [0]*(self.num_sensors+1)
         #Read Channel0~channel6 AD value
         
         cs = self.CS
@@ -66,7 +65,7 @@ class TRSensor(object):
         dataOut = self.DataOut
         clock = self.Clock
 
-        for j in range(0,self.numSensors+1):
+        for j in range(0,self.num_sensors+1):
             GPIO.output( cs, GPIO.LOW)
             for i in range(0,4):
                 #sent 4-bit Address
@@ -103,16 +102,17 @@ class TRSensor(object):
     Reads the sensors 10 times and uses the results for
     calibration.  The sensor values are not returned; instead, the
     maximum and minimum values found over time are stored internally
-    and used for the readCalibrated() method.
+    and used for the read_calibrated() method.
     """
     def calibrate(self):
-        max_sensor_values = [0]*self.numSensors
-        min_sensor_values = [0]*self.numSensors
+        max_sensor_values = [0]*self.num_sensors
+        min_sensor_values = [0]*self.num_sensors
+
         for j in range(0,10):
         
-            sensor_values = self.analogRead();
+            sensor_values = self.read_analog();
             
-            for i in range(0,self.numSensors):
+            for i in range(0,self.num_sensors):
             
                 # set the max we found THIS time
                 if((j == 0) or max_sensor_values[i] < sensor_values[i]):
@@ -127,7 +127,7 @@ class TRSensor(object):
         pass
 
         # record the min and max calibration values
-        for i in range(0,self.numSensors):
+        for i in range(0,self.num_sensors):
             if(min_sensor_values[i] > self.calibratedMin[i]):
                 self.calibratedMin[i] = min_sensor_values[i]
             pass
@@ -145,12 +145,12 @@ class TRSensor(object):
     stored separately for each sensor, so that differences in the
     sensors are accounted for automatically.
     """
-    def readCalibrated(self):
+    def read_calibrated(self):
         value = 0
         #read the needed values
-        sensor_values = self.analogRead();
+        sensor_values = self.read_analog();
 
-        for i in range (0,self.numSensors):
+        for i in range (0, self.num_sensors):
 
             denominator = self.calibratedMax[i] - self.calibratedMin[i]
 
@@ -165,8 +165,9 @@ class TRSensor(object):
             pass
                 
             sensor_values[i] = value
+        pass
         
-        #print("readCalibrated",sensor_values)
+        #print("read_calibrated",sensor_values)
         return sensor_values
     pass
             
@@ -191,47 +192,47 @@ class TRSensor(object):
     this case, each sensor value will be replaced by (1000-value)
     before the averaging.
     """
-    def readLine(self, white_line = 0):
+    def read_line(self, white_line = 0):
 
-        sensros = self.readCalibrated()
+        sensors = self.read_calibrated()
 
         avg = 0
         sum = 0
         on_line = 0
 
-        for i in range(0,self.numSensors):
-            value = sensros[i]
+        for i in range(0, self.num_sensors):
+            value = sensors[i]
             if(white_line):
                 value = 1000-value
             pass
 
             # keep track of whether we see the line at all
-            if(value > 200):
+            if value > 200 :
                 on_line = 1
             pass
                 
             # only average in values that are above a noise threshold
-            if(value > 50):
+            if value > 50 :
                 avg += value * (i * 1000);  # this is for the weighted total,
                 sum += value;                  #this is for the denominator 
             pass
         pass
 
-        if(on_line != 1):
-            if(self.last_value < (self.numSensors - 1)*1000/2):
+        if on_line != 1 :
+            if self.last_value < (self.num_sensors - 1)*1000/2 :
                 # If it last read to the left of center, return 0.            
                 #print("left")
                 self.last_value = 0;
             else:
                 # If it last read to the right of center, return the max.            
                 #print("right")
-                self.last_value = (self.numSensors - 1)*1000
+                self.last_value = (self.num_sensors - 1)*1000
             pass
         else:
             self.last_value = avg/sum
         pass
         
-        return self.last_value, sensros
+        return self.last_value, sensors
     pass
 
 pass
@@ -265,7 +266,7 @@ if __name__ == '__main__':
 
     idx = 0 
     while True:
-        analog = tr.analogRead()
+        analog = tr.read_analog()
         log.info( f"[{idx:04d}] analog={analog}" )
         time.sleep(0.2)
         idx += 1
