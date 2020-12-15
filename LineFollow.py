@@ -39,8 +39,8 @@ class LineTracker :
     def finish(self) :
         log.info(inspect.currentframe().f_code.co_name)
 
-        GPIO.setmode(GPIO.BCM)
-        GPIO.cleanup( self.JOY_STICK )
+        #GPIO.setmode(GPIO.BCM)
+        #GPIO.cleanup( self.JOY_STICK )
 
         self.stop()
     pass
