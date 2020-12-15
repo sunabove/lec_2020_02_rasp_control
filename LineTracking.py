@@ -17,7 +17,7 @@ Button = 7
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-GPIO.setup(Button,GPIO.IN,GPIO.PUD_UP)
+GPIO.setup(Button, GPIO.IN, GPIO.PUD_UP)
 
 # LED strip configuration:
 LED_COUNT      = 4      # Number of LED pixels.

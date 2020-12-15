@@ -18,17 +18,14 @@ class LineTracker :
     def __init__(self, robot, joystick = None):
         self.robot = robot
 
-        if joystick is None :
-            joystick = Button( JOY_STICK )
-        pass
-
-        joystick.when_pressed = self.joystick_pressed
-
-        self.joystick = joystick        
-
         self._running = False 
 
         self.then = time() 
+
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+        GPIO.setup( self.JOY_STICK, GPIO.IN, GPIO.PUD_UP)
+        GPIO.add_event_detect( self.JOY_STICK, GPIO.BOTH, callback=self.joystick_pressed)
     pass
 
     def __del__(self):
@@ -42,7 +39,8 @@ class LineTracker :
     def finish(self) :
         log.info(inspect.currentframe().f_code.co_name)
 
-        self.joystick and self.joystick.clear()
+        GPIO.setmode(GPIO.BCM)
+        GPIO.cleanup( self.JOY_STICK )
 
         self.stop()
     pass
@@ -89,8 +87,7 @@ class LineTracker :
 pass
 
 if __name__ == '__main__':
-    log.info( "Hello..." )
-    log.info( 'IRremote Test Start ...' )
+    log.info( "Hello..." ) 
 
     GPIO.setwarnings(False)
 
@@ -109,7 +106,6 @@ if __name__ == '__main__':
         GPIO.setmode(GPIO.BCM)
         GPIO.cleanup();
     pass
-
 
     def signal_handler(signal, frame):
         print("", flush=True) 
