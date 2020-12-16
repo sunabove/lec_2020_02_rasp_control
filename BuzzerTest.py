@@ -24,4 +24,4 @@ beep_warning()
 
 print( "buzzer end")
 
-input("Enter to quit! ")
+#input("Enter to quit! ")
