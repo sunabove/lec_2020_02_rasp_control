@@ -1,23 +1,23 @@
 # -*- coding:utf-8 -*-
 
-import RPi.GPIO as GPIO, threading, signal,  inspect
+import RPi.GPIO as GPIO, threading, signal, inspect
+import numpy as np
 from random import random
 from time import sleep, time
+from TRSensor import TRSensor
 
 import logging as log
 log.basicConfig(
-    format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
-    datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
-    )
+    format='%(asctime)s, %(levelname) [%(filename)s:%(lineno)04d] %(message)s',
+    datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO 
+    ) 
 
 class LineTracker :
 
     def __init__(self, robot, joystick = None):
         self.robot = robot
 
-        self._running = False 
-
-        self.then = time()  
+        self._running = False  
     pass
 
     def __del__(self):
@@ -36,8 +36,6 @@ class LineTracker :
 
     def start(self):
         log.info(inspect.currentframe().f_code.co_name)
-
-        self._running = True 
 
         if True :
             self.thread = threading.Thread(name='self.pulse_checker', target=self.robot_move )
@@ -58,15 +56,44 @@ class LineTracker :
     def robot_move (self) :
         log.info(inspect.currentframe().f_code.co_name)
 
+        self._running = True 
+
         robot = self.robot
 
-        now = time()
+        tr = TRSensor()
+
+        then = time()
         interval = 0.04
-        elapsed = now - self.then 
-        if elapsed < interval :
-            #log.info( f"sleep({interval - elapsed})" )
-            sleep( interval - elapsed ) 
-        pass 
+        elapsed = 0 
+        idx = 0 
+
+        white = 600
+        black = 300
+
+        while self._running : 
+            now = time()
+            elapsed = now - then 
+
+            if elapsed < interval :
+                #log.info( f"sleep({interval - elapsed})" )
+                sleep( interval - elapsed ) 
+                continue
+            pass
+            
+            sensors = tr.read_analog()
+
+            if np.all( sensors > white ) :
+                log.info( f"[{idx:04d}] [STOP] : All White {sensors}" )
+            elif np.all( sensors < black ) :
+                log.info( f"[{idx:04d}] [FORE] : All Black {sensors}" )
+            else :
+                log.info( f"[{idx:04d}] sensors={sensors}" )
+            pass
+
+            idx += 1
+
+            then = now
+        pass
     pass 
 
 pass
