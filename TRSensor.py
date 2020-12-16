@@ -6,20 +6,24 @@ from time import sleep
 
 import logging as log
 log.basicConfig(
-    format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
+    format='%(asctime)s, %(levelname)s [%(filename)s:%(lineno)04d] %(message)s',
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
     )
 
-class TRSensor(object):
+class TRSensor :
 
     CS = 5
     Clock = 25
-    Address = 24
+    Address = 24 
     DataOut = 23
     Button = 7
 
-    def __init__(self, num_sensors = 5):
+    def __init__(self, num_sensors = 5, white=450, black = 370):
+        self.white = white
+        self.black = black
         self.num_sensors = num_sensors
+        self.idx = 0 
+
         self.calibratedMin = [0] * num_sensors
         self.calibratedMax = [1023] * num_sensors
         self.last_value = 0
@@ -243,12 +247,30 @@ class TRSensor(object):
         return self.last_value, sensors
     pass
 
+    def read_sensors(self) : 
+        self.idx += 1
+        idx = self.idx
+
+        sensors = self.read_analog()
+
+        if np.all( sensors > self.white ) :
+            log.info( f"[{idx:04d}] [STOP] : All White {sensors}" )
+        elif np.all( sensors < self.black ) :
+            log.info( f"[{idx:04d}] [FORE] : All Black {sensors}" )
+        else :
+            log.info( f"[{idx:04d}] [Mixed] : {sensors}" )
+        pass
+
+        return sensors
+    pass
+
 pass
 
 # Simple example prints accel/mag data once per second:
 if __name__ == '__main__':
-    log.info("TRSensor Example")    
-    tr = TRSensor()
+    log.info("TRSensor")
+
+    tr = TRSensor(white=450, black = 370)
 
     def exit( result ) :
         tr.finish()
@@ -271,12 +293,9 @@ if __name__ == '__main__':
     import signal
     signal.signal(signal.SIGINT, signal_handler)
 
-    idx = 0 
     while True:
-        analog = tr.read_analog()
-        log.info( f"[{idx:04d}] analog={analog}" )
+        analog = tr.read_sensors() 
         time.sleep(0.2)
-        idx += 1
     pass
 
 pass

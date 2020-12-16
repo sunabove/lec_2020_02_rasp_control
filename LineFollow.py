@@ -8,14 +8,16 @@ from TRSensor import TRSensor
 
 import logging as log
 log.basicConfig(
-    format='%(asctime)s, %(levelname) [%(filename)s:%(lineno)04d] %(message)s',
+    format='%(asctime)s, %(levelname)s [%(filename)s:%(lineno)04d] %(message)s',
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO 
     ) 
 
 class LineTracker :
 
-    def __init__(self, robot, joystick = None):
+    def __init__(self, robot, white=450, black = 370):
         self.robot = robot
+        self.white = white
+        self.black = black
 
         self._running = False  
     pass
@@ -58,17 +60,14 @@ class LineTracker :
 
         self._running = True 
 
-        robot = self.robot
+        robot = self.robot 
 
-        tr = TRSensor()
+        tr = TRSensor(white=self.white, black = self.black)
 
         then = time()
         interval = 0.04
         elapsed = 0 
         idx = 0 
-
-        white = 600
-        black = 300
 
         while self._running : 
             now = time()
@@ -80,16 +79,8 @@ class LineTracker :
                 continue
             pass
             
-            sensors = tr.read_analog()
-
-            if np.all( sensors > white ) :
-                log.info( f"[{idx:04d}] [STOP] : All White {sensors}" )
-            elif np.all( sensors < black ) :
-                log.info( f"[{idx:04d}] [FORE] : All Black {sensors}" )
-            else :
-                log.info( f"[{idx:04d}] sensors={sensors}" )
-            pass
-
+            sensors = tr.read_sensors() 
+            
             idx += 1
 
             then = now
@@ -107,7 +98,7 @@ if __name__ == '__main__':
 
     robot = Motor()
     
-    lineTracker = LineTracker( robot )
+    lineTracker = LineTracker( robot=robot, white=450, black = 370 )
 
     lineTracker.start()
 
