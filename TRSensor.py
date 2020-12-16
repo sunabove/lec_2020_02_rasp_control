@@ -250,15 +250,17 @@ class TRSensor :
     def read_sensors(self) : 
         self.idx += 1
         idx = self.idx
+        white = self.white
+        black = self.black
 
         sensors = self.read_analog()
 
-        if np.all( sensors > self.white ) :
-            log.info( f"[{idx:04d}] [STOP] : All White {sensors}" )
-        elif np.all( sensors < self.black ) :
-            log.info( f"[{idx:04d}] [FORE] : All Black {sensors}" )
+        if np.all( sensors > white ) :
+            log.info( f"[STOP] : All White {sensors}" )
+        elif np.all( sensors < black ) :
+            log.info( f"[FORE] : All Black {sensors}" )
         else :
-            log.info( f"[{idx:04d}] [Mixed] : {sensors}" )
+            log.info( f"[MIX] : {sensors}" )
         pass
 
         return sensors
