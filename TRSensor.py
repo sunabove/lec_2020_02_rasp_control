@@ -275,8 +275,6 @@ class TRSensor :
 
     def sensor_pos(self, sensor, white, black) :
         # 신호 위치 
-        pos = 0 
-        mid = len(sensor)//2
         wb_diff = abs( white - black )
 
         norm = np.array( sensor )
@@ -293,6 +291,16 @@ class TRSensor :
 
             norm[i] = n
         pass
+
+        pos = 0 
+        len_norm = len(norm)
+        mid = len_norm//2
+        
+        for i, n in enumerate( norm ) : 
+            pos += n*(i-mid)
+        pass
+
+        pos = pos / len_norm
 
         return pos, norm
     pass
