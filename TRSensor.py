@@ -281,7 +281,7 @@ class TRSensor :
 
         norm = np.array( sensor )
 
-        for i in len( norm ):
+        for i in range( len( norm ) ):
             n = norm[i]
             if n < black :
                 n = 0 
@@ -325,8 +325,8 @@ class TRSensor :
             road_state = "Mixed"
         pass
 
-        debug and log.info( f"{txt} {sensor} [{move_state}] {road_state} {norm}" )
-        debug and log.info( f"{pos} {norm}" )
+        debug and log.info( f"{sensor} {txt} [{move_state}] {road_state}" )
+        debug and log.info( f"{norm} pos = {pos}" )
 
         return sensor
     pass
