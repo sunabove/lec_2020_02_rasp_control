@@ -273,38 +273,6 @@ class TRSensor :
         return txt 
     pass # -- to_sensors_text
 
-    def sensor_pos(self, sensor, white, black) :
-        # 신호 위치 
-        wb_diff = abs( white - black )
-
-        norm = np.array( sensor )
-
-        for i in range( len( norm ) ):
-            n = norm[i]
-            if n < black :
-                n = 0 
-            elif n > white :
-                n = 1
-            else :
-                n = (n - black)/wb_diff
-            pass
-
-            norm[i] = n
-        pass
-
-        pos = 0 
-        len_norm = len(norm)
-        mid = len_norm // 2
-        
-        for i, n in enumerate( norm ) : 
-            pos += n*(i -mid)
-        pass
-
-        pos = pos / len_norm
-
-        return pos, norm
-    pass # -- sensor_pos
-
     def read_sensor(self, debug=True) : 
         self.idx += 1
 
@@ -338,6 +306,53 @@ class TRSensor :
 
         return sensor
     pass # -- read_sensor
+
+    def sensor_pos(self, sensor, white, black) :
+        # 신호 위치 
+        wb_diff = abs( white - black )
+
+        # normalize
+        norm = np.array( sensor )
+
+        for i, s in enumerate( sensor ):
+            if s < black :
+                s = 0 
+            elif s > white :
+                s = 1
+            else :
+                s = (s - black)/wb_diff
+            pass
+
+            norm[i] = s
+        pass
+
+        # -- nomalize
+
+        pos = 0 
+        len_norm = len(norm)
+        mid = len_norm // 2
+
+        dir = 0 
+
+        left_pos  = np.sum( [ n*(i + 1) for i, n in enumerate( norm ) ] )
+        right_pos = np.sum( [ n*(len_norm - i) for i, n in enumerate( norm ) ] )
+        
+        if left_pos > right_pos or np.all( norm == 1 ): 
+            for i, n in enumerate( norm ) : 
+                pos += n*(i + 1)
+            pass
+        elif left_pos < right_pos : 
+            for i, n in enumerate( norm ) : 
+                pos += -n*(len_norm - i)
+            pass 
+        else :
+            pos = 0 
+        pass 
+
+        #pos = pos / len_norm
+
+        return pos, norm
+    pass # -- sensor_pos
 
 pass
 
