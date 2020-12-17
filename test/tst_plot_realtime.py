@@ -1,7 +1,9 @@
 # coding: utf-8
 
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+mpl.rcParams['toolbar'] = 'None'
 
 #from IPython.display import display, clear_output
 
@@ -24,10 +26,18 @@ pass
 
 if True :
     fig = plt.figure()
+    fig.canvas.toolbar_visible = False
+
     ax = fig.add_subplot(1, 1, 1)
 
     for i in range(30):
-        ax.set_xlim(0, 20)
+        if i < 20 :
+            ax.set_xlim(0, 20 )
+        else :
+            ax.set_xlim(0, i)
+            
+            ax.cla()
+        pass       
 
         ax.plot(i, 1, marker='x')
 
