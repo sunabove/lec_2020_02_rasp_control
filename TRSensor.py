@@ -273,13 +273,43 @@ class TRSensor :
         return txt 
     pass
 
+    def sensor_pos(self, sensor, white, black) :
+        # 신호 위치 
+        pos = 0 
+        mid = len(sensor)//2
+        wb_diff = abs( white - black )
+
+        norm = np.array( sensor )
+
+        for i in len( norm ):
+            n = norm[i]
+            if n < black :
+                n = 0 
+            elif n > white :
+                n = 1
+            else :
+                n = (n - black)/wb_diff
+            pass
+
+            norm[i] = n
+        pass
+
+        return pos, norm
+    pass
+
     def read_sensor(self, debug=True) : 
         self.idx += 1
+
         idx = self.idx
         white = self.white
         black = self.black
 
+        # 신호 읽기
         sensor = self.read_analog()
+
+        # 신호 위치
+        pos, norm = self.sensor_pos(sensor, white, black)
+
         txt = self.to_sensors_text( sensor, white, black )
         road_state = ""
         move_state = ""
@@ -295,7 +325,8 @@ class TRSensor :
             road_state = "Mixed"
         pass
 
-        debug and log.info( f"{txt} {sensor} [{move_state}] {road_state} " )
+        debug and log.info( f"{txt} {sensor} [{move_state}] {road_state} {norm}" )
+        debug and log.info( f"{pos} {norm}" )
 
         return sensor
     pass
