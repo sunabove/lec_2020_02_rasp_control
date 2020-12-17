@@ -36,7 +36,7 @@ class TRSensor :
         GPIO.setup(self.CS,GPIO.OUT)
         GPIO.setup(self.DataOut,GPIO.IN,GPIO.PUD_UP)
         GPIO.setup(self.Button,GPIO.IN,GPIO.PUD_UP)
-    pass
+    pass # -- __init__
 
     def __del__(self):
         self.finish()
@@ -48,8 +48,8 @@ class TRSensor :
         for port in [ self.Clock, self.Address, self.CS, self.DataOut, self.Button ] :             
             GPIO.cleanup(port)
         pass
-    pass
-        
+    pass # -- finish
+
     """
     Reads the sensor values into an array. There *MUST* be space
     for as many values as there were sensors specified in the constructor.
@@ -152,7 +152,7 @@ class TRSensor :
                 self.calibratedMax[i] = max_sensor_values[i]
             pass
         pass
-    pass
+    pass # -- calibrate
 
     """
     Returns values calibrated to a value between 0 and 1000, where
@@ -186,8 +186,8 @@ class TRSensor :
         
         #print("read_calibrated",sensor_values)
         return sensor_values
-    pass
-            
+    pass # -- read_calibrated
+
     """
     Operates the same as read calibrated, but also returns an
     estimated position of the robot with respect to a line. The
@@ -252,7 +252,7 @@ class TRSensor :
         pass
         
         return self.last_value, sensors
-    pass
+    pass # -- read_line
 
     def to_sensors_text(self, sensor, white, black) :
         txt = ""
@@ -271,7 +271,7 @@ class TRSensor :
         pass
 
         return txt 
-    pass
+    pass # -- to_sensors_text
 
     def sensor_pos(self, sensor, white, black) :
         # 신호 위치 
@@ -294,16 +294,16 @@ class TRSensor :
 
         pos = 0 
         len_norm = len(norm)
-        mid = len_norm//2
+        mid = len_norm // 2
         
         for i, n in enumerate( norm ) : 
-            pos += n*(i-mid)
+            pos += n*(i -mid)
         pass
 
-        pos = pos / (mid + 1) 
+        pos = pos / len_norm
 
         return pos, norm
-    pass
+    pass # -- sensor_pos
 
     def read_sensor(self, debug=True) : 
         self.idx += 1
@@ -337,11 +337,10 @@ class TRSensor :
         debug and log.info( f"{norm} pos = {pos}" )
 
         return sensor
-    pass
+    pass # -- read_sensor
 
 pass
 
-# Simple example prints accel/mag data once per second:
 if __name__ == '__main__':
     log.info("TRSensor")
 
@@ -359,7 +358,7 @@ if __name__ == '__main__':
 
         exit( 0 )
 
-        log.info( "Goood bye!")
+        log.info( "Good bye!")
 
         import sys
         sys.exit( 0 )
@@ -372,5 +371,4 @@ if __name__ == '__main__':
         analog = tr.read_sensor() 
         time.sleep(0.2)
     pass
-
 pass
