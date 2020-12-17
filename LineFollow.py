@@ -79,7 +79,7 @@ class LineTracker :
                 continue
             pass
             
-            sensors = tr.read_sensors() 
+            sensors = tr.read_sensor() 
             
             idx += 1
 

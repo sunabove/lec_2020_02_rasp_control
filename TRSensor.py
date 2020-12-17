@@ -254,23 +254,50 @@ class TRSensor :
         return self.last_value, sensors
     pass
 
-    def read_sensors(self) : 
+    def to_sensors_text(self, sensor, white, black) :
+        txt = ""
+        for i in range( len(sensor) ) :
+            s = sensor[i]
+            t = " "
+            if s > white :
+                t = "#"
+            elif s < black :
+                t = "_"
+            else :
+                t = "*"
+            pass
+            
+            txt += t
+        pass
+
+        return txt 
+    pass
+
+    def read_sensor(self, debug=True) : 
         self.idx += 1
         idx = self.idx
         white = self.white
         black = self.black
 
-        sensors = self.read_analog()
+        sensor = self.read_analog()
+        txt = self.to_sensors_text( sensor, white, black )
+        road_state = ""
+        move_state = ""
 
-        if np.all( sensors > white ) :
-            log.info( f"[STOP] : All White {sensors}" )
-        elif np.all( sensors < black ) :
-            log.info( f"[FORE] : All Black {sensors}" )
+        if np.all( sensor > white ) :
+            move_state = "STOP"
+            road_state = "All White"
+        elif np.all( sensor < black ) :
+            move_state = "FORE"
+            road_state = "All Black"
         else :
-            log.info( f"[MIX ] : Mixed     {sensors}" )
+            move_state = "MIX "
+            road_state = "Mixed"
         pass
 
-        return sensors
+        debug and log.info( f"{txt} {sensor} [{move_state}] {road_state} " )
+
+        return sensor
     pass
 
 pass
@@ -303,7 +330,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
 
     while True:
-        analog = tr.read_sensors() 
+        analog = tr.read_sensor() 
         time.sleep(0.2)
     pass
 
