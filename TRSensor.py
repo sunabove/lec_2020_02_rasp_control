@@ -297,10 +297,10 @@ class TRSensor :
         mid = len_norm//2
         
         for i, n in enumerate( norm ) : 
-            pos += n*(i+1)
+            pos += n*(i-mid)
         pass
 
-        pos = pos / (mid + 1)
+        pos = pos / (mid + 1) 
 
         return pos, norm
     pass
