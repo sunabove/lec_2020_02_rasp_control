@@ -90,15 +90,15 @@ class LineTracker :
 
                 log.info( f"area_cnt={area_cnt}")
 
-                if abs( pos ) < 0.2 :
+                if abs( pos ) < 0.1 :
                     log.info( "ROBOT forward")
                     robot.forward()
                 elif pos < 0 :
-                    log.info( "ROBOT left")
-                    robot.left(turn_speed)
-                elif pos > 0 :
                     log.info( "ROBOT right")
                     robot.right(turn_speed)
+                elif pos > 0 :
+                    log.info( "ROBOT left")
+                    robot.left(turn_speed)
                 pass
 
                 if prev_area == area :
