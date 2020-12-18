@@ -81,7 +81,8 @@ class LineTracker :
         max_speed = 20
         min_speed = -20
         
-        kp = 20
+        kp = -20
+        kp = -10
         kd = 10
         lastError = 0.0
 
