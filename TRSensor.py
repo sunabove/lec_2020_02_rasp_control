@@ -274,7 +274,7 @@ class TRSensor :
 
         area = 0
 
-        if np.all( norm == 1 ) :
+        if np.all( norm > 0.9 ) :
             move_state = "STOP"
             area = "white"
         elif pos == 0 :
@@ -321,8 +321,8 @@ class TRSensor :
 
         dir = 0 
 
-        left_pos  = np.sum( [ n*(len_norm - i) for i, n in enumerate( norm ) ] )
-        right_pos = np.sum( [ n*(i + 1) for i, n in enumerate( norm ) ] )
+        left_pos  = np.sum( [ n*(len_norm - i) for i, n in enumerate( norm ) if i > 0.5 ] )
+        right_pos = np.sum( [ n*(i + 1) for i, n in enumerate( norm ) if i > 0.5 ] )
         
         if left_pos > right_pos : 
             pos = - np.sum( norm )
