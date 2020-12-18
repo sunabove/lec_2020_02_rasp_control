@@ -85,7 +85,7 @@ class LineTracker :
         
         kp = 2.1
         kd = 1.9
-        lastError = 0 
+        lastError = 0.0 
 
         while self._running : 
             now = time()
@@ -97,10 +97,12 @@ class LineTracker :
                 pos, area, norm = tr.read_sensor()
 
                 error = pos - 0 
-                speed = kp*error + kd*(error - lastError)
+                speed = kp*error + kd*(error - lastError) 
 
                 left_speed = base_speed + speed
                 right_speed = base_speed - speed
+
+                log.info( "error=={error:.2f}, speed={speed:.2f}, left={left_speed:.2f}, right={right_speed:.2f}" )
 
                 robot.forward( left_speed, right_speed )
                 
