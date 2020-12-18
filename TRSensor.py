@@ -324,7 +324,7 @@ class TRSensor :
         left_pos  = np.sum( [ n*(len_norm - i) for i, n in enumerate( norm ) ] )
         right_pos = np.sum( [ n*(i + 1) for i, n in enumerate( norm ) ] )
         
-        if np.all( norm < 0.3 ) :
+        if np.all( norm < 0.32 ) :
             pos = 0
         elif np.all( norm > 0.7 ) :
             pos = -5 if self.prev_pos < 0 else  5
