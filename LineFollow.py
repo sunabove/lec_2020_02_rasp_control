@@ -50,7 +50,7 @@ class LineTracker :
 
         self._running = False 
 
-        thread = self.trhead
+        thread = self.thread
         if thread is not None :
             thread.join()
         pass
