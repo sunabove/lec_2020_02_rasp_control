@@ -108,8 +108,8 @@ class LineTracker :
             pos, area, norm = tr.read_sensor()
 
             error = pos - 0 
-            d = error - lastError
-            speed = kp*error + kd*d
+            error_derivative = error - lastError
+            speed = kp*error + kd*error_derivative
 
             left_speed = base_speed + speed
             right_speed = base_speed - speed
@@ -120,7 +120,7 @@ class LineTracker :
             right_speed = min( right_speed, max_speed )
             right_speed = max( right_speed, min_speed )
 
-            log.info( f"err=={error:.2f}, d={d:.2f}, spd={speed:.2f}, left={left_speed:.2f}, right={right_speed:.2f}" )
+            log.info( f"P={error:.2f}, D={error_derivative:.2f}, spd={speed:.2f}, left={left_speed:.2f}, right={right_speed:.2f}" )
 
             robot.forward( left_speed, right_speed )
             
