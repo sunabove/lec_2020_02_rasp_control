@@ -83,8 +83,8 @@ class LineTracker :
         max_speed = 20
         min_speed = -20
         
-        kp = 50
-        kd = 1
+        kp = 2.1
+        kd = 1.9
         lastError = 0 
 
         while self._running : 
@@ -99,8 +99,8 @@ class LineTracker :
                 error = pos - 0 
                 speed = kp*error + kd*(error - lastError)
 
-                left_speed = base_speed - speed
-                right_speed = base_speed + speed
+                left_speed = base_speed + speed
+                right_speed = base_speed - speed
 
                 robot.forward( left_speed, right_speed )
                 
