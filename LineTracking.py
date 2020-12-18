@@ -14,7 +14,7 @@ log.basicConfig(
 
 class LineTracker :
 
-    def __init__(self, robot, white = 570, black=240, interval=0.005):
+    def __init__(self, robot, white = 570, black=240, interval=0.01):
         self.robot = robot
         self.white = white
         self.black = black
