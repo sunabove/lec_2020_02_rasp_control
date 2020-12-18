@@ -70,7 +70,7 @@ class LineTracker :
         tr = TRSensor(white=self.white, black=self.black)
 
         then = time()
-        interval = 0.005
+        interval = 0.01
         elapsed = 0 
         idx = 0 
 
@@ -83,7 +83,7 @@ class LineTracker :
         min_speed = -20
         
         kp = 2.1
-        kd = 0.1
+        kd = 1.0
         lastError = 0.0 
 
         while self._running : 
