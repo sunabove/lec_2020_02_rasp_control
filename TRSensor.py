@@ -267,27 +267,10 @@ class TRSensor :
         white = self.white
         black = self.black
         
-        pos, norm = self.sensor_pos(sensor, white, black)
+        pos, norm, area, move_state = self.sensor_pos(sensor, white, black)
 
         txt = self.to_sensors_text( norm )
-        move_state = ""
-
-        area = 0
-
-        if np.all( norm > 0.9 ) :
-            move_state = "STOP"
-            area = "white"
-        elif pos == 0 :
-            move_state = "FORE"
-            area = "black"
-        elif pos < 0 :
-            move_state = "LEFT" 
-            area = "mixed"
-        elif pos > 0 :
-            move_state = "RIGHT" 
-            area = "mixed"
-        pass
-
+        
         debug and log.info( f"{sensor} {txt} [{move_state}] {area}" )
         debug and log.info( f"{np.around(norm, decimals=2)} pos = {pos}" )
 
@@ -323,17 +306,30 @@ class TRSensor :
 
         left_pos  = np.sum( [ n*(len_norm - i) for i, n in enumerate( norm ) ] )
         right_pos = np.sum( [ n*(i + 1) for i, n in enumerate( norm ) ] )
+
+        move_state = ""
+        area = ""
         
         if np.all( norm < 0.32 ) :
             pos = 0
+            
+            move_state = "FORE"
+            area = "black"
         elif np.all( norm > 0.7 ) :
             pos = -5 if self.prev_pos < 0 else  5
+
+            move_state = "STOP"
+            area = "white"
         elif left_pos > right_pos : 
             pos = - np.sum( n for n in norm if n > 0.1  )
+
+            move_state = "RIGHT" 
+            area = "mixed"
         elif left_pos < right_pos : 
-            pos = np.sum( n for n in norm if n > 0.1 )
-        else :
-            pos = 0
+            pos = np.sum( n for n in norm if n > 0.1 ) 
+
+            move_state = "RIGHT" 
+            area = "mixed"
         pass 
 
         #pos = pos / len_norm
