@@ -289,7 +289,7 @@ class TRSensor :
         pass
 
         debug and log.info( f"{sensor} {txt} [{move_state}] {area}" )
-        debug and log.info( f"{norm} pos = {pos}" )
+        debug and log.info( f"{np.around(norm, decimals=2)} pos = {pos}" )
 
         return pos, area, norm
     pass # -- read_sensor
@@ -309,7 +309,7 @@ class TRSensor :
             elif s < black :
                 n = 0
             else :
-                n = (white - s)/wb_diff
+                n = (s -black)/wb_diff
             pass
             norm[i] = n
         pass
