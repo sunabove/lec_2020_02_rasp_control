@@ -81,8 +81,8 @@ class LineTracker :
         max_speed = 20
         min_speed = -20
         
-        kp = 2.1
-        kd = 1.0
+        kp = 20
+        kd = 10
         lastError = 0.0
 
         while self._running : 
