@@ -89,13 +89,6 @@ class LineTracker :
                 if area_cnt > 1_000 :
                     log.info( f"ROBOT stop area_cnt={area_cnt}" )
                     robot.stop()
-                elif area == "white" :
-                    log.info( "ROBOT stop" )
-                    if area_cnt < 10 :
-                        robot.right()
-                    else : 
-                        robot.stop()
-                    pass
                 elif pos == 0 :
                     log.info( "ROBOT forward")
                     robot.forward()
