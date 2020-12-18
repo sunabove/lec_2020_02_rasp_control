@@ -18,8 +18,9 @@ class TRSensor :
     DataOut = 23
     Button = 7
 
-    def __init__(self, thresh = 410, num_sensors = 5 ):
-        self.thresh = thresh
+    def __init__(self, white = 570, black=240, num_sensors = 5 ):
+        self.white = white
+        self.black = black
         self.num_sensors = num_sensors
         self.idx = 0 
         self.prev_pos = 0
@@ -109,7 +110,7 @@ class TRSensor :
             GPIO.output(cs,GPIO.HIGH)
         pass
 
-        return np.array( value[1:][::-1] )
+        return np.array( value[1:] )
     pass # -- read_analog
 
     """
@@ -254,38 +255,21 @@ class TRSensor :
         return self.last_value, sensors
     pass # -- read_line
 
-    def to_sensors_text(self, sensor, thresh) :
-        txt = ""
-        for i in range( len(sensor) ) :
-            s = sensor[i]
-            t = " "
-            if s > thresh :
-                # white
-                t = "#"
-            else :
-                # black
-                t = "_"
-            pass
-            
-            txt += t
-        pass
-
-        return txt 
-    pass # -- to_sensors_text
-
     def read_sensor(self, debug=True) : 
         self.idx += 1
 
         idx = self.idx
-        thresh = self.thresh
-
+        
         # 신호 읽기
         sensor = self.read_analog()
 
         # 신호 위치
-        pos, norm = self.sensor_pos(sensor, thresh)
+        white = self.white
+        black = self.black
+        
+        pos, norm = self.sensor_pos(sensor, white, black)
 
-        txt = self.to_sensors_text( sensor, thresh)
+        txt = self.to_sensors_text( norm )
         move_state = ""
 
         area = 0
@@ -310,15 +294,24 @@ class TRSensor :
         return pos, area, norm
     pass # -- read_sensor
 
-    def sensor_pos(self, sensor, thresh) :
+    def sensor_pos(self, sensor, white, black) :
         # 신호 위치
         pos = 0
         
         # normalize
-        norm = np.array( sensor )
+        norm = np.array( sensor, np.float32 )
+        wb_diff = white - black
 
         for i, s in enumerate( sensor ):
-            norm[i] = 1 if s > thresh else 0 
+            n = 0
+            if s > white :
+                n = 1 
+            elif s < black :
+                n = 0
+            else :
+                n = (white - s)/wb_diff
+            pass
+            norm[i] = n
         pass
 
         # -- nomalize
@@ -350,12 +343,31 @@ class TRSensor :
         return pos, norm
     pass # -- sensor_pos
 
+    def to_sensors_text(self, norm ) :
+        txt = ""
+        for n in norm :
+            if n == 1 :
+                # white
+                t = "#"
+            elif n == 0 :
+                # black
+                t = "_"
+            else :
+                t = "|"
+            pass
+            
+            txt += t
+        pass
+
+        return txt 
+    pass # -- to_sensors_text
+
 pass
 
 if __name__ == '__main__':
     log.info("TRSensor")
 
-    tr = TRSensor(thresh=410)
+    tr = TRSensor(white = 570, black=240)
 
     def exit( result ) :
         tr.finish()
