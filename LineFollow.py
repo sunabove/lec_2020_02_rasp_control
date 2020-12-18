@@ -88,7 +88,7 @@ class LineTracker :
 
                 log.info( f"area_cnt={area_cnt}")
 
-                if area_cnt > 1_000 :
+                if area_cnt > 200 :
                     log.info( f"ROBOT stop area_cnt={area_cnt}" )
                     robot.stop()
                 elif pos == 0 :
