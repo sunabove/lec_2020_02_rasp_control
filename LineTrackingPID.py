@@ -14,11 +14,10 @@ log.basicConfig(
 
 class LineTracker :
 
-    def __init__(self, robot, white = 570, black=240, interval=0.01):
+    def __init__(self, robot, white = 570, black=240 ):
         self.robot = robot
         self.white = white
-        self.black = black
-        self.interval = interval
+        self.black = black 
 
         self._running = False  
     pass
@@ -71,7 +70,7 @@ class LineTracker :
         tr = TRSensor(white=self.white, black=self.black)
 
         then = time()
-        interval = self.interval
+        interval = 0.005
         elapsed = 0 
         idx = 0 
 
