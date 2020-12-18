@@ -120,11 +120,10 @@ class Motor:
     def forward(self, left = None, right=None):
         self.debug and log.info(inspect.currentframe().f_code.co_name)
 
-        self.mode = "forward"
-        min_speed = self.min_speed 
+        self.mode = "forward" 
 
         if left is None :
-            left = min_speed
+            left = self.PA
         pass
 
         if right is None :
