@@ -326,7 +326,7 @@ class TRSensor :
         
         if np.all( norm < 0.3 ) :
             pos = 0
-        elif np.all( norm > 0.8 ) :
+        elif np.all( norm > 0.7 ) :
             pos = -5 if self.prev_pos < 0 else  5
         elif left_pos > right_pos : 
             pos = - np.sum( n for n in norm if n > 0.1  )
