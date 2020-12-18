@@ -27,8 +27,7 @@ class Motor:
         self.PWMB = GPIO.PWM(enb, 500)
 
         self.min_speed = 10
-        self.turn_speed = 20
-
+        
         self.PA = self.min_speed  
         self.PB = self.min_speed  
 
@@ -167,12 +166,10 @@ class Motor:
         GPIO.output(self.BIN2,GPIO.LOW)
     pass 
         
-    def left(self):
+    def left(self, turn_speed=20):
         self.debug and log.info(inspect.currentframe().f_code.co_name)
 
-        self.mode = "left"
-
-        turn_speed = self.turn_speed
+        self.mode = "left" 
 
         self.PWMA.ChangeDutyCycle(turn_speed)
         self.PWMB.ChangeDutyCycle(turn_speed)
@@ -183,12 +180,10 @@ class Motor:
         GPIO.output(self.BIN2,GPIO.HIGH)
     pass 
 
-    def right(self):
+    def right(self, turn_speed=20):
         self.debug and log.info(inspect.currentframe().f_code.co_name)
 
         self.mode = "right"
-
-        turn_speed = self.turn_speed
 
         self.PWMA.ChangeDutyCycle(turn_speed)
         self.PWMB.ChangeDutyCycle(turn_speed)

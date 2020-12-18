@@ -76,6 +76,7 @@ class LineTracker :
 
         prev_area = ""
         area_cnt = 0 
+        turn_speed = 10
 
         while self._running : 
             now = time()
@@ -96,10 +97,10 @@ class LineTracker :
                     robot.forward()
                 elif pos < 0 :
                     log.info( "ROBOT left")
-                    robot.left()
+                    robot.left(turn_speed)
                 elif pos > 0 :
                     log.info( "ROBOT right")
-                    robot.right()
+                    robot.right(turn_speed)
                 pass
 
                 if prev_area == area :
