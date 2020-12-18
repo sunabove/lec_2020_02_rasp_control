@@ -84,7 +84,7 @@ class LineTracker :
         min_speed = -20
         
         kp = 2.1
-        kd = 1.9
+        kd = 0.1
         lastError = 0.0 
 
         while self._running : 
@@ -100,8 +100,8 @@ class LineTracker :
                 dis_error = error - lastError
                 speed = kp*error + kd*dis_error
 
-                left_speed = base_speed - speed
-                right_speed = base_speed + speed
+                left_speed = base_speed + speed
+                right_speed = base_speed - speed
 
                 left_speed = min( left_speed, max_speed )
                 left_speed = max( left_speed, min_speed )
