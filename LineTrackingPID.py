@@ -102,6 +102,12 @@ class LineTracker :
                 left_speed = base_speed + speed
                 right_speed = base_speed - speed
 
+                left_speed = min( left_speed, max_speed )
+                left_speed = max( left_speed, min_speed )
+
+                right_speed = min( right_speed, max_speed )
+                right_speed = max( right_speed, min_speed )
+
                 log.info( f"error=={error:.2f}, speed={speed:.2f}, left={left_speed:.2f}, right={right_speed:.2f}" )
 
                 robot.forward( left_speed, right_speed )
