@@ -307,29 +307,29 @@ class TRSensor :
         left_pos  = np.sum( [ n*(len_norm - i) for i, n in enumerate( norm ) ] )
         right_pos = np.sum( [ n*(i + 1) for i, n in enumerate( norm ) ] )
 
-        move_state = ""
         area = ""
+        move_state = ""
         
         if np.all( norm < 0.32 ) :
             pos = 0
-            
-            move_state = "FORE"
+
             area = "black"
+            move_state = "FORE"
         elif np.all( norm > 0.7 ) :
             pos = -5 if self.prev_pos < 0 else  5
 
-            move_state = "STOP"
             area = "white"
+            move_state = "STOP"
         elif left_pos > right_pos : 
             pos = - np.sum( n for n in norm if n > 0.1  )
 
-            move_state = "RIGHT" 
             area = "mixed"
+            move_state = "RIGHT"
         elif left_pos < right_pos : 
             pos = np.sum( n for n in norm if n > 0.1 ) 
 
-            move_state = "RIGHT" 
             area = "mixed"
+            move_state = "RIGHT"
         pass 
 
         #pos = pos / len_norm
@@ -338,7 +338,7 @@ class TRSensor :
             self.prev_pos = pos
         pass
 
-        return pos, norm
+        return pos, norm, area, move_state
     pass # -- sensor_pos
 
     def to_sensors_text(self, norm ) :
