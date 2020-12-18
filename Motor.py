@@ -123,23 +123,35 @@ class Motor:
         self.mode = "forward"
         min_speed = self.min_speed 
 
-        if left is not None and right is None :
+        if left is None :
+            left = min_speed
+        pass
+
+        if right is None :
             right = left
         pass
 
-        self.PA = self.PA if left is None else left
-        self.PB = self.PB if right is None else right
+        self.PA = left
+        self.PB = right
 
-        self.PA = self.PA if self.PA > min_speed else min_speed 
-        self.PB = self.PB if self.PB > min_speed else min_speed  
+        self.PWMA.ChangeDutyCycle( abs( left ) )
+        self.PWMB.ChangeDutyCycle( abs( right ) )
 
-        self.PWMA.ChangeDutyCycle(self.PA)
-        self.PWMB.ChangeDutyCycle(self.PB)
-
-        GPIO.output(self.AIN1,GPIO.LOW)
-        GPIO.output(self.AIN2,GPIO.HIGH)
-        GPIO.output(self.BIN1,GPIO.LOW)
-        GPIO.output(self.BIN2,GPIO.HIGH)
+        if left >= 0 :
+            GPIO.output(self.AIN1, GPIO.LOW)
+            GPIO.output(self.AIN2, GPIO.HIGH)
+        else :
+            GPIO.output(self.AIN1, GPIO.HIGH)
+            GPIO.output(self.AIN2, GPIO.LOW)
+        pass
+        
+        if right >= 0 : 
+            GPIO.output(self.BIN1,GPIO.LOW)
+            GPIO.output(self.BIN2,GPIO.HIGH)
+        else :
+            GPIO.output(self.BIN1,GPIO.HIGH)
+            GPIO.output(self.BIN2,GPIO.LOW)
+        pass
     pass
 
     def backward(self, left=None, right=None):
