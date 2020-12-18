@@ -49,6 +49,11 @@ class LineTracker :
         log.info(inspect.currentframe().f_code.co_name)
 
         self._running = False 
+
+        thread = self.trhead
+        if thread is not None :
+            thread.join()
+        pass
     pass
 
     def is_running(self):
@@ -97,6 +102,8 @@ class LineTracker :
                 then = now
             pass
         pass
+
+        self.thread = None
     pass 
 
 pass
