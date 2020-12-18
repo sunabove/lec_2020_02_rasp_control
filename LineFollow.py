@@ -14,7 +14,7 @@ log.basicConfig(
 
 class LineTracker :
 
-    def __init__(self, robot, thresh=410, interval=0.02):
+    def __init__(self, robot, thresh=410, interval=0.01):
         self.robot = robot
         self.thresh = thresh
         self.interval = interval
@@ -74,6 +74,9 @@ class LineTracker :
         elapsed = 0 
         idx = 0 
 
+        prev_area = ""
+        area_cnt = 0 
+
         while self._running : 
             now = time()
             elapsed = now - then 
@@ -85,7 +88,11 @@ class LineTracker :
 
                 if area == "white" :
                     log.info( "ROBOT stop" )
-                    robot.stop()
+                    if area_cnt < 10 :
+                        robot.left()
+                    else : 
+                        robot.stop()
+                    pass
                 elif pos == 0 :
                     log.info( "ROBOT forward")
                     robot.forward()
@@ -97,8 +104,14 @@ class LineTracker :
                     robot.right()
                 pass
 
-                idx += 1
+                if prev_area == area :
+                    area_cnt += 1
+                else : 
+                    area_cnt = 0 
+                    prev_area = area
+                pass
 
+                idx += 1
                 then = now
             pass
         pass
@@ -117,7 +130,7 @@ if __name__ == '__main__':
 
     robot = Motor()
     
-    lineTracker = LineTracker( robot=robot, thresh=410, interval=0.02 )
+    lineTracker = LineTracker( robot=robot, thresh=410, interval=0.01 )
 
     lineTracker.start()
 
