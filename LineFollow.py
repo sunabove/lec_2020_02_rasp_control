@@ -80,12 +80,16 @@ class LineTracker :
 
                 if area == "white" :
                     log.info( "ROBOT stop" )
+                    robot.stop()
                 elif pos == 0 :
                     log.info( "ROBOT forward")
-                elif pos > 0 :
-                    log.info( "ROBOT right")
+                    robot.forward()
                 elif pos < 0 :
                     log.info( "ROBOT left")
+                    robot.left()
+                elif pos > 0 :
+                    log.info( "ROBOT right")
+                    robot.right()
                 pass
 
                 idx += 1

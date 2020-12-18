@@ -296,11 +296,11 @@ class TRSensor :
         elif pos == 0 :
             move_state = "FORE"
             area = "black"
-        elif pos > 0 :
-            move_state = "RIGHT" 
-            area = "mixed"
         elif pos < 0 :
             move_state = "LEFT" 
+            area = "mixed"
+        elif pos > 0 :
+            move_state = "RIGHT" 
             area = "mixed"
         pass
 
