@@ -82,7 +82,7 @@ class LineTracker :
             elapsed = now - then 
 
             if elapsed < interval :
-                sleep( interval - elapsed )  
+                sleep( interval - elapsed ) 
             else :
                 pos, area, norm = tr.read_sensor()
 
