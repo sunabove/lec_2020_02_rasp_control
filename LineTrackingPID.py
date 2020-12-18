@@ -79,6 +79,14 @@ class LineTracker :
         area_cnt = 0 
         turn_speed = 15
 
+        base_speed = 10
+        max_speed = 20
+        min_speed = -20
+        
+        kp = 50
+        kd = 1
+        lastError = 0 
+
         while self._running : 
             now = time()
             elapsed = now - then 
@@ -88,18 +96,15 @@ class LineTracker :
             else :
                 pos, area, norm = tr.read_sensor()
 
-                log.info( f"area_cnt={area_cnt}")
+                error = pos - 0 
+                speed = kp*error + kd*(error - lastError)
 
-                if abs( pos ) < 0.1 :
-                    log.info( "ROBOT forward")
-                    robot.forward()
-                elif pos < 0 :
-                    log.info( "ROBOT right")
-                    robot.right(turn_speed)
-                elif pos > 0 :
-                    log.info( "ROBOT left")
-                    robot.left(turn_speed)
-                pass
+                left_speed = base_speed - speed
+                right_speed = base_speed + speed
+
+                robot.forward( left_speed, right_speed )
+                
+                lastError = error
 
                 if prev_area == area :
                     area_cnt += 1
