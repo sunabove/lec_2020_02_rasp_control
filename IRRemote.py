@@ -1,7 +1,10 @@
-import RPi.GPIO as GPIO, threading, inspect, signal
-from time import sleep, time
+# coding: utf-8
 
+import RPi.GPIO as GPIO
+import time, threading , inspect
+from time import sleep
 from gpiozero import Buzzer
+from ObstacleSensor import ObstacleSensor
 
 import logging as log
 log.basicConfig(
@@ -9,11 +12,12 @@ log.basicConfig(
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
     )
 
-class IRRemote : 
+class IRSensor :
 
-    IR_GPIO_NO = 17
+    GPIO_NO = 17
 
-    def __init__(self, robot, buzzer=None) : 
+    def __init__(self, robot, buzzer=None, obstacleSensor=None):
+
         self.robot = robot
         
         if buzzer is None : 
@@ -22,271 +26,285 @@ class IRRemote :
             self.buzzer = buzzer
         pass
 
+        if obstacleSensor is None :
+            self.obstacleSensor = ObstacleSensor( self.robot ) 
+        else :
+            self.obstacleSensor = obstacleSensor
+        pass
+
+        self.prev_key = 0 
+        self.repeat_cnt = 0 
+
+        self.decoding = False
+        self.pList = []
+        self.timer = time.time()
+        
+        self.callback = self.print_ir_code
+
+        self.checkTime = 150  # time in milliseconds
+        
+        self.repeatCodeOn = True
+        self.lastIRCode = 0
+        self.maxPulseListLength = 70
+
+        self.running = True 
+        self.thread = False
+
+        GPIO.setwarnings(False)
+
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.IR_GPIO_NO, GPIO.IN)
+        GPIO.setup(self.GPIO_NO,GPIO.IN)
+        GPIO.add_event_detect(17,GPIO.BOTH,callback=self.detect_gpio)
 
-        self._repeat_cnt = 0 
+        time.sleep( 0.1 )
 
-        self._running = False 
-        self._thread = None
-
-        self.start()
+        log.info('Setting up callback')
+        
+        self.callback = self.remote_callback
+        self.set_repeat(True) 
+    
     pass
 
     def __del__(self):
-        self.finish()
-    pass
+        self.running = False 
 
-    def finish(self) :
-        self._running = False 
-
-        _thread = self._thread 
-        if _thread is not None :
-            _thread.join()
-
-            self._thread = None 
-        pass
-
-        buzzer = self.buzzer
-        if buzzer is not None :
-            buzzer.close()
-            self.buzzer = None
+        thread = self.thread
+        if thread is not None :
+            thread.join()
         pass
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.cleanup( self.IR_GPIO_NO ) 
-    pass # -- finish
-
-    def start(self):
-        if not self._running and self._thread is None :
-            self._thread = threading.Thread(target=self.process_signal, args=[] )
-            self._thread.start()
-        pass
+        GPIO.cleanup(16)
     pass
 
-    def stop(self) :
-        self._running = False
+    def detect_gpio(self, pin):
+        self.pList.append(time.time()-self.timer)
+        self.timer = time.time()        
+
+        if self.decoding == False and self.running :
+            self.decoding = True
+
+            self.thread = threading.Thread(name='self.pulse_checker',target=self.pulse_checker)
+            self.thread.start()
+        return
     pass
 
-    def join(self) :
-        _thread = self._thread 
-        if _thread :
-            _thread.join()
-        pass
-    pass
+    def pulse_checker(self):
+        timer = time.time()
+        debug = False 
 
-    def check_interval(self, interval=0.00006):
-        then = time()
-        now = time()
-        duration = interval/10
-        while now - then < interval :
-            sleep( duration )
+        while self.running :                
+            check = (time.time()-timer)*1000
 
-            now = time()
-        pass
-    pass
-
-    def check_gpio_count(self, gpio_value, check_count = 0) :
-        gpio_no = self.IR_GPIO_NO
-        count = 0
-        interval = 0.00006
-        while GPIO.input(gpio_no) == gpio_value and count < check_count :
-            count += 1
-            self.check_interval( interval ) 
-        pass
-
-        return count 
-    pass
-
-    def _getkey(self):
-
-        gpio_no = self.IR_GPIO_NO
-
-        if GPIO.input(gpio_no) != 0:
-            return 
-        pass
-
-        interval = 0.00006 
-        
-        count = 0
-
-        count = self.check_gpio_count( 0, 200 ) #9ms
-
-        if count < 10 :
-            log.info( f"get key count = {count}" )
-            return;
-        pass
-
-        count = self.check_gpio_count( 1, 80 ) #4.5ms
-        
-        idx = 0
-        cnt = 0
-        data = [0, 0, 0, 0]
-
-        for i in range(0, 32):
-            count = self.check_gpio_count( 0, 15 ) #0.56ms
-            count = self.check_gpio_count( 1, 40 ) #0.56ms 
-                
-            if count > 7:
-                data[idx] |= 1 << cnt
+            if check > self.checkTime:                    
+                debug and log.info( f"check={check}, pList len={len(self.pList)}" )
+                break
+            elif len(self.pList) > self.maxPulseListLength:
+                debug and log.info( f"check={check}, pList len={len(self.pList)}" )
+                break
             pass
-        
-            if cnt == 7:
-                cnt = 0
-                idx += 1
+
+            sleep(0.001)
+        pass
+
+        if len(self.pList) > self.maxPulseListLength:
+            decode = self.decode_pulse(self.pList)
+            self.lastIRCode = decode
+        elif len(self.pList) < 10:        
+            if self.repeatCodeOn == True:
+                decode = self.lastIRCode
             else:
-                cnt += 1
+                decode = 0
+                self.lastIRCode = decode
             pass
-        pass
-
-        if data[0]+data[1] == 0xFF and data[2]+data[3] == 0xFF:
-            self._repeat_cnt = 0 
-
-            return data[2]
         else:
-            self._repeat_cnt += 1
-            log.info( f"repeat : {self._repeat_cnt}" )
-
-            return "repeat"
+            decode = 0
+            self.lastIRCode = decode
         pass
-    pass # -- _getkey
 
-    def process_signal(self) :
-        try:
-            self._process_signal()
-        except Exception as e :
-            self._running = False 
-            self._thread = None 
+        self.pList = []
+        self.decoding = False
 
-            log.info( e )
-        finally:
-            pass
+        if self.callback is not None and self.running :
+            self.callback( decode )
         pass
-    pass # -- process_signal
+        
+        return
+    pass
 
-    def _process_signal(self) :
-        self._running = True
+    def decode_pulse(self, pList):
 
-        robot = self.robot
-        key_none_count = 0 
+        bitList = []
+        sIndex = -1
+        
+        for p in range(0,len(pList)):
+            try:
+                pList[p]=float(pList[p])*1000
 
-        prev_key = None
-        repeat_cnt = 0 
-
-        while self._running :
-            key = self._getkey()
-
-            if key == "repeat" or ( key and prev_key == key ):
-                repeat_cnt += 1
-            elif key :
-                repeat_cnt = 0 
-            pass
-
-            if key is None :
-                key_none_count += 1
-                if key_none_count > 20_000:
-                    key_none_count = 0 
-                pass
-            elif key is not None : 
-                key_none_count = 0
-
-                if type( key )  == int : 
-                    log.info( f"key: 0x{key:02x}, repeat_cnt={repeat_cnt}" )
-                else :
-                    log.info( f"key: {key}, repeat_cnt={repeat_cnt}" )
-                pass
-
-                if key in [ 0x18, 0x19 ] :
-                    log.info( f"forward" )
-                    robot.forward() 
-                elif key == 0x52:
-                    log.info( f"backward" )
-                    robot.backward() 
-                elif key in [ 0x08, 0x16, 0x0c ] :
-                    log.info( f"left" )
-                    robot.left() 
-                elif key in [ 0x5a, 0x0d, 0x5e ] :
-                    log.info( f"right" )
-                    robot.right() 
-                elif key == 0x1c:
-                    log.info( f"stop" )
-                    robot.stop() 
-                elif key == 0x15 : 
-                    log.info( f"speed up" )
-                    robot.speed_up( 5 ) 
-                elif key == 0x07:
-                    log.info( f"speed down" )
-                    robot.speed_down( 5 ) 
-                elif key == 0x47 or prev_key == 0x47:
-                    log.info( f"shut down" )
-                    if repeat_cnt > 10 : 
-                        robot.stop()
-                        self.system_shutdown()
+                if pList[p]<11:
+                    if sIndex == -1:
+                        sIndex = p
                     pass
                 pass
-
-                if type( key ) == int : 
-                    prev_key = key
-
-                    sleep( 0.4 ) 
+            except:
                 pass
-            pass  
-        pass # -- while
+            pass
+        pass
 
-        self._running = False 
-        self._thread = None 
-    pass # -- _process_signal
+        if sIndex == -1:
+            return -1
+        elif sIndex+1 >= len(pList):
+            return -1        
+        elif (pList[sIndex]<4 or pList[sIndex]>11):
+            return -1
+        elif (pList[sIndex+1]<2 or pList[sIndex+1]>6):
+            return -1
+        pass
+
+        for i in range(sIndex+2,len(pList),2):
+            if i+1 < len(pList):
+                if pList[i+1]< 0.9:  
+                    bitList.append(0)
+                elif pList[i+1]< 2.5:
+                    bitList.append(1)
+                elif (pList[i+1]> 2.5 and pList[i+1]< 45):
+                    #print('end of data found')
+                    break
+                else:
+                    break
+                pass
+            pass
+        pass
+
+        # convert the list of 1s and 0s into a
+        # binary number
+
+        pulse = 0
+        bitShift = 0
+
+        for b in bitList:
+            pulse = (pulse<<bitShift) + b
+            bitShift = 1
+        pass
+
+        return pulse
+    pass
+
+    def print_ir_code(self, code):
+        log.info( f"ir_code = {hex(code)}" )
+
+        return
+    pass
+
+    def set_repeat(self, repeat = True):
+        self.repeatCodeOn = repeat
+
+        return
+    pass
+
+    def beep_warning(self) :
+        buzzer = self.buzzer
+
+        cnt = 9 
+        for frq in range( 1, cnt ) : 
+            frq = cnt - frq
+            t = 1/frq
+            buzzer.beep(on_time=t, off_time=t/4, n = int(frq), background=False)
+            sleep( 1 )
+        pass
+
+        buzzer.beep(on_time=5, off_time=1, n = 1, background=False)
+        sleep( 1 )
+    pass
 
     def system_shutdown(self) :
         log.info(inspect.currentframe().f_code.co_name) 
 
         # 시스템 셧다운
         # 경고음
-        buzzer = self.buzzer
-        
-        for frq in range( 1, 6 + 1 ) : 
-            t = 1/frq
-            buzzer.beep(on_time=t, off_time=t/2, n = int(frq), background=False)
-            sleep( 1 )
-        pass
-
-        buzzer.beep(on_time=2, off_time=1, n = 1, background=False)
+        self.beep_warning()
 
         from subprocess import check_call
 
         check_call(['sudo', 'poweroff'])
     pass # system_shutdown
 
-pass # --IRRemote
+    def remote_callback(self, key ):
+        log.info( f"key = {hex(key)}" )
 
-if __name__ == '__main__':
-    log.info( "Hello..." )
-    log.info( 'IRremote Test Start ...' )
+        if key and self.prev_key == key :
+            self.repeat_cnt += 1
+        elif key :
+            self.repeat_cnt = 0 
+        pass
 
-    GPIO.setwarnings(False)
+        robot = self.robot
 
-    from AlphaBot2 import AlphaBot2 
+        obstacleSensor = self.obstacleSensor
+
+        if key == 0xff38c7 :
+            log.info( f'stop')
+            
+            robot.stop()
+
+            if obstacleSensor.is_running() : 
+                obstacleSensor.stop()
+            pass
+
+            robot.stop()
+        elif key in [ 0xff9867, 0xff18e7 ]:
+            log.info( f"forward" ) 
+            robot.forward()
+        elif key in [ 0xff4ab5 , 0xff42bd, 0xff52ad ]:
+            log.info( f'backward' )
+            robot.backward()
+        elif key in [ 0xff10ef, 0xff30cf, 0xff6897 ]:
+            log.info( f'left' )
+            robot.left()
+        elif key in [ 0xff5aa5, 0xff7a85, 0xffb04f ]:
+            log.info( f'right' )
+            robot.right()
+        elif key == 0xffa857 :
+            log.info( f"speed up" )
+            robot.speed_up( 5 )
+        elif key == 0xffe01f:
+            log.info( f'speed down')
+            robot.speed_down( 5 )
+        elif key == 0xffe21d :
+            log.info( f"shut down, repeat_cnt={self.repeat_cnt}" )
+            if self.repeat_cnt > 10 : 
+                self.system_shutdown()
+            pass
+        elif key == 0xffa25d :
+            log.info( f'Obstacle Sensor')
+
+            if obstacleSensor.is_running() :
+                log.info( "Obstacle Sensor is running already." )
+            else :
+                log.info( "Obstacle Sensor start" )
+                obstacleSensor.start() 
+            pass
+        pass
+
+        if type( key ) == int : 
+            self.prev_key = key 
+        pass
+    pass
+
+pass
+
+if __name__ == "__main__":
+
+    log.info('Starting IR remote senssor ...')
+
     from Motor import Motor
 
     robot = Motor()
+    
+    ir = IRSensor( robot )  
+            
+    input( "Enter to quit..." )
 
-    irremote = IRRemote( robot )
+    log.info('Removing callback and cleaning up GPIO') 
 
-    def signal_handler(signal, frame):
-        print( "", flush=True) 
-
-        log.info('You have pressed Ctrl-C.')
-
-        irremote.finish()
-
-        sleep( 0.5 ) 
-    pass
-
-    signal.signal(signal.SIGINT, signal_handler)
-
-    irremote.join()
-
-    robot.stop()
-
-    log.info( "Good bye!")
-pass
+pass # -- main
