@@ -18,11 +18,11 @@ class TRSensor :
     DataOut = 23
     Button = 7
 
-    def __init__(self, num_sensors = 5, white=450, black = 370):
-        self.white = white
-        self.black = black
+    def __init__(self, num_sensors = 5, thresh = 410):
+        self.thresh = thresh
         self.num_sensors = num_sensors
         self.idx = 0 
+        self.prev_pos = 0
 
         self.calibratedMin = [0] * num_sensors
         self.calibratedMax = [1023] * num_sensors
@@ -109,7 +109,7 @@ class TRSensor :
             GPIO.output(cs,GPIO.HIGH)
         pass
 
-        return np.array( value[1:] )
+        return np.array( value[1:][::-1] )
     pass # -- read_analog
 
     """
@@ -254,17 +254,17 @@ class TRSensor :
         return self.last_value, sensors
     pass # -- read_line
 
-    def to_sensors_text(self, sensor, white, black) :
+    def to_sensors_text(self, sensor, thresh) :
         txt = ""
         for i in range( len(sensor) ) :
             s = sensor[i]
             t = " "
-            if s > white :
+            if s > thresh :
+                # white
                 t = "#"
-            elif s < black :
-                t = "_"
             else :
-                t = "*"
+                # black
+                t = "_"
             pass
             
             txt += t
@@ -277,23 +277,22 @@ class TRSensor :
         self.idx += 1
 
         idx = self.idx
-        white = self.white
-        black = self.black
+        thresh = self.thresh
 
         # 신호 읽기
         sensor = self.read_analog()
 
         # 신호 위치
-        pos, norm = self.sensor_pos(sensor, white, black)
+        pos, norm = self.sensor_pos(sensor, thresh)
 
-        txt = self.to_sensors_text( sensor, white, black )
+        txt = self.to_sensors_text( sensor, thresh)
         road_state = ""
         move_state = ""
 
-        if np.all( sensor > white ) :
+        if np.all( sensor > thresh ) :
             move_state = "STOP"
             road_state = "All White"
-        elif np.all( sensor < black ) :
+        elif np.all( sensor < thresh ) :
             move_state = "FORE"
             road_state = "All Black"
         else :
@@ -307,49 +306,42 @@ class TRSensor :
         return sensor
     pass # -- read_sensor
 
-    def sensor_pos(self, sensor, white, black) :
-        # 신호 위치 
-        wb_diff = abs( white - black )
-
+    def sensor_pos(self, sensor, thresh) :
+        # 신호 위치
+        pos = 0
+        
         # normalize
         norm = np.array( sensor )
 
         for i, s in enumerate( sensor ):
-            if s < black :
-                s = 0 
-            elif s > white :
-                s = 1
-            else :
-                s = (s - black)/wb_diff
-            pass
-
-            norm[i] = s
+            norm[i] = 1 if s > thresh else 0 
         pass
 
         # -- nomalize
 
-        pos = 0 
         len_norm = len(norm)
         mid = len_norm // 2
 
         dir = 0 
 
-        left_pos  = np.sum( [ n*(i + 1) for i, n in enumerate( norm ) ] )
-        right_pos = np.sum( [ n*(len_norm - i) for i, n in enumerate( norm ) ] )
+        left_pos  = np.sum( [ n*(len_norm - i) for i, n in enumerate( norm ) ] )
+        right_pos = np.sum( [ n*(i + 1) for i, n in enumerate( norm ) ] )
         
-        if left_pos > right_pos or np.all( norm == 1 ): 
-            for i, n in enumerate( norm ) : 
-                pos += n*(i + 1)
-            pass
+        if left_pos > right_pos : 
+            pos = - np.sum( norm )
         elif left_pos < right_pos : 
-            for i, n in enumerate( norm ) : 
-                pos += -n*(len_norm - i)
-            pass 
+            pos = np.sum( norm )
+        elif np.all( norm == 1 ) :
+            pos = -5 if self.prev_pos < 0 else  5
         else :
-            pos = 0 
+            pos = 0
         pass 
 
         #pos = pos / len_norm
+
+        if pos != self.prev_pos :
+            self.prev_pos = pos
+        pass
 
         return pos, norm
     pass # -- sensor_pos
@@ -359,7 +351,7 @@ pass
 if __name__ == '__main__':
     log.info("TRSensor")
 
-    tr = TRSensor(white=450, black = 370)
+    tr = TRSensor(thresh=410)
 
     def exit( result ) :
         tr.finish()
