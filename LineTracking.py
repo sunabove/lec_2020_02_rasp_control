@@ -69,46 +69,44 @@ class LineTracker :
 
         tr = TRSensor(white=self.white, black=self.black)
 
-        then = time()
         interval = 0.01
-        elapsed = 0 
         idx = 0 
 
         prev_area = ""
         area_cnt = 0 
         turn_speed = 15
 
-        while self._running : 
+        while self._running :             
+            start = time()
+            idx += 1
+            
+            pos, area, norm = tr.read_sensor()
+
+            log.info( f"area_cnt={area_cnt}")
+
+            if abs( pos ) < 0.1 :
+                log.info( "ROBOT forward")
+                robot.forward()
+            elif pos < 0 :
+                log.info( "ROBOT right")
+                robot.right(turn_speed)
+            elif pos > 0 :
+                log.info( "ROBOT left")
+                robot.left(turn_speed)
+            pass
+
+            if prev_area == area :
+                area_cnt += 1
+            else : 
+                area_cnt = 0 
+                prev_area = area
+            pass
+
             now = time()
-            elapsed = now - then 
-
-            if elapsed < interval :
-                sleep( interval - elapsed ) 
-            else :
-                pos, area, norm = tr.read_sensor()
-
-                log.info( f"area_cnt={area_cnt}")
-
-                if abs( pos ) < 0.1 :
-                    log.info( "ROBOT forward")
-                    robot.forward()
-                elif pos < 0 :
-                    log.info( "ROBOT right")
-                    robot.right(turn_speed)
-                elif pos > 0 :
-                    log.info( "ROBOT left")
-                    robot.left(turn_speed)
-                pass
-
-                if prev_area == area :
-                    area_cnt += 1
-                else : 
-                    area_cnt = 0 
-                    prev_area = area
-                pass
-
-                idx += 1
-                then = now
+            elapsed = now - start
+            remaining_time = interval - elapsed
+            if remaining_time > 0 :
+                sleep( remaining_time )
             pass
         pass
 

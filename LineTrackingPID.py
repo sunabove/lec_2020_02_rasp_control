@@ -71,7 +71,6 @@ class LineTracker :
 
         then = time()
         interval = 0.01
-        elapsed = 0 
         idx = 0 
 
         prev_area = ""
@@ -84,45 +83,45 @@ class LineTracker :
         
         kp = 2.1
         kd = 1.0
-        lastError = 0.0 
+        lastError = 0.0
 
         while self._running : 
+            start = time()
+            idx += 1
+
+            pos, area, norm = tr.read_sensor()
+
+            error = pos - 0 
+            dis_error = error - lastError
+            speed = kp*error + kd*dis_error
+
+            left_speed = base_speed + speed
+            right_speed = base_speed - speed
+
+            left_speed = min( left_speed, max_speed )
+            left_speed = max( left_speed, min_speed )
+
+            right_speed = min( right_speed, max_speed )
+            right_speed = max( right_speed, min_speed )
+
+            log.info( f"err=={error:.2f}, derr={dis_error:.2f}, spd={speed:.2f}, left={left_speed:.2f}, right={right_speed:.2f}" )
+
+            robot.forward( left_speed, right_speed )
+            
+            lastError = error
+
+            if prev_area == area :
+                area_cnt += 1
+            else : 
+                area_cnt = 0 
+                prev_area = area
+            pass
+
             now = time()
-            elapsed = now - then 
-
-            if elapsed < interval :
-                sleep( interval - elapsed ) 
-            else :
-                pos, area, norm = tr.read_sensor()
-
-                error = pos - 0 
-                dis_error = error - lastError
-                speed = kp*error + kd*dis_error
-
-                left_speed = base_speed + speed
-                right_speed = base_speed - speed
-
-                left_speed = min( left_speed, max_speed )
-                left_speed = max( left_speed, min_speed )
-
-                right_speed = min( right_speed, max_speed )
-                right_speed = max( right_speed, min_speed )
-
-                log.info( f"err=={error:.2f}, derr={dis_error:.2f}, spd={speed:.2f}, left={left_speed:.2f}, right={right_speed:.2f}" )
-
-                robot.forward( left_speed, right_speed )
-                
-                lastError = error
-
-                if prev_area == area :
-                    area_cnt += 1
-                else : 
-                    area_cnt = 0 
-                    prev_area = area
-                pass
-
-                idx += 1
-                then = now
+            elapsed = now - start
+            remaining_time = interval - elapsed
+            if remaining_time > 0 :
+                sleep( remaining_time )
             pass
         pass
 
