@@ -18,7 +18,7 @@ class TRSensor :
     DataOut = 23
     Button = 7
 
-    def __init__(self, num_sensors = 5, thresh = 410):
+    def __init__(self, thresh = 410, num_sensors = 5 ):
         self.thresh = thresh
         self.num_sensors = num_sensors
         self.idx = 0 
@@ -286,24 +286,28 @@ class TRSensor :
         pos, norm = self.sensor_pos(sensor, thresh)
 
         txt = self.to_sensors_text( sensor, thresh)
-        road_state = ""
         move_state = ""
 
-        if np.all( sensor > thresh ) :
+        area = 0
+
+        if np.all( norm == 1 ) :
             move_state = "STOP"
-            road_state = "All White"
-        elif np.all( sensor < thresh ) :
+            area = "white"
+        elif pos == 0 :
             move_state = "FORE"
-            road_state = "All Black"
-        else :
-            move_state = "MIX "
-            road_state = "Mixed"
+            area = "black"
+        elif pos > 0 :
+            move_state = "RIGHT" 
+            area = "mixed"
+        elif pos < 0 :
+            move_state = "LEFT" 
+            area = "mixed"
         pass
 
-        debug and log.info( f"{sensor} {txt} [{move_state}] {road_state}" )
+        debug and log.info( f"{sensor} {txt} [{move_state}] {area}" )
         debug and log.info( f"{norm} pos = {pos}" )
 
-        return sensor
+        return pos, area, norm
     pass # -- read_sensor
 
     def sensor_pos(self, sensor, thresh) :
@@ -375,7 +379,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
 
     while True:
-        analog = tr.read_sensor() 
-        time.sleep(0.2)
+        pos, area, norm = tr.read_sensor() 
+        time.sleep(0.2) 
     pass
 pass

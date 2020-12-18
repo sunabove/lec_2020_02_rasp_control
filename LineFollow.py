@@ -62,7 +62,7 @@ class LineTracker :
 
         robot = self.robot 
 
-        tr = TRSensor(white=self.white, black = self.black)
+        tr = TRSensor(thresh = 410)
 
         then = time()
         interval = 0.04
@@ -74,16 +74,24 @@ class LineTracker :
             elapsed = now - then 
 
             if elapsed < interval :
-                #log.info( f"sleep({interval - elapsed})" )
-                sleep( interval - elapsed ) 
-                continue
-            pass
-            
-            sensors = tr.read_sensor() 
-            
-            idx += 1
+                sleep( interval - elapsed )  
+            else :
+                pos, area, norm = tr.read_sensor()
 
-            then = now
+                if area == "white" :
+                    log.info( "ROBOT stop" )
+                elif pos == 0 :
+                    log.info( "ROBOT forward")
+                elif pos > 0 :
+                    log.info( "ROBOT right")
+                elif pos < 0 :
+                    log.info( "ROBOT left")
+                pass
+
+                idx += 1
+
+                then = now
+            pass
         pass
     pass 
 
