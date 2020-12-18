@@ -76,7 +76,7 @@ class LineTracker :
 
         prev_area = ""
         area_cnt = 0 
-        turn_speed = 10
+        turn_speed = 15
 
         while self._running : 
             now = time()
