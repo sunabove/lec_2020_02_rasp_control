@@ -89,7 +89,7 @@ class LineTracker :
                 if area == "white" :
                     log.info( "ROBOT stop" )
                     if area_cnt < 10 :
-                        robot.left()
+                        robot.right()
                     else : 
                         robot.stop()
                     pass
