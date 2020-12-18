@@ -14,7 +14,7 @@ log.basicConfig(
 
 class LineTracker :
 
-    def __init__(self, robot, white = 570, black=240, interval=0.01):
+    def __init__(self, robot, white = 570, black=240, interval=0.005):
         self.robot = robot
         self.white = white
         self.black = black
@@ -90,7 +90,7 @@ class LineTracker :
 
                 log.info( f"area_cnt={area_cnt}")
 
-                if area =="white" and area_cnt > 200 :
+                if area =="white" and area_cnt > 400 :
                     log.info( f"ROBOT stop area_cnt={area_cnt}" )
                     robot.stop()
                 elif pos == 0 :
