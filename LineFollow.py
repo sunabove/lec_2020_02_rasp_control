@@ -86,8 +86,8 @@ class LineTracker :
             else :
                 pos, area, norm = tr.read_sensor()
 
-                if area_cnt > 100 :
-                    log.info( "ROBOT stop area_cnt={area_cnt}" )
+                if area_cnt > 1_000 :
+                    log.info( f"ROBOT stop area_cnt={area_cnt}" )
                     robot.stop()
                 elif area == "white" :
                     log.info( "ROBOT stop" )
