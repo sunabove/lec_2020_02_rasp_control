@@ -12,7 +12,7 @@ log.basicConfig(
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
     )
 
-class IRSensor :
+class IRRemote :
 
     GPIO_NO = 17
 
@@ -301,7 +301,7 @@ if __name__ == "__main__":
 
     robot = Motor()
     
-    ir = IRSensor( robot )  
+    ir = IRRemote( robot )  
             
     input( "Enter to quit..." )
 
