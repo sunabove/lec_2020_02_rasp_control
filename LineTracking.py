@@ -90,7 +90,14 @@ class LineTracker :
 
                 log.info( f"area_cnt={area_cnt}")
 
-                if -0.2 < pos < 0.2 :
+                if area =="white" :
+                    log.info( f"ROBOT stop area_cnt={area_cnt}" )
+                    if area_cnt > 200 :
+                        robot.stop()
+                    else :
+                        robot.right(turn_speed)
+                    pass
+                elif abs( pos ) < 0.2 :
                     log.info( "ROBOT forward")
                     robot.forward()
                 elif pos < 0 :
