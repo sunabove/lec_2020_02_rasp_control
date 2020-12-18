@@ -4,6 +4,7 @@ import RPi.GPIO as GPIO, threading, signal, inspect
 import numpy as np
 from random import random
 from time import sleep, time
+from gpiozero import Buzzer
 from TRSensor import TRSensor
 
 import logging as log
@@ -14,10 +15,16 @@ log.basicConfig(
 
 class LineTracker :
 
-    def __init__(self, robot, white = 570, black=240 ):
+    def __init__(self, robot, white = 570, black=240, buzzer = None ):
         self.robot = robot
         self.white = white
         self.black = black 
+
+        if buzzer is None : 
+            self.buzzer = Buzzer(4)
+        elif buzzer is not None : 
+            self.buzzer = buzzer
+        pass
 
         self._running = False  
     pass
@@ -66,6 +73,11 @@ class LineTracker :
         self._running = True 
 
         robot = self.robot 
+        buzzer = self.buzzer
+
+        # 시작음
+        buzzer.beep(on_time=0.5, off_time=0.2, n = 2, background=False)
+        sleep( 1 )
 
         tr = TRSensor(white=self.white, black=self.black)
 
