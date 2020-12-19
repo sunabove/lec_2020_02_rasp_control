@@ -97,9 +97,11 @@ class LineTracker :
         
         #kp = -20
         kp = -10
+        ki = 10
         kd = 10
 
-        lastError = 0.0
+        last_error = 0.0
+        error_integral = 0.0
 
         while self._running : 
             start = time()
@@ -108,8 +110,9 @@ class LineTracker :
             pos, area, norm = tr.read_sensor()
 
             error = pos - 0 
-            error_derivative = error - lastError
-            correction = kp*error + kd*error_derivative
+            error_integral += error
+            error_derivative = error - last_error
+            correction = kp*error + ki*error_integral + kd*error_derivative
 
             left_speed = base_speed + correction
             right_speed = base_speed - correction
@@ -124,7 +127,7 @@ class LineTracker :
 
             robot.forward( left_speed, right_speed )
             
-            lastError = error
+            last_error = error
 
             if prev_area == area :
                 area_cnt += 1
