@@ -97,11 +97,12 @@ class LineTracker :
         
         #kp = -20
         kp = -6
-        ki = -0.01 
+        ki = -0.03
         kd = 5
 
         last_error = 0.0 
         errors = []
+        errors_max = 100
 
         move_start = time()
 
@@ -114,7 +115,7 @@ class LineTracker :
 
             error = pos - 0 
             
-            if len( errors ) > 20 : 
+            if len( errors ) > errors_max : 
                 errors.pop( 0 )
             pass
 
