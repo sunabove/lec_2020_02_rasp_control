@@ -121,7 +121,12 @@ class Motor:
         self.debug and log.info(inspect.currentframe().f_code.co_name)
 
         self.mode = "forward" 
-
+        self.move( left, right )
+    pass
+    
+    def move(self, left = None, right=None):
+        self.debug and log.info(inspect.currentframe().f_code.co_name)
+        
         if left is None :
             left = self.PA
         pass
