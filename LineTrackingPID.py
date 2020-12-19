@@ -97,7 +97,7 @@ class LineTracker :
         
         #kp = -20
         kp = -9
-        kd = 8
+        kd = 8 
 
         last_error = 0.0
 
