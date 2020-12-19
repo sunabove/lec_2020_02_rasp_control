@@ -80,7 +80,7 @@ class LineTracker :
         buzzer.beep(on_time=0.5, off_time=0.2, n = 2, background=False)
         sleep( 1 )
 
-        # 주행 센서
+        # 라인 센서
         tr = TRSensor(white=self.white, black=self.black)
 
         then = time()
@@ -141,6 +141,7 @@ class LineTracker :
             pass
         pass
 
+        self._running = False
         self.thread = None
     pass 
 
