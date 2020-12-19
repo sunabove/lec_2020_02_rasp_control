@@ -123,6 +123,8 @@ class LineTracker :
             pass
         pass
 
+        robot.stop()
+
         self._running = False
         self.thread = None
     pass 

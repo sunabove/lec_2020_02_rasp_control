@@ -85,7 +85,7 @@ class LineTracker :
 
         then = time()
         interval = 0.01
-        idx = 0 
+        n = 0 
 
         prev_area = ""
         area_cnt = 0 
@@ -97,22 +97,25 @@ class LineTracker :
         
         #kp = -20
         kp = -10
-        ki = 5
+        ki = 0.1
         kd = 10
 
         last_error = 0.0
         error_integral = 0.0
 
-        while self._running : 
+        move_start = time()
+
+        # 30 초 동안만 주행 
+        while self._running and ( time() - move_start < 30 ) : 
             start = time()
-            idx += 1
+            n += 1
 
             pos, area, norm = tr.read_sensor()
 
             error = pos - 0 
             error_integral += error
             error_derivative = error - last_error
-            correction = kp*error + ki*error_integral + kd*error_derivative
+            correction = kp*error + ki*error_integral/n + kd*error_derivative
 
             left_speed = base_speed + correction
             right_speed = base_speed - correction
@@ -144,9 +147,17 @@ class LineTracker :
             pass
         pass
 
+        robot.stop()
+
+        buzzer.beep(on_time=2, off_time=0.2, n = 1, background=False)
+        sleep( 1 )
+
+        log.info( f"Move stopped." )
+
         self._running = False
 
         self.thread = None
+
     pass 
 
 pass
