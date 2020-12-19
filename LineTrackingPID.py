@@ -109,10 +109,10 @@ class LineTracker :
 
             error = pos - 0 
             error_derivative = error - lastError
-            speed = kp*error + kd*error_derivative
+            correction = kp*error + kd*error_derivative
 
-            left_speed = base_speed + speed
-            right_speed = base_speed - speed
+            left_speed = base_speed + correction
+            right_speed = base_speed - correction
 
             left_speed = min( left_speed, max_speed )
             left_speed = max( left_speed, min_speed )
