@@ -102,9 +102,9 @@ class LineTracker :
 
         last_error = 0.0 
         errors = []
-        errors_max = 100
+        errors_max = 30
 
-        move_start = time()
+        move_start = time() 
 
         # 30 초 동안만 주행 
         while self._running and ( time() - move_start < 40 ) : 
