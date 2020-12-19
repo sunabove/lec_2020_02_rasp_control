@@ -159,6 +159,11 @@ if __name__ == '__main__':
 
         GPIO.setmode(GPIO.BCM)
         GPIO.cleanup();
+
+        log.info( "Good bye!")
+
+        import sys
+        sys.exit( 0 )
     pass
 
     def signal_handler(signal, frame):
@@ -167,9 +172,6 @@ if __name__ == '__main__':
         log.info('You have pressed Ctrl-C.')
 
         exit( 0 )
-
-        import sys
-        sys.exit( 0 )
     pass
 
     import signal
@@ -178,6 +180,5 @@ if __name__ == '__main__':
     input( "Enter to quit......" )
 
     exit( 0 )
-
-    log.info( "Good bye!")
+    
 pass
