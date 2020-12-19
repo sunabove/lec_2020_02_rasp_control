@@ -164,7 +164,7 @@ if __name__ == '__main__':
     import signal
     signal.signal(signal.SIGINT, signal_handler)
 
-    input( "Enter to quit......" )
+    input( "Enter to quit......" ) 
 
     exit( 0 )
 
