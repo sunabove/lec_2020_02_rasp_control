@@ -100,8 +100,8 @@ class LineTracker :
         ki = -0.01 
         kd = 5
 
-        last_error = 0.0
-        error_integral = 0.0
+        last_error = 0.0 
+        errors = []
 
         move_start = time()
 
@@ -113,7 +113,14 @@ class LineTracker :
             pos, area, norm = tr.read_sensor()
 
             error = pos - 0 
-            error_integral += error
+            
+            if len( errors ) > 20 : 
+                errors.pop( 0 )
+            pass
+
+            errors.append( error )
+
+            error_integral = sum( errors )
             error_derivative = error - last_error
             correction = kp*error + ki*error_integral + kd*error_derivative
 
