@@ -96,12 +96,14 @@ class LineTracker :
         min_speed = -20
         
         #kp = -20
-        kp = -10
-        kd = 10
+        kp = -9
+        kd = 8
 
         last_error = 0.0
 
-        while self._running : 
+        move_start = time()
+
+        while self._running and ( time() - move_start < 40 ) : 
             start = time()
             idx += 1
 
@@ -142,6 +144,8 @@ class LineTracker :
         pass
 
         robot.stop()
+
+        log.info( f"Move stopped." )
 
         self._running = False
         self.thread = None

@@ -96,8 +96,8 @@ class LineTracker :
         min_speed = -20
         
         #kp = -20
-        kp = -10
-        ki = 0.1
+        kp = -9
+        ki = -0.01 
         kd = 10
 
         last_error = 0.0
@@ -106,7 +106,7 @@ class LineTracker :
         move_start = time()
 
         # 30 초 동안만 주행 
-        while self._running and ( time() - move_start < 30 ) : 
+        while self._running and ( time() - move_start < 40 ) : 
             start = time()
             n += 1
 
@@ -115,7 +115,7 @@ class LineTracker :
             error = pos - 0 
             error_integral += error
             error_derivative = error - last_error
-            correction = kp*error + ki*error_integral/n + kd*error_derivative
+            correction = kp*error + ki*error_integral + kd*error_derivative
 
             left_speed = base_speed + correction
             right_speed = base_speed - correction
