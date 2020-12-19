@@ -102,7 +102,7 @@ class LineTracker :
 
         last_error = 0.0 
         errors = []
-        errors_max = 30
+        errors_max = 20
 
         move_start = time() 
 
