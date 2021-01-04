@@ -1,0 +1,282 @@
+From ce73c08ac432f3f92ca029eb155cb51e19a62e09 Mon Sep 17 00:00:00 2001
+From: bide <bide@example.com>
+Date: Mon, 29 Aug 2016 09:15:21 +0000
+Subject: [PATCH] added radio settings to ReachView settings page
+
+---
+ index.html | 259 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 259 insertions(+)
+
+diff --git a/index.html b/index.html
+index ab35f05..641fa40 100644
+--- a/index.html
++++ b/index.html
+@@ -454,6 +454,265 @@ along with ReachView.  If not, see <http://www.gnu.org/licenses/>. -->
+              </ul>
+             <a href="" class="ui-btn ui-corner-all ui-btn-inline" target="_blank" id="bluetooth_scan">Scan</a> <img src="static/images/update_loader.gif">
+         </div>
++        <div id="ui-bar-test" class="ui-bar ui-bar-a ui-corner-all reboot_button_container">
++            <p>Radio</p>
++<!--		<p>ReachView version: {{ system_status.app_version }}</p>
++                <b>Status: </b><span id="status_value2"></span> -->
++            <p>S1 - Serial Data Rate (2400 - 115200baud):</p>
++            <div>
++                <select disabled name="select-serial_speed-1" id="serial_speed" class="config_form_field">
++                    <option value="57">57600</option>
++                    <option value="2">2400</option>
++                    <option value="4">4800</option>
++                    <option value="9">9600</option>
++                    <option value="19">19200</option>
++                    <option value="38">38400</option>
++                    <option value="115">115200</option>
++                </select>
++            </div>
++            <p>S2 - Air Data Rate (4 - 250kbit/sec):</p>
++            <div>
++                <select disabled name="select-air_speed-1" id="air_speed" class="config_form_field">
++                    <option value="128">128</option>
++                    <option value="4">4</option>
++                    <option value="8">8</option>
++                    <option value="16">16</option>
++                    <option value="19">19</option>
++                    <option value="24">24</option>
++                    <option value="32">32</option>
++                    <option value="64">64</option>
++                    <option value="96">96</option>
++                    <option value="192">192</option>
++                    <option value="250">250</option>
++                </select>
++            </div>
++            <p>S3 - Network ID (0 - 499):</p>
++            <div>
++                <select disabled name="select-net_id-1" id="net_id" class="config_form_field">
++                    <option value="25">25</option>
++                    <option value="0">0</option>
++                    <option value="2">2</option>
++                    <option value="3">3</option>
++                    <option value="6">6</option>
++                    <option value="12">12</option>
++                    <option value="22">22</option>
++                    <option value="42">42</option>
++                    <option value="78">78</option>
++                    <option value="144">144</option>
++                    <option value="269">269</option>
++                    <option value="500">500</option>
++                </select>
++            </div>
++            <p>S4 - Transmit Power (0 - 30dBm / 1 - 1000mW):</p>
++            <div>
++                <select disabled name="select-tx_power-1" id="tx_power" class="config_form_field">
++                    <option value="27">27 / 501</option>
++                    <option value="0">0 / 1</option>
++                    <option value="2">2 / 1.58</option>
++                    <option value="5">5 / 3.16</option>
++                    <option value="7">7 / 5.01</option>
++                    <option value="10">10 / 10.0</option>
++                    <option value="12">12 / 15.8</option>
++                    <option value="15">15 / 31.6</option>
++                    <option value="17">17 / 50.1</option>
++                    <option value="20">20 / 100</option>
++                    <option value="22">22 / 158</option>
++                    <option value="25">25 / 316</option>
++                    <option value="30">30 / 1000</option>
++                </select>
++            </div>
++            <p>S5 - Error Correcting Code (boolean):</p>
++            <div>
++                <select disabled name="select-ecc-1" id="ecc" class="config_form_field">
++                    <option value="0">OFF</option>
++                    <option value="1">ON</option>
++                </select>
++            </div>
++            <p>S6 - Mavlink (boolean):</p>
++            <div>
++                <select disabled name="select-mavlink-1" id="mavlink" class="config_form_field">
++                    <option value="0">OFF</option>
++                    <option value="1">ON</option>
++                </select>
++            </div>
++            <p>S7 - Opportunistic Resend (boolean):</p>
++            <div>
++                <select disabled name="select-op_resend-1" id="op_resend" class="config_form_field">
++                    <option value="0">OFF</option>
++                    <option value="1">ON</option>
++                </select>
++            </div>
++            <p>S8 - Minimum Frequency (902000 - 927000kHz):</p>
++            <div>
++                <select disabled name="select-min_freq-1" id="min_freq" class="config_form_field">
++                    <option value="915000">915000</option>
++                </select>
++            </div>
++            <p>S9 - Maximum Frequency (903000 - 928000kHz):</p>
++            <div>
++                <select disabled name="select-max_freq-1" id="max_freq" class="config_form_field">
++                    <option value="928000">928000</option>
++                </select>
++            </div>
++            <p>S10 - Number of Frequency Hopping Channels (5 - 50):</p>
++            <div>
++                <select disabled name="select-num_channels-1" id="num_channels" class="config_form_field">
++                    <option value="20">20</option>
++                    <option value="50">50</option>
++                </select>
++            </div> 
++            <p>S11 - Duty Cycle (10 - 100):</p>
++            <div>
++                <select disabled name="select-duty_cycle-1" id="duty_cycle" class="config_form_field">
++                    <option value="100">100</option>
++                </select>
++            </div>
++            <p>S12 - Listen before talk threshold (boolean):</p>
++            <div>
++                <select disabled name="select-lbt_rssi-1" id="lbt_rssi" class="config_form_field">
++                    <option value="0">0</option>
++                </select>
++            </div>
++            <p>S13 - Manchester Encoding (boolean):</p>
++            <div>
++                <select disabled name="select-manchester-1" id="manchester" class="config_form_field">
++                    <option value="0">0</option>
++                </select>
++            </div>
++            <p>S14 - Ready to Send and Clear to Send (boolean):</p>
++            <div>
++                <select disabled name="select-rtscts-1" id="rtscts" class="config_form_field">
++                    <option value="0">0</option>
++                </select>
++            </div>
++            <p>S15 - Node ID (0 - 29):</p>
++            <div>
++                <select disabled name="select-nodeid-1" id="nodeid" class="config_form_field">
++                    <option value="2">2</option>
++                    <option value="0">0 Base</option>
++                    <option value="1">1</option>
++                    <option value="3">3</option>
++                    <option value="4">4</option>
++                    <option value="5">5</option>
++                    <option value="6">6</option>
++                    <option value="7">7</option>
++                    <option value="8">8</option>
++                    <option value="9">9</option>
++                    <option value="10">10</option>
++                    <option value="11">11</option>
++                    <option value="12">12</option>
++                    <option value="13">13</option>
++                    <option value="14">14</option>
++                    <option value="15">15</option>
++                    <option value="16">16</option>
++                    <option value="17">17</option>
++                    <option value="18">18</option>
++                    <option value="19">19</option>
++                    <option value="20">20</option>
++                    <option value="21">21</option>
++                    <option value="22">22</option>
++                    <option value="23">23</option>
++                    <option value="24">24</option>
++                    <option value="25">25</option>
++                    <option value="26">26</option>
++                    <option value="27">27</option>
++                    <option value="28">28</option>
++                    <option value="29">29</option>
++                </select>
++            </div>
++            <p>S16 - Node Destination (0 - 29, 65535):</p>
++            <div>
++                <select disabled name="select-nodedestination-1" id="nodedestination" class="config_form_field">
++                    <option value="0">65535 All Nodes</option>
++                    <option value="0">0 Base</option>
++                    <option value="1">1</option>
++                    <option value="2">2</option>
++                    <option value="3">3</option>
++                    <option value="4">4</option>
++                    <option value="5">5</option>
++                    <option value="6">6</option>
++                    <option value="7">7</option>
++                    <option value="8">8</option>
++                    <option value="9">9</option>
++                    <option value="10">10</option>
++                    <option value="11">11</option>
++                    <option value="12">12</option>
++                    <option value="13">13</option>
++                    <option value="14">14</option>
++                    <option value="15">15</option>
++                    <option value="16">16</option>
++                    <option value="17">17</option>
++                    <option value="18">18</option>
++                    <option value="19">19</option>
++                    <option value="20">20</option>
++                    <option value="21">21</option>
++                    <option value="22">22</option>
++                    <option value="23">23</option>
++                    <option value="24">24</option>
++                    <option value="25">25</option>
++                    <option value="26">26</option>
++                    <option value="27">27</option>
++                    <option value="28">28</option>
++                    <option value="29">29</option>
++                </select>
++            </div>
++            <p>S17 - Sync to any node (boolean):</p>
++            <div>
++                <select disabled name="select-syncany-1" id="syncany" class="config_form_field">
++                    <option value="0">0</option>
++                </select>
++            </div>
++            <p>S18 - Nodecount (2 - 30):</p>
++            <div>
++                <select disabled name="select-nodecount-1" id="nodecount" class="config_form_field">
++                    <option value="3">3</option>
++                    <option value="0">0</option>
++                    <option value="1">1</option>
++                    <option value="2">2</option>
++                    <option value="4">4</option>
++                    <option value="5">5</option>
++                    <option value="6">6</option>
++                    <option value="7">7</option>
++                    <option value="8">8</option>
++                    <option value="9">9</option>
++                    <option value="10">10</option>
++                    <option value="11">11</option>
++                    <option value="12">12</option>
++                    <option value="13">13</option>
++                    <option value="14">14</option>
++                    <option value="15">15</option>
++                    <option value="16">16</option>
++                    <option value="17">17</option>
++                    <option value="18">18</option>
++                    <option value="19">19</option>
++                    <option value="20">20</option>
++                    <option value="21">21</option>
++                    <option value="22">22</option>
++                    <option value="23">23</option>
++                    <option value="24">24</option>
++                    <option value="25">25</option>
++                    <option value="26">26</option>
++                    <option value="27">27</option>
++                    <option value="28">28</option>
++                    <option value="29">29</option>
++                    <option value="30">30</option>
++                </select>
++            </div>
++            <p>R0 - Target RSSI (50 - 255):</p>
++            <div>
++                <select disabled name="select-target_rssi-1" id="target_rssi" class="config_form_field">
++                    <option value="255">255</option>
++                </select>
++            </div>
++            <p>R1 - Hysteresis RSSI (20 - 50):</p>
++            <div>
++                <select disabled name="select-hysteresis_rssi-1" id="hysteresis_rssi" class="config_form_field">
++                    <option value="50">50</option>
++                </select>
++            </div>
++
++            <a href="" class="ui-btn ui-corner-all ui-btn-inline" target="_blank" id="radio">Get Radio Status</a>
++        </div>
+         <div id="ui-bar-test" class="ui-bar ui-bar-a ui-corner-all rinex_version_container">
+             <p>RINEX version:</p>
+             <div>
+-- 
+2.0.1
+
