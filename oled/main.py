@@ -5,7 +5,7 @@ import SSD1306
 import time
 import traceback
 
-from PIL import Image,ImageDraw,ImageFont
+from PIL import Image, ImageDraw, ImageFont
 
 time_bitmap = [
 0x00,0x06,0x0A,0xFE,0x0A,0xE6,0x00,0xF0,0x00,0xF8,0x00,0xFC,0x00,0x00,0x00,0x00,
@@ -52,13 +52,33 @@ try:
     # Create blank image for drawing.
     image1 = Image.new('1', (show.width, show.height), "WHITE")
     draw = ImageDraw.Draw(image1)    
+    
     draw.rectangle((0, 0, 127, 31), outline = 0)
     draw.text((20,0), 'wavehshare', font = ImageFont.truetype('Font.ttf',15), fill = 0)
+    
     show.ShowImage(show.getbuffer(image1))
+    
     time.sleep(2)
 
+    if 1 :
+        print ("Turn off screen")
+        show.ClearBlack()
+    pass
+
+    if 0 :
+        image1 = Image.new('1', (show.width, show.height), "WHITE")
+        draw = ImageDraw.Draw(image1)    
+        draw.rectangle((0, 0, 127, 31), outline = 1)    
+        show.ShowImage(show.getbuffer(image1))
+    pass
+
     print ("***draw image")
-    show.ShowImage(time_bitmap)
+    
+    if 0 :
+        print ("***draw image")
+        show.ShowImage(time_bitmap)
+    pass
+
     show.Closebus()
 
 except IOError as e:
