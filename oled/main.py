@@ -72,8 +72,6 @@ try:
         show.ShowImage(show.getbuffer(image1))
     pass
 
-    print ("***draw image")
-    
     if 0 :
         print ("***draw image")
         show.ShowImage(time_bitmap)
@@ -83,8 +81,8 @@ try:
 
 except IOError as e:
     show.Closebus()
-    print(e)
-    
+    print(e)    
 except KeyboardInterrupt:    
     print("ctrl + c:")
     show.Closebus()
+pass
