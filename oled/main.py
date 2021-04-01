@@ -15,19 +15,13 @@ def service() :
         show.Init()
         show.ClearBlack()
 
-        gw = os.popen("ip -4 route show default").read().split()
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect((gw[2], 0))
-        ipaddr = s.getsockname()[0]
-        gateway = gw[2]
-        hostname = socket.gethostname()
-        print ("IP:", ipaddr, " GW:", gateway, " Hostname:", hostname)
-            
         w = show.width
         h = show.height
         x = 20
         y = 4
+        
         font = ImageFont.truetype('Font.ttf',15)
+        
         # Create blank image for drawing.
         image1 = Image.new('1', [w, h], "WHITE")
         draw = ImageDraw.Draw(image1)
@@ -35,12 +29,17 @@ def service() :
         def display_oled_info( idx = 0 ) :
             idx = idx % 5
 
-            text = f"{hostname}"
+            text = f""
 
-            if idx == 0 :
-                text = f"{ipaddr}"
-            elif idx == 1 :
-                text = f"{hostname}"
+            if idx in [0, 1] :
+                gw = os.popen("ip -4 route show default").read().split()
+                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                s.connect((gw[2], 0))
+                ipaddr = s.getsockname()[0]
+                gateway = gw[2]
+                hostname = socket.gethostname()
+        
+                text = f"{ipaddr}" if idx == 0 else f"{hostname}"
             elif idx == 2 :
                 # Disk usage
 
@@ -64,6 +63,12 @@ def service() :
             pass
 
             print( f"text = {text}")
+
+            # text width
+            tw = font.getsize(text)[0]
+
+            # text center align
+            x = (w - tw)//2
             
             draw.rectangle( [0, 0, w -1, h -1], fill=1, outline = 0)            
             draw.text( [x, y], text, font = font, fill = 0) 

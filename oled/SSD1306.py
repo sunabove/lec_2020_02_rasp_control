@@ -109,14 +109,16 @@ class SSD1306(object):
         imwidth, imheight = image_monocolor.size
         pixels = image_monocolor.load()
         if(imwidth == self.width and imheight == self.height):
-            print ("Horizontal screen")
+            #print ("Horizontal screen")
+
             for y in range(imheight):
                 for x in range(imwidth):
                     # Set the bits for the column of pixels at the current position.
                     if pixels[x, y] == 0:
                         buf[x + int(y / 8) * self.width] &= ~(1 << (y % 8))
         elif(imwidth == self.height and imheight == self.width):
-            print ("Vertical screen")
+            #print ("Vertical screen")
+            
             for y in range(imheight):
                 for x in range(imwidth):
                     newx = y
