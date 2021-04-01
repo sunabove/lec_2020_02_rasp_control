@@ -31,15 +31,14 @@ def service() :
 
             text = f""
 
-            if idx in [0, 1] :
-                gw = os.popen("ip -4 route show default").read().split()
-                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                s.connect((gw[2], 0))
-                ipaddr = s.getsockname()[0]
-                gateway = gw[2]
-                hostname = socket.gethostname()
+            if idx == 0 :
+                hostname = os.popen("hostname").read().split()[0]
         
-                text = f"{ipaddr}" if idx == 0 else f"{hostname}"
+                text = f"{hostname}"
+            if idx == 1 :
+                ipaddr = os.popen("hostname -I").read().split()[0]
+        
+                text = f"{ipaddr}"
             elif idx == 2 :
                 # Disk usage
 
