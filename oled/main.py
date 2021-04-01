@@ -3,6 +3,7 @@
 
 import SSD1306
 import time, traceback, os, socket
+import psutil, shutil
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -14,6 +15,14 @@ def service() :
         show.Init()
         show.ClearBlack()
 
+        gw = os.popen("ip -4 route show default").read().split()
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect((gw[2], 0))
+        ipaddr = s.getsockname()[0]
+        gateway = gw[2]
+        hostname = socket.gethostname()
+        print ("IP:", ipaddr, " GW:", gateway, " Hostname:", hostname)
+            
         w = show.width
         h = show.height
         x = 20
@@ -24,15 +33,7 @@ def service() :
         draw = ImageDraw.Draw(image1)
         
         def display_oled_info( idx = 0 ) :
-            idx = idx % 4
-
-            gw = os.popen("ip -4 route show default").read().split()
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            s.connect((gw[2], 0))
-            ipaddr = s.getsockname()[0]
-            gateway = gw[2]
-            hostname = socket.gethostname()
-            print ("IP:", ipaddr, " GW:", gateway, " Hostname:", hostname)
+            idx = idx % 5
 
             text = f"{hostname}"
 
@@ -41,7 +42,7 @@ def service() :
             elif idx == 1 :
                 text = f"{hostname}"
             elif idx == 2 :
-                import shutil
+                # Disk usage
 
                 total, used, free = shutil.disk_usage("/")
                 total //= (2**30)
@@ -49,7 +50,17 @@ def service() :
                 free //= (2**30)
                 pct = used*100/total
 
-                text = f"{pct:.1f} % = {used}/{total}"
+                text = f"Disk : {pct:02.1f} %"
+            elif idx == 3 :
+                # CPU
+                pct = psutil.cpu_percent()
+
+                text = f"CPU : {pct:02.1f} %"
+            elif idx == 4 :
+                # RAM
+                pct = psutil.virtual_memory()[2] 
+
+                text = f"RAM : {pct:02.1f} %"
             pass
 
             print( f"text = {text}")
@@ -74,12 +85,12 @@ def service() :
         pass
 
     except IOError as e:
-        show.Closebus()
         print(e)    
     except KeyboardInterrupt:    
         print("ctrl + c:")
-        show.Closebus()
     finally:
+        print( "Clear Black" )
+        show.ClearBlack()
         show.Closebus()
     pass
 pass
