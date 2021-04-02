@@ -2,10 +2,11 @@
 # -*- coding:utf-8 -*-
 
 import SSD1306
-import time, traceback, os, socket
-import psutil, shutil
+from time import sleep
+import traceback, os, socket
+import psutil, shutil, numpy as np
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageOps, ImageDraw, ImageFont
 
 def service() :
     try:
@@ -17,17 +18,33 @@ def service() :
 
         w = show.width
         h = show.height
-        x = 20
-        y = 4
         
         font = ImageFont.truetype('Font.ttf',15)
+        # open lena image
+        lena = Image.open("lena.png")
+
+        if 1 : 
+            im = lena
+            # convert to grayscale
+            im = ImageOps.grayscale(im)
+            # rescale to show width height
+            im = im.resize( [w, im.size[1]*w//im.size[0] ], Image.ANTIALIAS)
+            #im = np.asarray(im)
+            #im = im.ravel()
+
+            #print( f"im.shape ={im.shape}" )
+
+            lena = im
+        pass
+
+        print( f"lena shape={lena.size}" )
         
         # Create blank image for drawing.
-        image1 = Image.new('1', [w, h], "WHITE")
-        draw = ImageDraw.Draw(image1)
+        image = Image.new('1', [w, h], "WHITE")
+        draw = ImageDraw.Draw(image)
         
         def display_oled_info( idx = 0 ) :
-            idx = idx % 5
+            idx = idx % 6
 
             text = f""
 
@@ -59,6 +76,12 @@ def service() :
                 pct = psutil.virtual_memory()[2] 
 
                 text = f"RAM : {pct:02.1f} %"
+            elif idx == 5 :
+                # show image by scrolling up by n pixel
+                for y in range( 0, lena.size[1] - h, 1 ) :
+                    show.ShowImage( show.getbuffer( lena.crop( [0, y, w, y + h ] ) ) )
+                    sleep( 0.001 )
+                pass
             pass
 
             print( f"text = {text}")
@@ -68,18 +91,19 @@ def service() :
 
             # text center align
             x = (w - tw)//2
+            y = 4
             
             draw.rectangle( [0, 0, w -1, h -1], fill=1, outline = 0)            
             draw.text( [x, y], text, font = font, fill = 0) 
             
-            show.ShowImage(show.getbuffer(image1))
-            
-            time.sleep(2)
+            show.ShowImage( show.getbuffer(image) )
+
+            sleep(2)
 
             print ("Turn off screen to prevent heating oled.")
             show.ClearBlack()
 
-            time.sleep(1)
+            sleep(1)
         pass
 
         idx = 0
