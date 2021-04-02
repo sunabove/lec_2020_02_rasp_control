@@ -84,8 +84,21 @@ def service() :
                 text = f"RAM : {pct:02.1f} %"
             elif idx == 5 :
                 # show image by scrolling up by n pixel
-                for y in range( 0, lena.size[1] - h, 1 ) :
-                    show.ShowImage( show.getbuffer( lena.crop( [0, y, w, y + h ] ) ) )
+                for y in range( 0, lena.size[1], 4 ) :
+                    im = Image.new('1', (w, h), 0 ) # create a new blank image
+                    im_draw = ImageDraw.Draw( im )
+                    im_draw.rectangle( [0, 0, w -1, h -1], fill=1, outline = 1)
+                    
+                    y2 = y + h 
+                    if y2 > lena.size[1] :
+                        y2 = lena.size[1]
+                    pass
+                    
+                    crop = lena.crop( [0, y, w, y2 ] )
+
+                    im.paste( crop, box=[0, 0, w, y2 - y ] ) 
+                    
+                    show.ShowImage( show.getbuffer( im ) )
                     sleep( 0.001 )
                 pass
             pass
@@ -99,7 +112,7 @@ def service() :
             x = (w - tw)//2
             y = 4
             
-            draw.rectangle( [0, 0, w -1, h -1], fill=1, outline = 0)            
+            draw.rectangle( [0, 0, w -1, h -1], fill=1, outline = 0)
             draw.text( [x, y], text, font = font, fill = 0) 
             
             show.ShowImage( show.getbuffer(image) )
