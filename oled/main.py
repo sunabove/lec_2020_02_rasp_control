@@ -11,10 +11,36 @@ from PIL import Image, ImageOps, ImageDraw, ImageFont
 
 oled_alive = True 
 
+oled_disp = SSD1306()
+
 def stop() :
     oled_alive = 0
 
-    sleep( 3 )
+    w = oled_disp.width
+    h = oled_disp.height
+    
+    image = Image.new('1', [w, h], "WHITE")
+    draw = ImageDraw.Draw(image)
+
+    font_path = path.join( path.dirname(path.realpath(__file__)), 'Font.ttf' )
+    font = ImageFont.truetype( font_path, 15)
+
+    text = "SHUTDOWN"
+
+    tw = font.getsize(text)[0]
+
+    # text center align
+    x = (w - tw)//2
+    y = 4
+    
+    draw.rectangle( [0, 0, w -1, h -1], fill=1, outline = 0)
+    draw.text( [x, y], text, font = font, fill = 0) 
+    
+    oled_disp.ShowImage( oled_disp.getbuffer(image) )
+
+    oled_disp.Closebus()
+pass # -- stop
+
 pass # -- stop
 
 def service() :
@@ -23,14 +49,12 @@ def service() :
 
         oled_alive = True 
 
-        show = SSD1306()
-
         # Initialize library.
-        show.Init()
-        show.ClearBlack()
+        oled_disp.Init()
+        oled_disp.ClearBlack()
 
-        w = show.width
-        h = show.height
+        w = oled_disp.width
+        h = oled_disp.height
 
         font_path = path.join( path.dirname(path.realpath(__file__)), 'Font.ttf' )
         print( f"font_path = {font_path}" )  
@@ -118,7 +142,7 @@ def service() :
 
                     im.paste( crop, box=[0, 0, w, y2 - y ] ) 
                     
-                    show.ShowImage( show.getbuffer( im ) )
+                    oled_alive and oled_disp.ShowImage( oled_disp.getbuffer( im ) )
                     sleep( 0.001 )
                 pass
             pass
@@ -136,14 +160,14 @@ def service() :
                 draw.rectangle( [0, 0, w -1, h -1], fill=1, outline = 0)
                 draw.text( [x, y], text, font = font, fill = 0) 
                 
-                show.ShowImage( show.getbuffer(image) )
+                oled_disp.ShowImage( oled_disp.getbuffer(image) )
             pass
 
             sleep(2)
 
             if idx >= 0 : 
                 print ("Turn off screen to prevent heating oled.")
-                show.ClearBlack()
+                oled_disp.ClearBlack()
             pass
 
             sleep(1)
@@ -157,17 +181,18 @@ def service() :
             idx %= 1000
         pass
 
+        stop()
+
     except IOError as e:
-        show.ClearBlack()
+        oled_disp.ClearBlack()
 
         print(e)    
     except KeyboardInterrupt:
-        show.ClearBlack()
+        oled_disp.ClearBlack()
 
         print("ctrl + c:")
     finally:
-        display_oled_info( -1 )
-        #show.Closebus()
+        stop()
     pass
 pass  # -- service
 
