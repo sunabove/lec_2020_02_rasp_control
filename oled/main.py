@@ -9,8 +9,20 @@ import psutil, shutil, numpy as np
 
 from PIL import Image, ImageOps, ImageDraw, ImageFont
 
+oled_alive = True 
+
+def stop() :
+    oled_alive = 0
+
+    sleep( 3 )
+pass # -- stop
+
 def service() :
     try:
+        global oled_alive
+
+        oled_alive = True 
+
         show = SSD1306()
 
         # Initialize library.
@@ -50,16 +62,20 @@ def service() :
         draw = ImageDraw.Draw(image)
         
         def display_oled_info( idx = 0 ) :
-            idx = idx % 6
+            if idx >= 0 : 
+                idx = idx % 6
+            pass
 
             text = f""
 
-            if idx == 0 :
-                hostname = os.popen("hostname").read().split()[0]
+            if idx < 0 :
+                text = "SHUTDOWN"
+            elif idx == 0 :
+                hostname = os.popen("hostname").read().strip().split()[0]
         
                 text = f"{hostname}"
             if idx == 1 :
-                ipaddr = os.popen("hostname -I").read().split()[0]
+                ipaddr = os.popen("hostname -I").read().strip().split()[-1]
         
                 text = f"{ipaddr}"
             elif idx == 2 :
@@ -85,6 +101,10 @@ def service() :
             elif idx == 5 :
                 # show image by scrolling up by n pixel
                 for y in range( 0, lena.size[1], 4 ) :
+                    if not oled_alive :
+                        break
+                    pass
+
                     im = Image.new('1', (w, h), 0 ) # create a new blank image
                     im_draw = ImageDraw.Draw( im )
                     im_draw.rectangle( [0, 0, w -1, h -1], fill=1, outline = 1)
@@ -119,28 +139,36 @@ def service() :
 
             sleep(2)
 
-            print ("Turn off screen to prevent heating oled.")
-            show.ClearBlack()
+            if idx >= 0 : 
+                print ("Turn off screen to prevent heating oled.")
+                show.ClearBlack()
+            pass
 
             sleep(1)
         pass
 
         idx = 0
-        while True :
+        while oled_alive :
             display_oled_info(idx = idx) 
             idx += 1
+
+            idx %= 1000
         pass
 
     except IOError as e:
+        show.ClearBlack()
+
         print(e)    
-    except KeyboardInterrupt:    
+    except KeyboardInterrupt:
+        show.ClearBlack()
+
         print("ctrl + c:")
     finally:
-        print( "Clear Black" )
-        show.ClearBlack()
-        show.Closebus()
+        display_oled_info( -1 )
+
+        #show.Closebus()
     pass
-pass
+pass  # -- service
 
 if __name__ == '__main__':
     service()
