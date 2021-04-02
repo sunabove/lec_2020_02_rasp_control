@@ -125,17 +125,19 @@ def service() :
 
             print( f"text = {text}")
 
-            # text width
-            tw = font.getsize(text)[0]
+            if text : 
+                # text width
+                tw = font.getsize(text)[0]
 
-            # text center align
-            x = (w - tw)//2
-            y = 4
-            
-            draw.rectangle( [0, 0, w -1, h -1], fill=1, outline = 0)
-            draw.text( [x, y], text, font = font, fill = 0) 
-            
-            show.ShowImage( show.getbuffer(image) )
+                # text center align
+                x = (w - tw)//2
+                y = 4
+                
+                draw.rectangle( [0, 0, w -1, h -1], fill=1, outline = 0)
+                draw.text( [x, y], text, font = font, fill = 0) 
+                
+                show.ShowImage( show.getbuffer(image) )
+            pass
 
             sleep(2)
 
@@ -165,7 +167,6 @@ def service() :
         print("ctrl + c:")
     finally:
         display_oled_info( -1 )
-
         #show.Closebus()
     pass
 pass  # -- service
