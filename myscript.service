@@ -1,0 +1,13 @@
+[Unit]
+Description=MyScript
+After=network.target
+[Service]
+ExecStart=/usr/bin/python3 /home/pi/myservice.py
+WorkingDirectory=/home/pi
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+StartLimitBurst=0
+[Install]
+WantedBy=multi-user.target
