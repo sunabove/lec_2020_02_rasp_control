@@ -1,8 +1,9 @@
-﻿#!/usr/bin/python
-# -*- coding:utf-8 -*-
+﻿import sys
+from os import path
+sys.path.append( path.dirname(path.realpath(__file__)) )
 
-import SSD1306
-from time import sleep
+from SSD1306 import SSD1306 
+from time import sleep 
 import traceback, os, socket
 import psutil, shutil, numpy as np
 
@@ -10,7 +11,7 @@ from PIL import Image, ImageOps, ImageDraw, ImageFont
 
 def service() :
     try:
-        show = SSD1306.SSD1306()
+        show = SSD1306()
 
         # Initialize library.
         show.Init()
@@ -18,10 +19,15 @@ def service() :
 
         w = show.width
         h = show.height
-        
-        font = ImageFont.truetype('Font.ttf',15)
+
+        font_path = path.join( path.dirname(path.realpath(__file__)), 'Font.ttf' )
+        print( f"font_path = {font_path}" )  
+        font = ImageFont.truetype( font_path, 15)
+
         # open lena image
-        lena = Image.open("lena.png")
+        img_path = path.join( path.dirname(path.realpath(__file__)), 'lena.png' )        
+        print( f"img_path = {img_path}" )         
+        lena = Image.open( img_path )
 
         if 1 : 
             im = lena
