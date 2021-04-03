@@ -10,7 +10,7 @@ with picamera.PiCamera() as camera:
     camera.resolution = (1240, 1024)
     camera.start_preview()
     try:
-        for i, filename in enumerate(camera.capture_continuous('output/image{counter:02d}.jpg')):
+        for i, filename in enumerate(camera.capture_continuous('output/image{counter:03d}.jpg')):
             time.sleep(1)
             if i == 10:
                 break
@@ -18,4 +18,4 @@ with picamera.PiCamera() as camera:
         camera.stop_preview()
 
 check_call("sudo apt install ffmpeg -y", shell=True)
-check_call("avconv -r 1 -i output/image%02d.jpg -r 10 -vcodec libx264 -crf 10 -g 15 output/tl.mp4", shell=True)
+check_call("ffmpeg -framerate 1 -i output/image%03d.jpg output/my_video.mp4", shell=True)
