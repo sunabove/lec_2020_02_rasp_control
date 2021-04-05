@@ -8,9 +8,13 @@ from robot.oled import main
 
 targets = [ blink, main ]
 
-def start() :
+def start() : # start services
     for target in targets : 
-        Thread(target=target.service).start()
+        try : 
+            Thread(target=target.service).start()
+        except Exception as e:
+            print( e )
+        pass
     pass
 
     while False :
@@ -18,9 +22,13 @@ def start() :
     sleep( 1 )
 pass # -- start
 
-def stop() :
+def stop() : # stop services
     for target in targets : 
-        target.stop()
+        try : 
+            target.stop()
+        except Exception as e :
+            print( e )
+        pass
     pass
 pass # -- start
 
