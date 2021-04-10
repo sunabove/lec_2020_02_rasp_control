@@ -11,9 +11,13 @@ with picamera.PiCamera() as camera:
         for i, filename in enumerate(camera.capture_continuous('output/image_{counter:03d}.jpg')):
             print( f"[{i +1:02d}] filename = {filename}" )
             time.sleep(1)
-            if i == 10 : break
+            if i > 9 : break
     finally:
         camera.stop_preview()
+    pass
+pass
 
+print( "Convering images to a video file ... " )    
 check_call("sudo apt install ffmpeg -y", shell=True)
 check_call("ffmpeg -framerate 1 -i output/image_%03d.jpg output/my_video.mp4", shell=True)
+print( "Done converting." )
