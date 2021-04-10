@@ -143,6 +143,9 @@ cython_debug/
 dark.jpg
 image.jpg
 my_*
+**/my_*
 My*
+**/My*
+**/Untitled*
 #old/
 *.deb
