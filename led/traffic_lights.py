@@ -2,7 +2,7 @@
 from gpiozero import TrafficLights, Button
 from time import sleep, time
 
-tr = TrafficLights(2, 3, 4)
+tr = TrafficLights(23, 24, 25)
 
 # 신호등 
 lights = [ tr.green, tr.amber, tr.red ]
