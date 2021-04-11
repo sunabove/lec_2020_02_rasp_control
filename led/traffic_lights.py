@@ -16,10 +16,8 @@ signal_no = 0 # 신호 번호
 def change_signal() :
    print( "Button pressed." )
    global light_no, signal_no
-   if light_no in (1, 2) : #  핸재 녹색이 아니면, 
-      signal_no += 1 # 신호 번호를 하나 증가 시키고 
-      light_no = 0   # 다음 신호를 녹색으로 설정한다.
-   pass
+   signal_no += 1 # 신호 번호를 하나 증가 시키고 
+   light_no += 1  # 다음 신호등으로 변경한다.
 pass
 
 button = Button(17) # 버튼
@@ -52,10 +50,10 @@ while True :
       pass
       
       # 신호 깜빡이기
-      if period_no % 2 == 0 :
-         light.on()
-      else :
+      if period_no % 2 :
          light.off()
+      else :
+         light.on()
       pass
 
       if curr_signal_no == signal_no :
