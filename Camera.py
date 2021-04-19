@@ -156,7 +156,7 @@ def generate_frame(camera):
     pass
 pass
 
-if __name__=='__main__':
+def service() :
     log.info( "Hello....." )
     
     from flask import Flask, render_template, Response, request, jsonify
@@ -178,7 +178,6 @@ if __name__=='__main__':
         camera.finish()
 
         sleep( 0.5 )
-
         log.info( "Good bye!" )
 
         import sys
@@ -205,4 +204,12 @@ if __name__=='__main__':
     app.run(host='0.0.0.0', port=80, threaded=True) 
 
     log.info( "Good bye!" )
+pass # -- service
+
+def stop() :
+    pass
+pass # -- stop
+
+if __name__=='__main__':
+    service()
 pass
