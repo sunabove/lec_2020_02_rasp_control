@@ -90,6 +90,8 @@ class Camera(object):
 
     def stop_recording(self):
         self._running = False 
+        
+        sleep( 1 )
 
         _thread = self._thread
         if _thread is not None :
@@ -103,6 +105,10 @@ class Camera(object):
         self.frame_cnt += 1 
 
         txt = f"Alphabot Control [{self.frame_cnt}]"
+        
+        if not self._running : 
+            txt = f"Camera Stopped"
+        pass
 
         if not success or image is None :
             h = 480
@@ -145,7 +151,8 @@ pass
 
 def generate_frame(camera): 
     output = camera.output
-    while True:
+    
+    while 1 :
         with output.condition:
             output.condition.wait()
             frame = output.frame
@@ -156,6 +163,24 @@ def generate_frame(camera):
     pass
 pass
 
+camera = None
+
+def handler(signal, frame):
+    print()
+    sleep( 0.01 )
+
+    log.info('You have pressed Ctrl-C.')
+    
+    global camera
+    camera.finish()
+
+    sleep( 0.5 )
+    log.info( "Good bye!" )
+
+    import sys
+    sys.exit(0)
+pass # -- handler
+
 def service() :
     log.info( "Hello....." )
     
@@ -164,26 +189,13 @@ def service() :
     app = Flask(__name__, static_url_path='', static_folder='html/static', template_folder='html/templates')
     app.config["TEMPLATES_AUTO_RELOAD"] = True
 
-    camera = Camera() 
-    camera.start_recording()
-
-    def handler(signal, frame):
-        print()
-        sleep( 0.01 )
-        
-        log.info('You have pressed Ctrl-C.')
-
-        global camera
-        
-        camera.finish()
-
-        sleep( 0.5 )
-        log.info( "Good bye!" )
-
-        import sys
-        sys.exit(0)
+    global camera
+    
+    if not camera :
+        camera = Camera() 
+        camera.start_recording()
     pass
-
+    
     import signal
     signal.signal(signal.SIGINT, handler)
 
@@ -207,6 +219,11 @@ def service() :
 pass # -- service
 
 def stop() :
+    global camera
+    
+    if camera :
+        camera.finish()
+        camera = None
     pass
 pass # -- stop
 
