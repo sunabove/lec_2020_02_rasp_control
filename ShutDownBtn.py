@@ -32,9 +32,7 @@ def service() :
     shutdown_btn = Button(9, hold_time=3)
     shutdown_btn.when_held = shutdown
 
-    input( "ShutDownBtn is enabled." )
-
-    input( "Enter Ctrl-C to quit" )
+    print( "ShutDownBtn is enabled." )
 
     while 1 :
         sleep( 10 )

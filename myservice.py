@@ -7,9 +7,7 @@ from robot import blink
 from robot.oled import main
 from robot import ShutDownBtn
 
-#targets = [ blink, main, ShutDownBtn ]
-
-targets = [ ShutDownBtn ]
+targets = [ blink, main, ShutDownBtn ]
 
 def start() : # start services
     for target in targets : 
