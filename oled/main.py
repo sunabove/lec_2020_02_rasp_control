@@ -95,7 +95,7 @@ def service() :
             if idx < 0 : # shutdown
                 text = "SHUTDOWN"
             elif idx == 0 : # current time
-                text = datetime.datetime.now().strftime("TIME : %H:%M:%S")
+                text = datetime.datetime.now().strftime("%p %H:%M:%S")
             elif idx == 1 : # hostname
                 hostname = os.popen("hostname").read().strip().split()[0]
         
@@ -163,7 +163,7 @@ def service() :
                 oled_disp.ShowImage( oled_disp.getbuffer(image) )
             pass
 
-            sleep(2)
+            sleep(2.5)
 
             if idx >= 0 : 
                 print ("Turn off screen to prevent heating oled.")
