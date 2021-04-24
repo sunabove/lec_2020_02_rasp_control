@@ -1,12 +1,13 @@
-#!/usr/bin/python3
-# myservice.py
+# -*- coding: utf-8 -*-
+
 from time import sleep
 from threading import Thread
 
-import blink
+from robot import blink
 from robot.oled import main
+from robot import ShutDownBtn
 
-targets = [ blink, main ]
+targets = [ blink, main, ShutDownBtn ]
 
 def start() : # start services
     for target in targets : 
@@ -17,8 +18,6 @@ def start() : # start services
         pass
     pass
 
-    while False :
-        print( "Running ....") 
     sleep( 1 )
 pass # -- start
 

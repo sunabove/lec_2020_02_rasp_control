@@ -4,7 +4,7 @@ sys.path.append( path.dirname(path.realpath(__file__)) )
 
 from SSD1306 import SSD1306 
 from time import sleep 
-import traceback, os, socket
+import traceback, os, socket, datetime
 import psutil, shutil, numpy as np
 
 from PIL import Image, ImageOps, ImageDraw, ImageFont
@@ -87,22 +87,24 @@ def service() :
         
         def display_oled_info( idx = 0 ) :
             if idx >= 0 : 
-                idx = idx % 6
+                idx = idx % 7
             pass
 
             text = f""
 
-            if idx < 0 :
+            if idx < 0 : # shutdown
                 text = "SHUTDOWN"
-            elif idx == 0 :
+            elif idx == 0 : # current time
+                text = datetime.datetime.now().strftime("%p %H:%M:%S")
+            elif idx == 1 : # hostname
                 hostname = os.popen("hostname").read().strip().split()[0]
         
                 text = f"{hostname}"
-            if idx == 1 :
+            elif idx == 2 : # ip address
                 ipaddr = os.popen("hostname -I").read().strip().split()[-1]
         
                 text = f"{ipaddr}"
-            elif idx == 2 :
+            elif idx == 3 : # disk usage
                 # Disk usage
 
                 total, used, free = shutil.disk_usage("/")
@@ -112,17 +114,15 @@ def service() :
                 pct = used*100/total
 
                 text = f"Disk : {pct:02.1f} %"
-            elif idx == 3 :
-                # CPU
+            elif idx == 4 : # CPU
                 pct = psutil.cpu_percent()
 
                 text = f"CPU : {pct:02.1f} %"
-            elif idx == 4 :
-                # RAM
+            elif idx == 5 : # RAM
                 pct = psutil.virtual_memory()[2] 
 
                 text = f"RAM : {pct:02.1f} %"
-            elif idx == 5 :
+            elif idx == 6 : # LENA IMAGE
                 # show image by scrolling up by n pixel
                 for y in range( 0, lena.size[1], 4 ) :
                     if not oled_alive :
@@ -163,7 +163,7 @@ def service() :
                 oled_disp.ShowImage( oled_disp.getbuffer(image) )
             pass
 
-            sleep(2)
+            sleep(2.5)
 
             if idx >= 0 : 
                 print ("Turn off screen to prevent heating oled.")
