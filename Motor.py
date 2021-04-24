@@ -210,6 +210,10 @@ class Motor:
         GPIO.output(self.BIN2,GPIO.LOW)
     pass
 
+    def stop_motor(self):
+        self.stop()
+    pass
+
     def stop(self):
         self.debug and log.info(inspect.currentframe().f_code.co_name)
 

@@ -316,7 +316,5 @@ if __name__ == "__main__":
     rgb_led.setPixelColor(3, Color(0, 0, 0))       #Yellow
     rgb_led.show() 
 
-    sleep( 1 )
-
-    input( "Enter to quit!")
+    sleep( 3 )
 pass # -- main
