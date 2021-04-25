@@ -1,6 +1,6 @@
 #coding: utf-8
 
-import cv2, numpy as np, threading, logging, inspect, signal
+import sys, cv2, numpy as np, threading, logging, inspect, signal
 import RPi.GPIO as GPIO    
 
 from time import  sleep
@@ -83,7 +83,7 @@ class Robot :
     def forward(self, speed = 30) :
         # 전진
         # 전진 경고음
-        self.buzzer.beep(on_time=0.2, off_time=0.2, n = 4)
+        self.buzzer.beep(on_time=0.5, off_time=0.5, n = 1)
         # 전진 라이트 
         self.rgb_led.light_effect( "breath", Color(0, 255, 0) )
         
@@ -93,7 +93,7 @@ class Robot :
     def backward(self, speed = 30) :
         # 후진 
         # 후진시 경고음 
-        self.buzzer.beep(on_time=0.5, off_time=0.5, n = 4)
+        self.buzzer.beep(on_time=0.1, off_time=0.1, n = 5)
         # 후진시에는 빨간색으로 깜박인다.
         self.rgb_led.light_effect( "flash", Color(255, 0, 0) ) 
 
@@ -102,7 +102,7 @@ class Robot :
 
     def left(self) : # 좌회전
         # 경고음 
-        self.buzzer.beep(on_time=1, off_time=0.5, n = 2)
+        self.buzzer.beep(on_time=0.3, off_time=0.3, n = 3)
 
         self.motor.left()
         # LED 깜빡이기
@@ -110,7 +110,7 @@ class Robot :
 
     def right(self): # 우회전 
         # 경고음 
-        self.buzzer.beep(on_time=1, off_time=0.5, n = 3)
+        self.buzzer.beep(on_time=0.3, off_time=0.3, n = 3)
 
         self.motor.right()
     pass
@@ -175,12 +175,6 @@ def service() :
         pass
     pass
 
-    def signal_handler(signal, frame):
-        stop()
-    pass
-
-    signal.signal(signal.SIGINT, signal_handler)
-
     @app.route( '/' )
     @app.route( '/index.html' )
     @app.route( '/index.htm' )
@@ -237,5 +231,15 @@ def service() :
 pass # -- service
 
 if __name__=='__main__':
+    def signal_handler(signal, frame):
+        stop()
+
+        sleep( 2 )
+
+        sys.exit(0)
+    pass
+
+    signal.signal(signal.SIGINT, signal_handler)
+    
     service()
 pass
