@@ -134,16 +134,37 @@ class Robot :
 
 pass
 
-if __name__=='__main__':
+app = None 
+robot = None 
+
+def stop():
+    print( "", flush=True) 
+
+    log.info( 'You have pressed Ctrl-C.' ) 
+    
+    robot.finish()
+
+    app.do_teardown_appcontext()
+
+    GPIO.setmode(GPIO.BCM)  
+
+    log.info( "Good bye!" )
+pass
+
+def service() : 
     log.info( "Hello....." )
 
     # web by flask framewwork
     from flask import Flask, render_template, Response, request, jsonify
 
+    global app 
+
     app = Flask(__name__, static_url_path='', static_folder='html/static', template_folder='html/templates')
     app.config["TEMPLATES_AUTO_RELOAD"] = True
 
     GPIO.setwarnings(False)
+
+    global robot 
     
     robot = Robot()
     robot.camera.start_recording()    
@@ -155,18 +176,7 @@ if __name__=='__main__':
     pass
 
     def signal_handler(signal, frame):
-        print( "", flush=True) 
-
-        log.info( 'You have pressed Ctrl-C.' ) 
-        
-        robot.finish()
-
-        log.info( "Good bye!" )
-
-        GPIO.setmode(GPIO.BCM) 
-        
-        import sys
-        sys.exit(0)
+        stop()
     pass
 
     signal.signal(signal.SIGINT, signal_handler)
@@ -224,5 +234,8 @@ if __name__=='__main__':
     app.run(host='0.0.0.0', port=80, debug=False, threaded=True) 
 
     log.info( "Good bye!")
+pass # -- service
 
+if __name__=='__main__':
+    service()
 pass
