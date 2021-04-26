@@ -27,13 +27,12 @@ class Robot :
         self.buzzer     = Buzzer(4)   # 부저
         self.motor      = Motor()
         self.rgb_led    = RGB_LED()
-        self.camera     = Camera()
+        self.camera     = Camera( motor = self.motor )
         self.servo      = Servo()
         #self.irremote   = IRRemote( robot, buzzer=self.buzzer )
 
         # 시동 소리 내기
-        self.rgb_led.light_effect( "flash", Color(0, 255, 0), duration=6 ) 
-        self.buzzer.beep(on_time=1, off_time=0.2, n = 1, background=False)
+        self.rgb_led.light_effect( "flash", Color(0, 255, 0), duration=3 )         
         self.buzzer.beep(on_time=0.2, off_time=0.2, n = 2)
     pass
 
@@ -157,21 +156,19 @@ def service() :
     # web by flask framewwork
     from flask import Flask, render_template, Response, request, jsonify
 
+    GPIO.setwarnings(False)
+
     global app 
+    global robot 
 
     app = Flask(__name__, static_url_path='', static_folder='html/static', template_folder='html/templates')
     app.config["TEMPLATES_AUTO_RELOAD"] = True
-
-    GPIO.setwarnings(False)
-
-    global robot 
     
     robot = Robot()
     robot.camera.start_recording()    
 
     @app.before_request
     def before_request_func():
-        #log.info(inspect.currentframe().f_code.co_name) 
         pass
     pass
 

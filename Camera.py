@@ -36,7 +36,8 @@ pass
 
 class Camera(object):
     
-    def __init__(self):
+    def __init__(self, motor=None):
+        self.motor = motor
         self.output = StreamingOutput()
         # 전체 프레임 카운트 
         self.frame_cnt = 0 
@@ -103,8 +104,13 @@ class Camera(object):
         success, image = self.video.read()
 
         self.frame_cnt += 1 
+        motor = self.motor 
 
         txt = f"Alphabot Control [{self.frame_cnt}]"
+
+        if motor :
+            txt += f" {motor.mode.upper()}"
+        pass
         
         if not self._running : 
             txt = f"Camera Stopped"

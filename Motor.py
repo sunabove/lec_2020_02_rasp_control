@@ -150,11 +150,11 @@ class Motor:
         pass
         
         if right >= 0 : 
-            GPIO.output(self.BIN1,GPIO.LOW)
-            GPIO.output(self.BIN2,GPIO.HIGH)
+            GPIO.output(self.BIN1, GPIO.LOW)
+            GPIO.output(self.BIN2, GPIO.HIGH)
         else :
-            GPIO.output(self.BIN1,GPIO.HIGH)
-            GPIO.output(self.BIN2,GPIO.LOW)
+            GPIO.output(self.BIN1, GPIO.HIGH)
+            GPIO.output(self.BIN2, GPIO.LOW)
         pass
     pass
 
@@ -176,10 +176,11 @@ class Motor:
 
         self.PWMA.ChangeDutyCycle(self.PA)
         self.PWMB.ChangeDutyCycle(self.PB)
-        GPIO.output(self.AIN1,GPIO.HIGH)
-        GPIO.output(self.AIN2,GPIO.LOW)
-        GPIO.output(self.BIN1,GPIO.HIGH)
-        GPIO.output(self.BIN2,GPIO.LOW)
+
+        GPIO.output(self.AIN1, GPIO.HIGH)
+        GPIO.output(self.AIN2, GPIO.LOW)
+        GPIO.output(self.BIN1, GPIO.HIGH)
+        GPIO.output(self.BIN2, GPIO.LOW)
     pass 
         
     def left(self, turn_speed=20):
@@ -190,10 +191,10 @@ class Motor:
         self.PWMA.ChangeDutyCycle(turn_speed)
         self.PWMB.ChangeDutyCycle(turn_speed)
         
-        GPIO.output(self.AIN1,GPIO.HIGH)
-        GPIO.output(self.AIN2,GPIO.LOW)
-        GPIO.output(self.BIN1,GPIO.LOW)
-        GPIO.output(self.BIN2,GPIO.HIGH)
+        GPIO.output(self.AIN1, GPIO.HIGH)
+        GPIO.output(self.AIN2, GPIO.LOW)
+        GPIO.output(self.BIN1, GPIO.LOW)
+        GPIO.output(self.BIN2, GPIO.HIGH)
     pass 
 
     def right(self, turn_speed=20):
@@ -204,10 +205,10 @@ class Motor:
         self.PWMA.ChangeDutyCycle(turn_speed)
         self.PWMB.ChangeDutyCycle(turn_speed)
         
-        GPIO.output(self.AIN1,GPIO.LOW)
-        GPIO.output(self.AIN2,GPIO.HIGH)
-        GPIO.output(self.BIN1,GPIO.HIGH)
-        GPIO.output(self.BIN2,GPIO.LOW)
+        GPIO.output(self.AIN1, GPIO.LOW)
+        GPIO.output(self.AIN2, GPIO.HIGH)
+        GPIO.output(self.BIN1, GPIO.HIGH)
+        GPIO.output(self.BIN2, GPIO.LOW)
     pass
 
     def stop_motor(self):
@@ -221,10 +222,11 @@ class Motor:
 
         self.PWMA.ChangeDutyCycle(0)
         self.PWMB.ChangeDutyCycle(0)
-        GPIO.output(self.AIN1,GPIO.LOW)
-        GPIO.output(self.AIN2,GPIO.LOW)
-        GPIO.output(self.BIN1,GPIO.LOW)
-        GPIO.output(self.BIN2,GPIO.LOW)
+        
+        GPIO.output(self.AIN1, GPIO.LOW)
+        GPIO.output(self.AIN2, GPIO.LOW)
+        GPIO.output(self.BIN1, GPIO.LOW)
+        GPIO.output(self.BIN2, GPIO.LOW)
     pass
 
     def back(self) :
