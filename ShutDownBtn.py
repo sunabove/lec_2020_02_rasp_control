@@ -28,7 +28,7 @@ def service() :
         os.system( 'sudo poweroff' )
     pass
 
-    shutdown_btn = Button(9, hold_time=3)
+    shutdown_btn = Button(9, hold_time=5)
     shutdown_btn.when_held = shutdown
 
     print( "ShutDownBtn is enabled." )
