@@ -1,23 +1,19 @@
-from subprocess import check_call
-check_call("mkdir -p output", shell=True)
-check_call("rm -rf output/*", shell=True)
+import os, time, picamera
 
-import time, picamera
+os.system("mkdir -p output && rm -rf output/*" ) 
 
 with picamera.PiCamera() as camera:
     camera.resolution = (1240, 1024)
     camera.start_preview()
-    try:
-        for i, filename in enumerate(camera.capture_continuous('output/image_{counter:03d}.jpg')):
-            print( f"[{i +1:02d}] filename = {filename}" )
-            time.sleep(1)
-            if i > 9 : break
-    finally:
-        camera.stop_preview()
+    for i, filename in enumerate(camera.capture_continuous('output/image_{counter:03d}.jpg')):
+        print( f"[{i +1:02d}] filename = {filename}" )
+        time.sleep(1)
+        if i > 9 : break
     pass
+    camera.stop_preview()
 pass
 
-print( "Convering images to a video file ... " )    
-check_call("sudo apt install ffmpeg -y", shell=True)
-check_call("ffmpeg -framerate 1 -i output/image_%03d.jpg output/my_video.mp4", shell=True)
+print( "Converting images to a video file ... " )    
+os.system("sudo apt install ffmpeg -y" )
+os.system("ffmpeg -framerate 1 -i output/image_%03d.jpg output/my_video.mp4" )
 print( "Done converting." )
