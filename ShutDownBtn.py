@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from gpiozero import Button
-from subprocess import check_call
 from time import sleep
 import os
 
@@ -26,7 +25,7 @@ def service() :
         blink_internal_led( 0 )
         blink_internal_led( 1 )
 
-        check_call( 'sudo poweroff'.split() )
+        os.system( 'sudo poweroff' )
     pass
 
     shutdown_btn = Button(9, hold_time=3)
