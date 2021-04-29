@@ -114,6 +114,8 @@ class Servo :
     pass
     
     def setServoPulse(self, channel, pulse):
+        print( f"channel = {channel}, pulse={pulse}" ) 
+        
         # "Sets the Servo Pulse,The PWM frequency must be 50HZ"
         pwm = pulse*4096//20000 #PWM frequency is 50HZ,the period is 20000us
         self._setPWM(channel, pwm)
@@ -174,16 +176,30 @@ if __name__=='__main__':
         pass
     pass
 
-    if 1 :         
+    if 0 :         
         channel = 1
         print( f"channel = {channel}" ) 
 
-        fr = 800 ; to = 600; step = 10 if to > fr else -10
+        fr = 800 ; to = 600; 
+        step = 10 if to > fr else -10
         duration = 0.02
         for pulse in range( fr, to, step ):
             servo.setServoPulse(channel, pulse)
             sleep( duration )  
         pass
+    pass
+
+    if 1 :         
+        channel = 1
+        print( f"channel = {channel}" ) 
+
+        fr = -600 ; to = -800; 
+        step = 10 if to > fr else -10
+        duration = 0.02
+        for pulse in range( fr, to, step ):
+            servo.setServoPulse(channel, pulse)
+            sleep( duration )  
+        pass  
     pass
 
     if 0 : 
