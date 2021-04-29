@@ -1,11 +1,6 @@
-#!/usr/bin/python
 # -*- coding:utf-8 -*-
-import threading
-import traceback
-import paho.mqtt.client as mqtt
+import threading, traceback
 from PCA9685 import PCA9685
-from Logger import Logger
-
 
 class CameraServo:
  
@@ -19,9 +14,13 @@ class CameraServo:
     PITCH_DEG = ROLL_DEG
 
     def __init__(self, client, service_name, debug=False):
+        log.basicConfig( format='%(asctime)s, %(levelname)s [%(filename)s:%(lineno)04d] %(message)s',
+            datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO 
+            )
+        self.log = log.getLogger( self.__class__.__name__ )
+
         self.client = client
-        self.serviceName = service_name
-        self.logger = Logger("CameraServo", debug)
+        self.serviceName = service_name        
         
         self.pwm = PCA9685(0x40, debug)
         self.pwm.setPWMFreq(50)
@@ -30,9 +29,10 @@ class CameraServo:
         
         self.set_position(0, self.ROLL_MID, self.ROLL_MIN, self.ROLL_MAX)
         self.set_position(1, self.PITCH_MID, self.PITCH_MIN, self.PITCH_MAX)
+    pass
 
     def on_message(self, client, userdata, msg):
-        self.logger.info(msg.topic + ": " + msg.payload)
+        self.log.info(msg.topic + ": " + msg.payload)
         try:
             path = msg.topic.split("/")
             if len(path) > 1 and path[0] == self.serviceName and path[1] == "control":  # mutinus/control/#
@@ -55,8 +55,10 @@ class CameraServo:
                         else:                                                           # mutinus/control/camera/pitch
                             self.set_position(1, int(msg.payload), self.PITCH_MIN, self.PITCH_MAX)
         except:
-            self.logger.error("Unexpected Error!")
+            self.log.error("Unexpected Error!")
             traceback.print_exc()
+        pass
+    pass
 
     def roll_percent(self, percent):
         self.set_position_percent(0, percent, self.ROLL_MIN, self.ROLL_MAX)
@@ -68,7 +70,7 @@ class CameraServo:
         original = position
         if position > position_max: position = position_max
         if position < position_min: position = position_min
-        self.logger.debug(str(original) + " -> " + str(position))
+        self.log.debug(str(original) + " -> " + str(position))
 
         self.client.publish(self.serviceName + "/state/camera/" + str(servo) + "/raw", position, 0, True)
 
@@ -82,15 +84,19 @@ class CameraServo:
         if percent > 100: percent = 100
         if percent < 0: percent = 0
         position = position_min + int((100.0 - float(percent)) * float(position_max - position_min) / 100.0)
-        self.logger.debug(str(percent) + "% -> " + str(position))
+        self.log.debug(str(percent) + "% -> " + str(position))
         self.set_position(servo, position, position_min, position_max)
 
     def set_position_degrees(self, servo, degrees, mid, position_min, position_max, points_per_degree):
         position = int(degrees * points_per_degree + mid)
-        self.logger.debug(str(degrees) + "deg -> " + str(position))
+        self.log.debug(str(degrees) + "deg -> " + str(position))
         self.set_position(servo, position, position_min, position_max)
+    pass
 
     def stop(self):
-        self.logger.debug("Stopping")
+        self.log.debug("Stopping")
         self.pwm.stop(0)
         self.pwm.stop(1)
+    pass
+
+pass
