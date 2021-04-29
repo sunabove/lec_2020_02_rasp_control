@@ -22,6 +22,18 @@ class PCA9685:
     __ALLLED_OFF_L       = 0xFC
     __ALLLED_OFF_H       = 0xFD
 
+    ROLL_MIN = 750
+    ROLL_MID = 1750
+    ROLL_MAX = 2750
+    ROLL_DEG = (ROLL_MAX - ROLL_MIN) / 180.0
+    
+    PITCH_MIN = 1150
+    PITCH_MID = 2100
+    PITCH_MAX = 2800
+    PITCH_DEG = (PITCH_MAX - PITCH_MIN) / 180.0
+
+    MIN_MID_MAX_DEGS = ( ( ROLL_MIN, ROLL_MAX, ROLL_DEG ), (PITCH_MIN, PITCH_MAX, PITCH_DEG) )
+
     def __init__(self, address=0x40, debug=False):
         log.basicConfig( format='%(asctime)s, %(levelname)s [%(filename)s:%(lineno)04d] %(message)s',
             datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO 
@@ -86,8 +98,10 @@ class PCA9685:
         # pulse * 4096 / 20000
         # PWM frequency is 50HZ,the period is 20000us
 
-        pulse = int( pulse * 4096 * self.freq / 1000000 )
-        self.setPWM( channel, pulse )
+        self.log.info( f"pulse = {pulse}" )
+
+        pwm = int( pulse * 4096 * self.freq / 1000000 )
+        self.setPWM( channel, pwm )
     pass
         
     def stop(self, channel):
@@ -105,20 +119,19 @@ if __name__=='__main__':
     pwm.setServoPulse(0, 0)   
     pwm.setServoPulse(1, 0)   
 
-    try : 
-        while 1 :
-            min = 500
-            max = 2500
-            for channel in [ 0, 1 ] : 
-                for i in range( min, max, 10):  
-                    pwm.setServoPulse(channel, i)   
-                    time.sleep(0.2)
-                pass
-                
-                for i in range( max, min, -10):
-                    pwm.setServoPulse(channel, i) 
-                    time.sleep(0.2) 
-                pass
+    try :
+        min = 500
+        max = 550
+        step = 10
+        for channel in [ 0 ] : 
+            for i in range( min, max, step):  
+                pwm.setServoPulse(channel, i)   
+                time.sleep(0.2)
+            pass
+            
+            for i in range( max, min, -step):
+                pwm.setServoPulse(channel, i) 
+                time.sleep(0.2) 
             pass
         pass
     finally:
