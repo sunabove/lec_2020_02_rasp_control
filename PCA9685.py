@@ -32,6 +32,7 @@ class PCA9685:
         self.address = address
         self.log.debug("Reseting PCA9685")
         self.write(self.__MODE1, 0x00)
+    pass
 	
     def write(self, reg, value):
         # "Writes an 8-bit value to the specified register/address"
@@ -43,6 +44,7 @@ class PCA9685:
         result = self.bus.read_byte_data(self.address, reg)
         self.log.debug("I2C: Device 0x%02X returned 0x%02X from reg 0x%02X" % (self.address, result & 0xFF, reg))
         return result
+    pass
 
     def setPWMFreq(self, freq):
         # "Sets the PWM frequency"
@@ -51,13 +53,16 @@ class PCA9685:
         prescaleval /= 4096.0       # 12-bit
         prescaleval /= float(freq)
         prescaleval -= 1.0
+        
         self.log.debug("Setting PWM frequency to %d Hz" % freq)
         self.log.debug("Estimated pre-scale: %d" % prescaleval)
+        
         prescale = math.floor(prescaleval + 0.5)
         self.log.debug("Final pre-scale: %d" % prescale)
 
         oldmode = self.read(self.__MODE1);
         newmode = (oldmode & 0x7F) | 0x10        # sleep
+
         self.write(self.__MODE1, newmode)        # go to sleep
         self.write(self.__PRESCALE, int(math.floor(prescale)))
         self.write(self.__MODE1, oldmode)
@@ -65,13 +70,15 @@ class PCA9685:
         self.write(self.__MODE1, oldmode | 0x80)
     pass
 
-    def setPWM(self, channel, on, off):
+    def setPWM(self, channel, off):
         #"Sets a single PWM channel"
+        on = 0 
         self.write(self.__LED0_ON_L+4*channel, on & 0xFF)
         self.write(self.__LED0_ON_H+4*channel, on >> 8)
         self.write(self.__LED0_OFF_L+4*channel, off & 0xFF)
         self.write(self.__LED0_OFF_H+4*channel, off >> 8)
-        self.log.debug("channel: %d  LED_ON: %d LED_OFF: %d" % (channel,on,off))
+
+        self.log.info( f"channel: {channel}, pwm={off}, LED_ON: {on} LED_OFF: {off}" )
     pass
 
     def setServoPulse(self, channel, pulse):
@@ -80,14 +87,14 @@ class PCA9685:
         # PWM frequency is 50HZ,the period is 20000us
 
         pulse = int( pulse * 4096 * self.freq / 1000000 )
-        self.setPWM(channel, 0, pulse )
+        self.setPWM( channel, pulse )
     pass
         
     def stop(self, channel):
         self.log.debug("Stopping PCA9685")
         self.write(self.__MODE1, 0x00)
         self.write(self.__PRESCALE, 0x00)
-        self.setPWM(channel, 0, 0)
+        self.setPWM(channel, 0)
     pass
 pass
 
@@ -100,14 +107,17 @@ if __name__=='__main__':
 
     try : 
         while 1 :
+            min = 500
+            max = 2500
             for channel in [ 0, 1 ] : 
-                for i in range(500,2500,10):  
+                for i in range( min, max, 10):  
                     pwm.setServoPulse(channel, i)   
-                    time.sleep(0.02)     
+                    time.sleep(0.2)
+                pass
                 
-                for i in range(2500,500,-10):
+                for i in range( max, min, -10):
                     pwm.setServoPulse(channel, i) 
-                    time.sleep(0.02) 
+                    time.sleep(0.2) 
                 pass
             pass
         pass

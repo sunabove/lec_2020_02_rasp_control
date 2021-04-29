@@ -38,14 +38,12 @@ class CameraServo:
         original = position
         
         position = min( position, position_max )
-        position = max( position, position_min )
+        position = max( position, position_min ) 
         
         self.log.debug(str(original) + " -> " + str(position))
 
-        percent = 100 - int( (position - position_min) * 100.0 /(position_max - position_min))
-        
         self.pwm.setServoPulse(servo, position)
-        threading.Timer(0.5, self.stop).start()
+        threading.Timer(0.01, self.stop).start()
     pass
 
     def set_position_percent(self, servo, percent, position_min, position_max):
@@ -76,8 +74,12 @@ if __name__ == '__main__':
 
     try : 
         cameraServo = CameraServo()
+
+        #cameraServo.roll_percent( 1 )
+        cameraServo.pitch_percent( 1 )
     finally :
-        CameraServo.start()
+        pass
+        #cameraServo.stop()
     pass
 
 pass
