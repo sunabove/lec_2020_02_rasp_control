@@ -130,9 +130,9 @@ class Servo :
         self.debug and print(inspect.currentframe().f_code.co_name)
 
         channel = 1 
-        servo.setPWM(channel, 390 ) 
+        self.setPWM(channel, 390 ) 
         sleep( 0.02 ) 
-        servo.setPWM(channel, 0)
+        self.setPWM(channel, 0)
     pass
 
     def down(self):
@@ -141,7 +141,7 @@ class Servo :
         channel = 1
         self.setPWM(channel, 540)
         sleep( 0.02 )        
-        servo.setPWM(channel, 0)
+        self.setPWM(channel, 0)
     pass
 
     def left(self):
@@ -159,7 +159,7 @@ class Servo :
         channel = 0
         self.setPWM(channel, 105)
         sleep( 0.01 )        
-        servo.setPWM(channel, 0)
+        self.setPWM(channel, 0)
     pass
 
 pass

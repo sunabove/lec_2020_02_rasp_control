@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 from time import sleep
-from Motor import Motor
+from Servo import Servo
 
 class JoyStick : 
 
@@ -10,7 +10,8 @@ class JoyStick :
     C = 10
     D = 11
 
-    def __init__(self, target ) :
+    def __init__(self, target, debug = 0 ) :
+        self.debug = debug
         self.target = target
 
         GPIO.setmode(GPIO.BCM)
@@ -22,42 +23,42 @@ class JoyStick :
     pass
 
     def __del__(self) :
+        GPIO.setmode(GPIO.BCM) 
+        
+        for key in [ self.CTR, self.A, self.B, self.C, self.D ] : 
+            GPIO.cleanup( key )
         pass
     pass
 
     def control(self) :
-
         try:
             print( "JoyStick is ready to control." )
+            
+            target = self.target
+            debug = self.debug
+
             while 1 :
                 key = None 
-                if GPIO.input(CTR) == 0:
-                    print("center")
-                    key = CTR 
-                    beep_on();
-                    motor.stop();
-                elif GPIO.input(A) == 0:
-                    print("up")
-                    key = A
-                    beep_on();
-                    motor.forward();            
-                elif GPIO.input(B) == 0:
-                    print("right")
-                    key = B
-                    beep_on();
-                    motor.right();
-                elif GPIO.input(C) == 0:
-                    print("left")
-                    key = C
-                    beep_on();
-                    motor.left();
-                elif GPIO.input(D) == 0:
-                    print("down")
-                    key = D
-                    beep_on();
-                    motor.backward();
-                else:
-                    beep_off();
+                if GPIO.input(self.CTR) == 0:
+                    debug and print("center")
+                    key = self.CTR 
+                    target.stop()
+                elif GPIO.input(self.A) == 0:
+                    debug and print("up")
+                    key = self.A
+                    target.forward()
+                elif GPIO.input(self.B) == 0:
+                    debug and print("right")
+                    key = self.B
+                    target.right()
+                elif GPIO.input(self.C) == 0:
+                    debug and print("left")
+                    key = self.C
+                    target.left()
+                elif GPIO.input(self.D) == 0:
+                    debug and print("down")
+                    key = self.D
+                    target.backward()
                 pass
 
                 while key and GPIO.input(key) == 0:
@@ -65,14 +66,16 @@ class JoyStick :
                 pass
             pass
         except KeyboardInterrupt:
-            GPIO.cleanup()
+            pass
         pass
     pass # -- control
 
 pass # -- JoyStick
 
 def service() :
-    pass
+    servo = Servo()
+    joyStick = JoyStick(target=servo)
+    joyStick.control()
 pass
 
 def stop():
