@@ -176,8 +176,12 @@ if __name__=='__main__':
 
     def control_servo(window):
         next_key = None
-        while True:
+
+        running = 1
+
+        while running :
             curses.halfdelay(1)
+
             if next_key is None:
                 key = window.getch()
             else:
@@ -185,6 +189,11 @@ if __name__=='__main__':
                 next_key = None
             pass
 
+            if key == 'q' :
+                running = 0 
+                break
+            pass
+            
             if key != -1:
                 # KEY PRESSED
                 curses.halfdelay(3)
@@ -196,9 +205,12 @@ if __name__=='__main__':
                 next_key = key
                 while next_key == key:
                     next_key = window.getch()
+
+                    if next_key == 'q' :
+                        running = 0 
+                        break
+                    pass
                 pass
-                # KEY RELEASED
-                # servo.stop()
             pass
         pass
     pass
