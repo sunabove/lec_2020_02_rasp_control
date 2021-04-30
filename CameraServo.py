@@ -8,6 +8,7 @@ class CameraServo:
     ROLL_MID = 1750
     ROLL_MAX = 2750
     ROLL_DEG = (ROLL_MAX - ROLL_MIN) / 180.0
+    
     PITCH_MIN = 1150
     PITCH_MID = 2100
     PITCH_MAX = 2800
