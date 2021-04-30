@@ -216,6 +216,7 @@ def service() :
             robot.left()
         elif code == "turnright":
             robot.right()
+            
         elif code == "servo_left":
             robot.servo_left()
         elif code == "servo_right":
