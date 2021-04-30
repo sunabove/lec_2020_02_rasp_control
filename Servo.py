@@ -118,6 +118,14 @@ class Servo :
         self.setPWM(1, 0) 
     pass
 
+    def backward(self):
+        self.up()
+    pass
+
+    def forward(self):
+        self.down()
+    pass
+
     def up(self):
         self.debug and print(inspect.currentframe().f_code.co_name)
 
