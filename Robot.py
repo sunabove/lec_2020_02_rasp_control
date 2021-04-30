@@ -131,7 +131,15 @@ class Robot :
         self.servo.down()
     pass
 
-pass
+    def servo_stop( self ) : 
+        self.servo.stop()
+    pass
+
+    def stop_servo( self ) : 
+        self.servo.stop()
+    pass
+
+pass # -- Robot
 
 app = None 
 robot = None 
@@ -199,6 +207,7 @@ def service() :
 
         if code == "stop":
             robot.stop_robot()
+            robot.stop_servo()
         elif code == "forward":
             robot.forward( speed )
         elif code == "backward":
@@ -207,14 +216,16 @@ def service() :
             robot.left()
         elif code == "turnright":
             robot.right()
-        elif code == "left":
+        elif code == "servo_left":
             robot.servo_left()
-        elif code == "right":
+        elif code == "servo_right":
             robot.servo_right()
-        elif code == "up":
+        elif code == "servo_up":
             robot.servo_up()
-        elif code == "down":
+        elif code == "servo_down":
             robot.servo_down()
+        elif code == "servo_stop":
+            robot.servo_stop()
         pass
 
         return "OK"

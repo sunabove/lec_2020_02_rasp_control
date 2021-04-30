@@ -10,7 +10,7 @@ log.basicConfig(
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
     )
 
-class StreamingOutput(object):
+class StreamingOutput :
     def __init__(self):
         self.frame = None
         self.buffer = io.BytesIO()
@@ -32,9 +32,9 @@ class StreamingOutput(object):
             
         return self.buffer.write(buf)
     pass
-pass
+pass # -- StreamingOutput
 
-class Camera(object):
+class Camera :
     
     def __init__(self, motor=None):
         self.motor = motor
@@ -153,7 +153,7 @@ class Camera(object):
         cv2.putText(image, txt, (x, y), font, fs, bg_color, ft + 2, cv2.LINE_AA)
         cv2.putText(image, txt, (x, y), font, fs, fg_color, ft    , cv2.LINE_AA) 
     pass
-pass
+pass # -- Camera
 
 def generate_frame(camera): 
     output = camera.output
@@ -167,7 +167,7 @@ def generate_frame(camera):
         yield (b'--frame\r\n'
             b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
     pass
-pass
+pass # -- generate_frame
 
 camera = None
 

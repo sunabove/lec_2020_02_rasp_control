@@ -10,29 +10,34 @@
     <script> 
 		
         $(function(){
-            $("button").bind( "mousedown",function(){
-                $.post("/cmd",{cmd: this.id, speed: $("#speed").val()},function(data,status){
+            $("button.motor").bind( "mousedown",function(){
+                $.post("/cmd",{ cmd: this.id, speed: $("#speed").val() },function(data,status){
                 });
             });
 
-			$("button").bind( "mouseup, mouseleave",function(){
-                $.post("/cmd",{cmd:"stop"},function(data,status){
+			$("button.motor").bind( "mouseup, mouseleave",function(){
+                $.post("/cmd",{ cmd:"stop" },function(data,status){
                 });
             }); 
 
 			$( "#speed" ).change( function() { $('#speed_desc').html( $("#speed").val() ) } )
+
+			$("button.servo").bind( "mousedown",function(){
+                $.post("/cmd",{ cmd: this.id },function(data,status){
+                });
+            });
         });
 		
     </script>
 
 	<style type="text/css">
 		button {
-			margin: 10px 15px 10px 15px;
+			/* margin: 10px 15px 10px 15px; */
 			width: 50px;
 			height: 50px;
 		}
 		input {
-			margin: 10px 15px 10px 15px;
+			/* margin: 10px 15px 10px 15px; */
 			width: 50px;
 			height: 50px;
 		}
@@ -46,51 +51,112 @@
 	<center>
 		<img src="{{ url_for('video_feed') }}" />
 		<br/><br/>
-		<table class="text-center" >
-			<thead>
-				<tr>
-					<td colspan="100%">
-						<h4>Motor Control</h4>
-					</td>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>&nbsp;</td>
-					<td>
-						<button id="forward" class="btn btn-lg btn-primary">&uuarr;</button>
-					</td>
-					<td>&nbsp;</td>
-				</tr>
-				<tr>
-					<td>
-						<button id='turnleft' class="btn btn-lg btn-primary">&llarr;</button>
-					</td>
-					<td>
-						<button id='stop' class="btn btn-sm btn-primary">Stop</button>
-					</td>
-					<td>
-						<button id='turnright' class="btn btn-lg btn-primary">&rrarr;</button>
-					</td>
-				</tr>
-				<tr>
-					<td>&nbsp;</td>
-					<td>
-						<button id='backward' class="btn btn-lg btn-primary">&ddarr;</button>
-					</td>
-					<td>&nbsp;</td>
-				</tr>
-			</tbody>
-			<tfoot>
-				<tr>
-					<td colspan="100%">
-						<br/>
-						<h4>Speed : <span id="speed_desc">50</span></h4>
-						<input id="speed" type="range" class="form-label" min="20" max="100", value="50" style="margin:-10px; width:300px;"  >
-					</td>
-				</tr>
-			</tfoot>
-		</table>
+
+		<div class="container" class="width: 120px;">
+			<div class="row">
+				<div class="col">&nbsp;</div>
+				<div class="col">
+					<table class="text-center" >
+						<colgroup>
+							<col width="56px" />
+							<col width="56px" />
+							<col width="56px" />
+						</colgroup>
+						<thead>
+							<tr>
+								<td colspan="100%" >
+									<h4 class="text-center">Motor Control</h4>
+								</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>&nbsp;</td>
+								<td>
+									<button id="forward" class="motor btn btn-lg btn-primary">&uuarr;</button>
+								</td>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td>
+									<button id='turnleft' class="motor btn btn-lg btn-primary">&llarr;</button>
+								</td>
+								<td>
+									<button id='stop' class="motor btn btn-sm btn-primary">Stop</button>
+								</td>
+								<td>
+									<button id='turnright' class="motor btn btn-lg btn-primary">&rrarr;</button>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td>
+									<button id='backward' class="motor btn btn-lg btn-primary">&ddarr;</button>
+								</td>
+								<td>&nbsp;</td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="100%">
+									<br/>
+									<h4>Speed : <span id="speed_desc">50</span></h4>
+									<input id="speed" type="range" class="form-label" min="20" max="100", value="50" style="margin:-10px; width:300px;"  >
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+
+				<div class="col">
+					<table class="text-center" >
+						<colgroup>
+							<col width="56px" />
+							<col width="56px" />
+							<col width="56px" />
+						</colgroup>
+						<thead>
+							<tr>
+								<td colspan="100%" >
+									<h4 class="text-center">Servo Control</h4>
+								</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>&nbsp;</td>
+								<td>
+									<button id="servo_up" class="servo btn btn-lg btn-primary">&uuarr;</button>
+								</td>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td>
+									<button id='servo_left' class="servo btn btn-lg btn-primary">&llarr;</button>
+								</td>
+								<td>
+									<button id='servo_stop' class="servo btn btn-sm btn-primary">Stop</button>
+								</td>
+								<td>
+									<button id='servo_right' class="servo btn btn-lg btn-primary">&rrarr;</button>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td>
+									<button id='servo_down' class="servo btn btn-lg btn-primary">&ddarr;</button>
+								</td>
+								<td>&nbsp;</td> 
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="col">&nbsp;</div>
+
+			</div>
+		  </div>
+
 	</center>
 </div>
 </body>
