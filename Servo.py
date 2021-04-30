@@ -140,7 +140,7 @@ class Servo :
 
         channel = 1
         self.setPWM(channel, 540)
-        sleep( 0.02 )
+        sleep( 0.02 )        
         servo.setPWM(channel, 0)
     pass
 
@@ -148,8 +148,8 @@ class Servo :
         self.debug and print(inspect.currentframe().f_code.co_name)
 
         channel = 0  
-        self.setPWM(channel, 170 ) 
-        sleep( 0.02 ) 
+        self.setPWM(channel, 350 ) 
+        sleep( 0.02 )
         self.setPWM(channel, 0)
     pass
 
@@ -158,7 +158,7 @@ class Servo :
 
         channel = 0
         self.setPWM(channel, 105)
-        sleep( 0.02 )
+        sleep( 0.01 )        
         servo.setPWM(channel, 0)
     pass
 
@@ -209,6 +209,8 @@ if __name__=='__main__':
     pass
 
     if 1 : 
+        print( "Use arrow key to control the servos." )
+        sleep( 2 )
         curses.wrapper( control_servo )
     pass
     
@@ -241,7 +243,6 @@ if __name__=='__main__':
             channel = 1
             servo.debug = 1
             print( f"channel = {channel}" ) 
-            #servo.setServoPulse(1,2000)
             for pwm in range( 300, 430, 5) :
                 servo.setPWM(channel, pwm)
                 sleep( 1 )
