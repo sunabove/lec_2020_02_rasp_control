@@ -1,6 +1,6 @@
 #coding: utf-8
 
-import sys, cv2, numpy as np, threading, logging, inspect, signal
+import sys, cv2, numpy as np, threading, logging as log, inspect, signal
 import RPi.GPIO as GPIO    
 
 from time import  sleep
@@ -12,7 +12,6 @@ from Servo import Servo
 from IRRemote import IRRemote
 from rpi_ws281x import Color
 
-import logging as log
 log.basicConfig(
     format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
