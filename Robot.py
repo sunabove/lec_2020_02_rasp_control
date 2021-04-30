@@ -155,7 +155,7 @@ def stop():
     GPIO.setmode(GPIO.BCM)  
 
     log.info( "Good bye!" )
-pass
+pass # -- stop
 
 def service() : 
     log.info( "Hello....." )
