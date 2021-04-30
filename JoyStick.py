@@ -13,6 +13,7 @@ class JoyStick :
     def __init__(self, target, debug = 0 ) :
         self.debug = debug
         self.target = target
+        self.running = 0 
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
@@ -23,6 +24,10 @@ class JoyStick :
     pass
 
     def __del__(self) :
+        self.running = False
+
+        sleep( 0.1 )
+
         GPIO.setmode(GPIO.BCM) 
         
         for key in [ self.CTR, self.A, self.B, self.C, self.D ] : 
@@ -36,8 +41,9 @@ class JoyStick :
             
             target = self.target
             debug = self.debug
+            self.running = True
 
-            while 1 :
+            while self.running :
                 key = None 
                 if GPIO.input(self.CTR) == 0:
                     debug and print("center")
@@ -61,11 +67,11 @@ class JoyStick :
                     target.backward()
                 pass
 
-                while key and GPIO.input(key) == 0:
+                while self.running and key and GPIO.input(key) == 0:
                     sleep(0.01)
                 pass
             pass
-        except KeyboardInterrupt:
+        except :
             pass
         pass
     pass # -- control
