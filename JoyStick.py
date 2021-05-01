@@ -26,13 +26,7 @@ class JoyStick :
     def __del__(self) :
         self.running = False
 
-        sleep( 0.1 )
-
-        GPIO.setmode(GPIO.BCM) 
-        
-        for key in [ self.CTR, self.A, self.B, self.C, self.D ] : 
-            GPIO.cleanup( key )
-        pass
+        self.finish()
     pass
 
     def control(self) :
@@ -83,7 +77,18 @@ class JoyStick :
     pass # -- servic
 
     def stop(self):
+        self.finish()
+    pass
+
+    def finish(self):
         self.running = 0
+
+        GPIO.setmode(GPIO.BCM) 
+        
+        for key in [ self.CTR, self.A, self.B, self.C, self.D ] : 
+            GPIO.cleanup( key )
+        pass
+    
         while not self.finished :
             sleep( 0.01 )
         pass

@@ -46,22 +46,34 @@ class Robot :
 
     def finish(self) :
         log.info(inspect.currentframe().f_code.co_name) 
-
+        
         self.buzzer.close()
+        log.info( "buzzer finished" ) 
 
         self.motor.finish()
+        log.info( "motor finished" ) 
+
         self.rgb_led.finish() 
+        log.info( "rgg_led finished" ) 
+
         self.camera.finish()
+        log.info( "camera finished" ) 
+
         self.servo.finish()
+        log.info( "servo finished" ) 
 
         if hasattr( self, "irremote" ) : 
             self.irremote.finish()
+            log.info( "irremote finished" ) 
         pass
-
-        sleep( 0.5 )
 
         GPIO.setmode(GPIO.BCM)
         GPIO.cleanup()
+
+        #self.joyStick.finish()
+        log.info( "joyStick finished" ) 
+
+        sleep( 0.5 )        
     pass
 
     def stop(self) :
@@ -243,9 +255,9 @@ def service() :
     log.info( "Good bye!")
 pass # -- service
 
-if __name__=='__main__':
-    def signal_handler(signal, frame):
-        stop()
+if __name__=='__main__':    
+    def signal_handler(signal, frame): 
+        stop() 
 
         sleep( 2 )
 
