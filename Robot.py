@@ -67,13 +67,8 @@ class Robot :
             log.info( "irremote finished" ) 
         pass
 
-        GPIO.setmode(GPIO.BCM)
-        GPIO.cleanup()
-
         #self.joyStick.finish()
-        log.info( "joyStick finished" ) 
-
-        sleep( 0.5 )        
+        log.info( "joyStick finished" )
     pass
 
     def stop(self) :
@@ -266,5 +261,6 @@ if __name__=='__main__':
 
     signal.signal(signal.SIGINT, signal_handler)
     
+    GPIO.cleanup()
     service()
 pass
