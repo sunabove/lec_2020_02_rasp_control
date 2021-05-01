@@ -11,7 +11,7 @@ from Camera import Camera, generate_frame
 from Servo import Servo
 from IRRemote import IRRemote
 from rpi_ws281x import Color
-import JoyStick
+from JoyStick import JoyStick
 
 log.basicConfig(
     format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
@@ -29,7 +29,7 @@ class Robot :
         self.rgb_led    = RGB_LED()
         self.camera     = Camera( motor = self.motor )
         self.servo      = Servo()
-        self.joyStick   = JoyStick.JoyStick( self.servo )
+        self.joyStick   = JoyStick( self.servo )
         #self.irremote   = IRRemote( robot, buzzer=self.buzzer )
 
         # 시동 소리 내기
@@ -37,7 +37,7 @@ class Robot :
         self.buzzer.beep(on_time=0.2, off_time=0.2, n = 2)
 
         # joystick service start
-        threading.Thread(target=JoyStick.service).start()
+        threading.Thread(target=self.joyStick.service).start()
     pass
 
     def __del__(self):

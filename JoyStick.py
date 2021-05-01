@@ -41,7 +41,8 @@ class JoyStick :
             
             target = self.target
             debug = self.debug
-            self.running = True
+            self.finished = 0 
+            self.running = 1
 
             while self.running :
                 key = None 
@@ -71,17 +72,29 @@ class JoyStick :
                     sleep(0.01)
                 pass
             pass
-        except :
-            pass
+        finally :
+            self.finished = 0 
+            self.running = 0 
         pass
     pass # -- control
 
+    def service(self) :
+        self.control()
+    pass # -- servic
+
+    def stop(self):
+        self.running = 0
+        while not self.finished :
+            sleep( 0.01 )
+        pass
+    pass
+
 pass # -- JoyStick
 
-def service() :
+def service(debug=0) :
     servo = Servo()
-    joyStick = JoyStick(target=servo)
-    joyStick.control()
+    joyStick = JoyStick(target=servo, debug=debug)
+    joyStick.service()
 pass
 
 def stop():
@@ -89,5 +102,5 @@ def stop():
 pass
 
 if __name__ == '__main__':
-    service()
+    service(debug=1)
 pass
