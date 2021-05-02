@@ -88,10 +88,6 @@ class JoyStick :
         for key in [ self.CTR, self.A, self.B, self.C, self.D ] : 
             GPIO.cleanup( key )
         pass
-    
-        while not self.finished :
-            sleep( 0.01 )
-        pass
     pass
 
 pass # -- JoyStick
