@@ -143,7 +143,7 @@ class Servo :
         self.debug and print(inspect.currentframe().f_code.co_name)
 
         channel = 0  
-        self.setPWM(channel, 350 ) 
+        self.setPWM(channel, 300 ) #350, 340, 300, 150
         sleep( 0.02 )
         self.setPWM(channel, 0)
     pass

@@ -83,27 +83,27 @@ class PCA9685:
 
 if __name__=='__main__':
 
-  pwm = PCA9685(0x40, debug=1) 
-  pwm.setPWMFreq(50)
-  #pwm.setServoPulse(0,1000)
-  pwm.setServoPulse(1,2000)
-  time.sleep(1)
-  for k in [1] : 
-    for i in range(500,2500,10):  
-      pwm.setServoPulse(k,i)   
-      time.sleep(0.02)     
-    
-    for i in range(2500,500,-10):
-      pwm.setServoPulse(k,i) 
-      time.sleep(0.02)
+    pwm = PCA9685(0x40, debug=1) 
+    pwm.setPWMFreq(50)
+    if 1 :
+        channel = 0 
+        #pwm.setServoPulse(0,1000)
+        pwm.setServoPulse(1,2000)
+        time.sleep(1)
+        for k in [1] : 
+          for i in range(500, 2500, 10):  
+            pwm.setServoPulse(k,i)   
+            time.sleep(0.02)     
+          
+          for i in range(2500,500,-10):
+            pwm.setServoPulse(k,i) 
+            time.sleep(0.02)
+          pass
+          pwm.setServoPulse(k,0)
+          time.sleep(0.02)
+        pwm.setServoPulse(0,0)
     pass
-    pwm.setServoPulse(k,0)
-    time.sleep(0.02)
-  pass
+    
+    time.sleep(1)
 
-  pwm.setServoPulse(0,0)
-  time.sleep(1)
-  pwm.setServoPulse(1,0)
-  time.sleep(1)
-  
 pass  
