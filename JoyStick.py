@@ -13,14 +13,7 @@ class JoyStick :
     def __init__(self, target, debug = 0 ) :
         self.debug = debug
         self.target = target
-        self.running = 0 
-
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
-        
-        for key in [ self.CTR, self.A, self.B, self.C, self.D ] : 
-            GPIO.setup( key, GPIO.IN, GPIO.PUD_UP )
-        pass
+        self.running = 0
     pass
 
     def __del__(self) :
@@ -29,52 +22,67 @@ class JoyStick :
         self.finish()
     pass
 
-    def control(self) :
-        try:
-            print( "JoyStick is ready to control." )
-            
-            target = self.target
-            debug = self.debug
-            self.finished = 0 
-            self.running = 1
+    def service(self) :
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BCM)        
+        
+        for key in [ self.CTR, self.A, self.B, self.C, self.D ] : 
+            GPIO.setup( key, GPIO.IN, GPIO.PUD_UP )
+        pass
 
+        debug = self.debug
+        
+        target = self.target
+        self.finished = 0 
+        self.running = 1
+
+        #GPIO.add_event_detect( self.CTR, GPIO.FALLING, callback=self.target_control )
+        #GPIO.add_event_detect( self.A, GPIO.FALLING, callback=self.target_control )
+        GPIO.add_event_detect( self.B, GPIO.FALLING, callback=self.target_control )
+        GPIO.add_event_detect( self.C, GPIO.FALLING, callback=self.target_control )
+        GPIO.add_event_detect( self.D, GPIO.FALLING, callback=self.target_control )
+
+        try : 
             while self.running :
                 key = None 
+
                 if GPIO.input(self.CTR) == 0:
-                    debug and print("center")
                     key = self.CTR 
-                    target.stop()
+                    self.target_control( key )
                 elif GPIO.input(self.A) == 0:
-                    debug and print("up")
                     key = self.A
-                    target.forward()
-                elif GPIO.input(self.B) == 0:
-                    debug and print("right")
-                    key = self.B
-                    target.right()
-                elif GPIO.input(self.C) == 0:
-                    debug and print("left")
-                    key = self.C
-                    target.left()
-                elif GPIO.input(self.D) == 0:
-                    debug and print("down")
-                    key = self.D
-                    target.backward()
+                    self.target_control( key )
                 pass
 
                 while self.running and key and GPIO.input(key) == 0:
                     sleep(0.01)
                 pass
             pass
-        finally :
-            self.finished = 0 
-            self.running = 0 
+        except :
+            pass
+        finally: 
+            self.finished = 1 
+            self.running = 0
         pass
-    pass # -- control
+    pass
 
-    def service(self) :
-        self.control()
-    pass # -- servic
+    def target_control(self, channel) :
+        print( f"channel: {channel}" )
+
+        target = self.target 
+
+        if channel == self.CTR :
+            target.stop()
+        elif channel == self.A :
+            target.forward()
+        elif channel == self.B :
+            target.right()
+        elif channel == self.C :
+            target.left()
+        elif channel == self.D :
+            target.backward()
+        pass
+    pass ## -- target_control
 
     def stop(self):
         self.finish()
@@ -88,10 +96,11 @@ class JoyStick :
         for key in [ self.CTR, self.A, self.B, self.C, self.D ] : 
             GPIO.cleanup( key )
         pass
-    pass
+    pass # -- finish
 
 pass # -- JoyStick
 
+joyStick = None 
 def service(debug=0) :
     servo = Servo()
     joyStick = JoyStick(target=servo, debug=debug)
@@ -99,9 +108,15 @@ def service(debug=0) :
 pass
 
 def stop():
+    if joyStick :
+        joyStick.finish()
     pass
 pass
 
 if __name__ == '__main__':
+    print( "Use the joyStick to control servos." )
+
     service(debug=1)
+
+    input( "Enter any key to quit." )
 pass

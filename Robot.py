@@ -67,7 +67,7 @@ class Robot :
             log.info( "irremote finished" ) 
         pass
 
-        #self.joyStick.finish()
+        self.joyStick.finish()
         log.info( "joyStick finished" )
     pass
 
@@ -261,6 +261,7 @@ if __name__=='__main__':
 
     signal.signal(signal.SIGINT, signal_handler)
     
+    GPIO.setwarnings(False)
     GPIO.cleanup()
     service()
 pass
