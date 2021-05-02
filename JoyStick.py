@@ -52,6 +52,8 @@ class JoyStick :
                 elif GPIO.input(self.A) == 0:
                     key = self.A
                     self.target_control( key )
+                else :
+                    sleep( 0.01 )
                 pass
 
                 while self.running and key and GPIO.input(key) == 0:
@@ -67,7 +69,7 @@ class JoyStick :
     pass
 
     def target_control(self, channel) :
-        print( f"channel: {channel}" )
+        self.debug and print( f"channel: {channel}" )
 
         target = self.target 
 
@@ -115,8 +117,5 @@ pass
 
 if __name__ == '__main__':
     print( "Use the joyStick to control servos." )
-
-    service(debug=1)
-
-    input( "Enter any key to quit." )
+    service(debug=0)
 pass
