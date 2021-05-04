@@ -14,8 +14,10 @@ def blink_internal_led(led_no=0) :
     pass
 pass
 
-def beep_warning() :
-    buzzer = Buzzer(4)
+def beep_warning( buzzer=None ) :
+    if not buzzer : 
+        buzzer = Buzzer(4)
+    pass
 
     cnt = 9 
     for frq in range( 1, cnt ) : 
@@ -29,9 +31,9 @@ def beep_warning() :
     sleep( 1 )
 pass # -- beep_warning
 
-def shutdown():
+def shutdown( buzzer = None ):
     print( '\nShutdown now ...' )
-    beep_warning()
+    beep_warning( buzzer )
     
     blink_internal_led( 0 )
     blink_internal_led( 1 )
