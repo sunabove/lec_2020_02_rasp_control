@@ -238,7 +238,7 @@ def service() :
             robot.servo_down()
         elif cmd == "servo_stop":
             robot.servo_stop()
-        elif cmd == "shutdown"
+        elif cmd == "shutdown" :
             funtions.shutdown()
         pass
 
