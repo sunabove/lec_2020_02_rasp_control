@@ -103,7 +103,7 @@ class Robot :
     def backward(self, speed = 30) :
         # 후진 
         # 후진시 경고음 
-        self.buzzer.beep(on_time=0.1, off_time=0.1, n = 5)
+        self.buzzer.beep(on_time=0.05, off_time=0.05, n = 3)
         # 후진시에는 빨간색으로 깜박인다.
         self.rgb_led.light_effect( "flash", Color(255, 0, 0) ) 
 
@@ -112,7 +112,7 @@ class Robot :
 
     def left(self) : # 좌회전
         # 경고음 
-        self.buzzer.beep(on_time=0.3, off_time=0.3, n = 3)
+        self.buzzer.beep(on_time=0.1, off_time=0.1, n = 2)
 
         self.motor.left()
         # LED 깜빡이기
@@ -120,7 +120,7 @@ class Robot :
 
     def right(self): # 우회전 
         # 경고음 
-        self.buzzer.beep(on_time=0.3, off_time=0.3, n = 3)
+        self.buzzer.beep(on_time=0.1, off_time=0.1, n = 2)
 
         self.motor.right()
     pass
