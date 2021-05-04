@@ -130,7 +130,7 @@ class IRRemote :
         pass
         
         return
-    pass
+    pass # -- pulse_checker
 
     def decode_pulse(self, pList):
 

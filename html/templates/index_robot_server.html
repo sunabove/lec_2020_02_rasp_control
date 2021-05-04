@@ -10,22 +10,27 @@
     <script> 
 		
         $(function(){
-            $("button.motor").bind( "mousedown",function(){
-                $.post("/cmd",{ cmd: this.id, speed: $("#speed").val() },function(data,status){
+            $("button.motor").bind( "mousedown", function(){
+                $.post("/cmd",{ cmd: this.id, speed: $("#speed").val() }, function(data,status){
                 });
             });
 
 			$("button.motor").bind( "mouseup, mouseleave",function(){
-                $.post("/cmd",{ cmd:"stop" },function(data,status){
+                $.post("/cmd",{ cmd:"stop" }, function(data,status){
                 });
             }); 
 
-			$( "#speed" ).change( function() { $('#speed_desc').html( $("#speed").val() ) } )
-
-			$("button.servo").bind( "mousedown",function(){
+			$("button.servo").bind( "mousedown", function(){
                 $.post("/cmd",{ cmd: this.id },function(data,status){
                 });
             });
+
+			$(".menu").click( function(){
+                $.post("/cmd",{ cmd: this.id },function(data,status){
+                });
+            });
+
+			$( "#speed" ).change( function() { $('#speed_desc').html( $("#speed").val() ) } )
         });
 		
     </script>
@@ -168,7 +173,7 @@
 						<li><a class="dropdown-item">라인 트래킹 (센서)</a></li> 
 						<li><a class="dropdown-item">라인 트래킹 (카메라)</a></li> 
 						<li><hr class="dropdown-divider"></li>
-						<li><a class="dropdown-item">Shut down</a></li>
+						<li><a class="dropdown-item menu">Shut down</a></li>
 					</ul>
 				</div>
 			</div>

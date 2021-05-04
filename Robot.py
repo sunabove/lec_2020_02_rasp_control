@@ -12,6 +12,7 @@ from Servo import Servo
 from IRRemote import IRRemote
 from rpi_ws281x import Color
 from JoyStick import JoyStick
+import Functions as funtions
 
 log.basicConfig(
     format='%(asctime)s, %(levelname)-8s [%(filename)s:%(lineno)04d] %(message)s',
@@ -204,8 +205,8 @@ def service() :
     pass 
 
     @app.route("/cmd", methods=['POST'] )
-    def cmd():
-        code = request.form.get("cmd")
+    def process_cmd():
+        cmd = request.form.get("cmd")
         speed = request.form.get("speed")
 
         if speed :
@@ -214,30 +215,31 @@ def service() :
             speed = 50 
         pass
 
-        print(f"code={code}, speed={speed}")
+        log.info(f"cmd={cmd}, speed={speed}")
 
-        if code == "stop":
+        if cmd == "stop":
             robot.stop_robot()
             robot.stop_servo()
-        elif code == "forward":
+        elif cmd == "forward":
             robot.forward( speed )
-        elif code == "backward":
+        elif cmd == "backward":
             robot.backward( speed )
-        elif code == "turnleft":
+        elif cmd == "turnleft":
             robot.left()
         elif code == "turnright":
             robot.right()
-            
-        elif code == "servo_left":
+        elif cmd == "servo_left":
             robot.servo_left()
-        elif code == "servo_right":
+        elif cmd == "servo_right":
             robot.servo_right()
-        elif code == "servo_up":
+        elif cmd == "servo_up":
             robot.servo_up()
-        elif code == "servo_down":
+        elif cmd == "servo_down":
             robot.servo_down()
-        elif code == "servo_stop":
+        elif cmd == "servo_stop":
             robot.servo_stop()
+        elif cmd == "shutdown"
+            funtions.shutdown()
         pass
 
         return "OK"
