@@ -239,7 +239,7 @@ def service() :
         elif cmd == "servo_stop":
             robot.servo_stop()
         elif cmd == "shutdown" :
-            funtions.shutdown(self.buzzer)
+            funtions.shutdown(robot.buzzer)
         pass
 
         return "OK"
