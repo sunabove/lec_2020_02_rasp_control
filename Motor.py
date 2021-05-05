@@ -220,8 +220,8 @@ class Motor:
 
         self.mode = "stop"
 
-        self.PWMA.ChangeDutyCycle(0)
-        self.PWMB.ChangeDutyCycle(0)
+        self.PWMA and self.PWMA.ChangeDutyCycle(0)
+        self.PWMB and self.PWMB.ChangeDutyCycle(0)
         
         GPIO.output(self.AIN1, GPIO.LOW)
         GPIO.output(self.AIN2, GPIO.LOW)

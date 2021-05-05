@@ -120,12 +120,11 @@ class ObstacleSensor :
 pass # -- ObstacleSensor
 
 obstacleSensor = None 
+motor = None
 
-def service( motor = None ):
-    if not motor : 
-        motor = Motor()
-    pass
-    
+def service():
+    global motor , obstacleSensor
+    motor = Motor()    
     obstacleSensor = ObstacleSensor( motor )
 
     obstacleSensor.start()
@@ -133,7 +132,7 @@ pass # -- service
 
 def stop():
     if obstacleSensor : 
-        obstacleSensor.stop() 
+        obstacleSensor.stop()  
     pass
 pass # -- stop
 
@@ -146,7 +145,11 @@ if __name__ == '__main__':
         
         log.info('You have pressed Ctrl-C.')
 
+        global motor , obstacleSensor
+
         stop()
+
+        motor.finish()
 
         sleep( 2 )
 
@@ -164,6 +167,8 @@ if __name__ == '__main__':
     input( "Enter to quit......" )
 
     stop()
+    
+    motor.finish()
 
     log.info( "Good bye!")
 pass
