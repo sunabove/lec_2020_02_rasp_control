@@ -96,7 +96,9 @@ class ObstacleSensor :
 
         log.info( f"state={state}, prev={self.prev_state}, LEFT={left_obstacle:d}, RIGHT={right_obstacle:d}" )
 
-        if left_obstacle == 0 and right_obstacle == 0 :
+        if state == self.prev_state :
+            log.info( "state is not changed. do nothing!" )
+        elif left_obstacle == 0 and right_obstacle == 0 :
             # 장애물이 없을 때
             robot.forward( 10 )
         else :
@@ -104,6 +106,8 @@ class ObstacleSensor :
             self.turn_count += 1
 
             robot.left()
+
+            sleep( 0.2 )
         pass
 
         self.prev_state = state
