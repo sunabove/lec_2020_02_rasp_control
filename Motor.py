@@ -220,13 +220,15 @@ class Motor:
 
         self.mode = "stop"
 
-        self.PWMA and self.PWMA.ChangeDutyCycle(0)
-        self.PWMB and self.PWMB.ChangeDutyCycle(0)
+        if self.PWMA and self.PWMB :
+            self.PWMA.ChangeDutyCycle(0)
+            self.PWMB.ChangeDutyCycle(0)
         
-        GPIO.output(self.AIN1, GPIO.LOW)
-        GPIO.output(self.AIN2, GPIO.LOW)
-        GPIO.output(self.BIN1, GPIO.LOW)
-        GPIO.output(self.BIN2, GPIO.LOW)
+            GPIO.output(self.AIN1, GPIO.LOW)
+            GPIO.output(self.AIN2, GPIO.LOW)
+            GPIO.output(self.BIN1, GPIO.LOW)
+            GPIO.output(self.BIN2, GPIO.LOW)
+        pass
     pass
 
     def back(self) :
