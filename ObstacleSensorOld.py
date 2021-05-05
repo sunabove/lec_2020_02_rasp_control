@@ -58,8 +58,10 @@ class ObstacleSensor :
         GPIO.setup( self.LEFT_GPIO, GPIO.IN, GPIO.PUD_UP ) 
         GPIO.setup( self.RIGHT_GPIO, GPIO.IN, GPIO.PUD_UP ) 
 
-        GPIO.add_event_detect( self.LEFT_GPIO, GPIO.BOTH, callback=self.robot_move )
-        GPIO.add_event_detect( self.RIGHT_GPIO, GPIO.BOTH, callback=self.robot_move )
+        GPIO.add_event_detect( self.LEFT_GPIO, GPIO.BOTH, callback=self.event_detect )
+        GPIO.add_event_detect( self.RIGHT_GPIO, GPIO.BOTH, callback=self.event_detect )
+
+        self.then = time()
 
         self.robot.forward()
     pass # -- start
@@ -82,12 +84,33 @@ class ObstacleSensor :
         return self._running
     pass # -- is_running
 
-    def robot_move(self, pin) :
+    def event_detect(self, pin):
         log.info(inspect.currentframe().f_code.co_name)
 
         self.event_no += 1
 
+        log.info( f"event_no = {self.event_no}, pin = {pin}" )
+        
+        if True :
+            self.thread = threading.Thread(name='self.pulse_checker', target=self.robot_move )
+            self.thread.start()
+        return
+    pass # -- event_detect
+
+    def robot_move(self) :
+        log.info(inspect.currentframe().f_code.co_name)
+
         robot = self.robot
+
+        now = time()
+        interval = 0.04
+        elapsed = now - self.then 
+        if elapsed < interval :
+            #log.info( f"sleep({interval - elapsed})" )
+            sleep( interval - elapsed )
+            
+            return 
+        pass
 
         left_obstacle = GPIO.input( self.LEFT_GPIO ) == 0 
         right_obstacle = GPIO.input( self.RIGHT_GPIO ) == 0 
@@ -96,17 +119,25 @@ class ObstacleSensor :
 
         log.info( f"state={state}, prev={self.prev_state}, LEFT={left_obstacle:d}, RIGHT={right_obstacle:d}" )
 
-        if left_obstacle == 0 and right_obstacle == 0 :
-            # 장애물이 없을 때
-            robot.forward( 10 )
+        if state == self.prev_state : 
+            # do nothing
+            sleep( 0.01 ) 
         else :
-            # 장애물이 있을 때
-            self.turn_count += 1
+            self.then = now 
 
-            robot.left()
+            if left_obstacle == 0 and right_obstacle == 0 :
+                # 장애물이 없을 때
+                #log.info( "forward")
+                robot.forward( 10 )
+            else :
+                # 장애물이 있을 때
+                self.turn_count += 1
+
+                robot.left()
+            pass
+
+            self.prev_state = state
         pass
-
-        self.prev_state = state
     pass # -- robot_move
 
 pass
