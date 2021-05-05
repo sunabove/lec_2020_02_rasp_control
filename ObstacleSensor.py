@@ -71,6 +71,8 @@ class ObstacleSensor :
 
         self._running = False
 
+        self.robot.stop()  
+
         GPIO.setmode(GPIO.BCM)
 
         GPIO.remove_event_detect( self.LEFT_GPIO )
@@ -145,6 +147,8 @@ if __name__ == '__main__':
         log.info('You have pressed Ctrl-C.')
 
         stop()
+
+        sleep( 2 )
 
         import sys
         sys.exit( 0 )
