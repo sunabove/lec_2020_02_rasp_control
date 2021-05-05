@@ -19,16 +19,11 @@ def beep_warning( buzzer=None ) :
         buzzer = Buzzer(4)
     pass
 
-    cnt = 9 
-    for frq in range( 1, cnt ) : 
-        frq = cnt - frq
-        t = 1/frq
-        buzzer.beep(on_time=t, off_time=t/4, n = int(frq), background=False)
-        sleep( 1 )
+    for frq in range( 4, 0, -1 ) : 
+        t = 1/frq/3
+        buzzer.beep(on_time=t, off_time=t, n = frq, background=False)
+        sleep( 0.5 )
     pass
-
-    buzzer.beep(on_time=5, off_time=1, n = 1, background=False)
-    sleep( 1 )
 pass # -- beep_warning
 
 def shutdown( buzzer = None ):
@@ -39,4 +34,8 @@ def shutdown( buzzer = None ):
     blink_internal_led( 1 )
 
     os.system( 'sync && sync && sudo poweroff' )
+pass # -- shutdown
+
+if __name__ == '__main__':
+    beep_warning()
 pass
