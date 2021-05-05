@@ -18,8 +18,8 @@ class ObstacleSensor :
     LEFT_GPIO  = 19    # 왼   쪽 센서 GPIO 번호
     RIGHT_GPIO = 16    # 오른 쪽 센서 GPIO 번호
 
-    def __init__(self, robot):
-        self.robot = robot
+    def __init__(self, motor):
+        self.motor = motor
 
         self.event_no = 0 
         self.turn_count = 0
@@ -63,7 +63,7 @@ class ObstacleSensor :
         GPIO.add_event_detect( self.LEFT_GPIO, GPIO.BOTH, callback=self.robot_move )
         GPIO.add_event_detect( self.RIGHT_GPIO, GPIO.BOTH, callback=self.robot_move )
 
-        self.robot.forward()
+        self.motor.forward()
     pass # -- start
 
     def stop(self) :
@@ -71,7 +71,7 @@ class ObstacleSensor :
 
         self._running = False
 
-        self.robot.stop()  
+        self.motor.stop()  
 
         GPIO.setmode(GPIO.BCM)
 
@@ -91,7 +91,7 @@ class ObstacleSensor :
 
         self.event_no += 1
 
-        robot = self.robot
+        motor = self.motor
 
         left_obstacle = GPIO.input( self.LEFT_GPIO ) == 0 
         right_obstacle = GPIO.input( self.RIGHT_GPIO ) == 0 
@@ -104,12 +104,12 @@ class ObstacleSensor :
             log.info( "state is not changed. do nothing!" )
         elif left_obstacle == 0 and right_obstacle == 0 :
             # 장애물이 없을 때
-            robot.forward( 10 )
+            motor.forward( 10 )
         else :
             # 장애물이 있을 때
             self.turn_count += 1
 
-            robot.left()
+            motor.left()
 
             sleep( 0.18 )
         pass
