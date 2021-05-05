@@ -111,7 +111,7 @@ class ObstacleSensor :
 
             robot.left()
 
-            sleep( 0.15 )
+            sleep( 0.18 )
         pass
 
         self.prev_state = state
