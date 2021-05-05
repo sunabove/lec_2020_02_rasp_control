@@ -1,9 +1,11 @@
 # coding: utf-8
 
-import RPi.GPIO as GPIO, threading, signal,  inspect
+import RPi.GPIO as GPIO, threading, signal, inspect
 from gpiozero import Button
 from random import random
 from time import sleep, time
+
+from Motor import Motor 
 
 import logging as log
 log.basicConfig(
@@ -113,36 +115,36 @@ class ObstacleSensor :
         self.prev_state = state
     pass # -- robot_move
 
-pass
+pass # -- ObstacleSensor
+
+obstacleSensor = None 
+
+def service( motor = None ):
+    if not motor : 
+        motor = Motor()
+    pass
+    
+    obstacleSensor = ObstacleSensor( motor )
+
+    obstacleSensor.start()
+pass # -- service
+
+def stop():
+    if obstacleSensor : 
+        obstacleSensor.stop() 
+    pass
+pass # -- stop
 
 if __name__ == '__main__':
     log.info( "Hello..." )
-    log.info( 'IRremote Test Start ...' )
-
-    GPIO.setwarnings(False)
-
-    from Motor import Motor 
-
-    robot = Motor()
-    
-    os = ObstacleSensor( robot )
-
-    os.start()
-
-    def exit( result ) :
-        os.stop()
-        sleep( 0.5 ) 
-
-        GPIO.setmode(GPIO.BCM)
-        GPIO.cleanup();
-    pass # -- exit
+    log.info( 'Obstacle Sensor Start ...' )
 
     def signal_handler(signal, frame):
         print("", flush=True) 
         
         log.info('You have pressed Ctrl-C.')
 
-        exit( 0 )
+        stop()
 
         import sys
         sys.exit( 0 )
@@ -151,9 +153,13 @@ if __name__ == '__main__':
     import signal
     signal.signal(signal.SIGINT, signal_handler)
 
+    GPIO.setwarnings(False)
+
+    service()
+
     input( "Enter to quit......" )
 
-    exit( 0 )
+    stop()
 
     log.info( "Good bye!")
 pass
