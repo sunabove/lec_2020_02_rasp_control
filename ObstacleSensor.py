@@ -13,8 +13,8 @@ log.basicConfig(
 
 class ObstacleSensor : 
 
-    LEFT_GPIO  = 19    # 왼 쪽 센서 GPIO 번호 
-    RIGHT_GPIO = 16    # 오른 쪽 센서 GPIO 번호    
+    LEFT_GPIO  = 19    # 왼   쪽 센서 GPIO 번호
+    RIGHT_GPIO = 16    # 오른 쪽 센서 GPIO 번호
 
     def __init__(self, robot):
         self.robot = robot
@@ -28,34 +28,38 @@ class ObstacleSensor :
         self._running = False 
 
         self.then = time() 
-    pass
+    pass # -- __init__
 
     def __del__(self):
         self.finish()
     pass
 
-    def finish(self) :
+    def finish(self):
         log.info(inspect.currentframe().f_code.co_name)
 
         self.stop()
-    pass
+    pass # -- finish
 
     def join(self) :
         pass
-    pass
+    pass  # -- join
+
+    def service(self) :
+        self.start()
+    pass # -- service
 
     def start(self):
         log.info(inspect.currentframe().f_code.co_name)
 
         self._running = True
 
-        GPIO.setmode(GPIO.BCM)  # uses numbering outside circles
+        GPIO.setmode( GPIO.BCM )
         
-        GPIO.setup( self.LEFT_GPIO, GPIO.IN, GPIO.PUD_UP) 
-        GPIO.setup( self.RIGHT_GPIO, GPIO.IN, GPIO.PUD_UP) 
+        GPIO.setup( self.LEFT_GPIO, GPIO.IN, GPIO.PUD_UP ) 
+        GPIO.setup( self.RIGHT_GPIO, GPIO.IN, GPIO.PUD_UP ) 
 
-        GPIO.add_event_detect( self.LEFT_GPIO, GPIO.BOTH, callback=self.event_detect)
-        GPIO.add_event_detect( self.RIGHT_GPIO, GPIO.BOTH, callback=self.event_detect)
+        GPIO.add_event_detect( self.LEFT_GPIO, GPIO.BOTH, callback=self.event_detect )
+        GPIO.add_event_detect( self.RIGHT_GPIO, GPIO.BOTH, callback=self.event_detect )
 
         self.then = time()
 
@@ -67,7 +71,7 @@ class ObstacleSensor :
 
         self._running = False
 
-        GPIO.setmode(GPIO.BCM)  # uses numbering outside circles
+        GPIO.setmode(GPIO.BCM)
 
         GPIO.remove_event_detect( self.LEFT_GPIO )
         GPIO.remove_event_detect( self.RIGHT_GPIO )
@@ -78,7 +82,7 @@ class ObstacleSensor :
 
     def is_running(self):
         return self._running
-    pass
+    pass # -- is_running
 
     def event_detect(self, pin):
         log.info(inspect.currentframe().f_code.co_name)
