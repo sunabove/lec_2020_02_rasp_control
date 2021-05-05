@@ -60,9 +60,9 @@ class ObstacleSensor :
         self.then = time()
 
         self.robot.forward()
-    pass 
+    pass # -- start
 
-    def stop( self ) :
+    def stop(self) :
         log.info(inspect.currentframe().f_code.co_name)
 
         self._running = False
@@ -74,7 +74,7 @@ class ObstacleSensor :
 
         GPIO.cleanup( self.LEFT_GPIO )
         GPIO.cleanup( self.RIGHT_GPIO )
-    pass
+    pass # -- stop
 
     def is_running(self):
         return self._running
@@ -91,7 +91,7 @@ class ObstacleSensor :
             self.thread = threading.Thread(name='self.pulse_checker', target=self.robot_move )
             self.thread.start()
         return
-    pass
+    pass # -- event_detect
 
     def robot_move(self) :
         log.info(inspect.currentframe().f_code.co_name)
@@ -134,7 +134,7 @@ class ObstacleSensor :
 
             self.prev_state = state
         pass
-    pass 
+    pass # -- robot_move
 
 pass
 
@@ -158,8 +158,7 @@ if __name__ == '__main__':
 
         GPIO.setmode(GPIO.BCM)
         GPIO.cleanup();
-    pass
-
+    pass # -- exit
 
     def signal_handler(signal, frame):
         print("", flush=True) 
@@ -170,7 +169,7 @@ if __name__ == '__main__':
 
         import sys
         sys.exit( 0 )
-    pass
+    pass # -- signal_handler
 
     import signal
     signal.signal(signal.SIGINT, signal_handler)
