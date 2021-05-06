@@ -15,7 +15,7 @@
                 });
             });
 
-			$("button.motor").bind( "mouseup, mouseleave",function(){
+			$("button.motor").bind( "mouseup",function(){
                 $.post("/cmd",{ cmd:"stop" }, function(data,status){
                 });
             }); 
@@ -44,7 +44,7 @@
 
 <div id="container" class="container text-center" >
 	<br/>
-	<h4>AlphaBot Control v 1.0.02</h4>
+	<h4>AlphaBot Control v 1.0.03</h4>
 
 	<div class="container" class="text-center">
 		<div class="row">
