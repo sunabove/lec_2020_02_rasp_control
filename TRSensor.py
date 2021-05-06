@@ -223,7 +223,22 @@ class TRSensor :
         black = self.black
 
         norm = self.normalize( sensor, white, black )
-        pos = 1.0
+        pos = 0.0
+
+        sum_norm = sum( norm )
+
+        if sum_norm : 
+
+            for i, n in enumerate( norm ) :
+                pos += (i+1)*n
+            pass
+
+            pos = pos/sum_norm
+
+            pos = pos - 3.0
+        else :
+            pos = -3
+        pass
 
         if debug : 
             sensor_text = ", ".join( [ f"{x:4}" for x in sensor ] )
@@ -231,7 +246,7 @@ class TRSensor :
             road_text = self.to_sensors_text( norm, 5 )
         
             print( f"[{idx:04}] Sensor [ {sensor_text}  ] " )
-            print( f"[{idx:04}] Normal [ {norm_text}  ] pos = {pos:.4}" )
+            print( f"[{idx:04}] Normal [ {norm_text}  ] pos = {pos:.2g}" )
             print( f"[{idx:04}] Line   [ {road_text} ]" )
             print()
         pass
