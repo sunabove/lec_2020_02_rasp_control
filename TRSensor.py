@@ -51,16 +51,6 @@ class TRSensor :
         pass
     pass # -- finish
 
-    """
-    Reads the sensor values into an array. There *MUST* be space
-    for as many values as there were sensors specified in the constructor.
-    Example usage:
-    unsigned int sensor_values[8];
-    sensors.read(sensor_values);
-    The values returned are a measure of the reflectance in abstract units,
-    with higher values corresponding to lower reflectance (e.g. a black
-    surface or a void).
-    """
     def read_analog(self):
         num_sensors = self.num_sensors
 
@@ -113,12 +103,6 @@ class TRSensor :
         return np.array( value[1:] )
     pass # -- read_analog
 
-    """
-    Reads the sensors 10 times and uses the results for
-    calibration.  The sensor values are not returned; instead, the
-    maximum and minimum values found over time are stored internally
-    and used for the read_calibrated() method.
-    """
     def calibrate(self):
         num_sensors = self.num_sensors
 
@@ -155,13 +139,6 @@ class TRSensor :
         pass
     pass # -- calibrate
 
-    """
-    Returns values calibrated to a value between 0 and 1000, where
-    0 corresponds to the minimum value read by calibrate() and 1000
-    corresponds to the maximum value.  Calibration values are
-    stored separately for each sensor, so that differences in the
-    sensors are accounted for automatically.
-    """
     def read_calibrated(self):
         value = 0
         #read the needed values
@@ -185,31 +162,9 @@ class TRSensor :
             sensor_values[i] = value
         pass
         
-        #print("read_calibrated",sensor_values)
         return sensor_values
     pass # -- read_calibrated
 
-    """
-    Operates the same as read calibrated, but also returns an
-    estimated position of the robot with respect to a line. The
-    estimate is made using a weighted average of the sensor indices
-    multiplied by 1000, so that a return value of 0 indicates that
-    the line is directly below sensor 0, a return value of 1000
-    indicates that the line is directly below sensor 1, 2000
-    indicates that it's below sensor 2000, etc.  Intermediate
-    values indicate that the line is between two sensors.  The
-    formula is:
-
-       0*value0 + 1000*value1 + 2000*value2 + ...
-       --------------------------------------------
-             value0  +  value1  +  value2 + ...
-
-    By default, this function assumes a dark line (high values)
-    surrounded by white (low values).  If your line is light on
-    black, set the optional second argument white_line to true.  In
-    this case, each sensor value will be replaced by (1000-value)
-    before the averaging.
-    """
     def read_line(self, white_line = 0):
 
         sensors = self.read_calibrated()
@@ -255,7 +210,7 @@ class TRSensor :
         return self.last_value, sensors
     pass # -- read_line
 
-    def read_sensor(self, debug=True) : 
+    def read_sensor(self, debug=1) : 
         self.idx += 1
 
         idx = self.idx
@@ -271,8 +226,10 @@ class TRSensor :
 
         txt = self.to_sensors_text( norm )
         
-        debug and log.info( f"{sensor} {txt} [{move_state}] {area}" )
-        debug and log.info( f"{np.around(norm, decimals=2)} pos = {pos}" )
+        if debug :
+            print( f"[{self.idx:04}] {sensor} {txt} [{move_state}] {area}" )
+            print( f"[{self.idx:04}] {np.around(norm, decimals=2)} pos = {pos}" )
+        pass
 
         return pos, area, norm
     pass # -- read_sensor
@@ -304,8 +261,8 @@ class TRSensor :
 
         dir = 0 
 
-        left_pos  = np.sum( [ n*(len_norm - i) for i, n in enumerate( norm ) ] )
-        right_pos = np.sum( [ n*(i + 1) for i, n in enumerate( norm ) ] )
+        left_pos  = sum( [ n*(len_norm - i) for i, n in enumerate( norm ) ] )
+        right_pos = sum( [ n*(i + 1) for i, n in enumerate( norm ) ] )
 
         area = ""
         move_state = ""
@@ -321,12 +278,12 @@ class TRSensor :
             area = "white"
             move_state = "STOP"
         elif left_pos > right_pos : 
-            pos = - np.sum( n for n in norm if n > 0.1  )
+            pos = - sum( n for n in norm if n > 0.1  )
 
             area = "mixed"
             move_state = "RIGHT"
         elif left_pos < right_pos : 
-            pos = np.sum( n for n in norm if n > 0.1 ) 
+            pos = sum( n for n in norm if n > 0.1 ) 
 
             area = "mixed"
             move_state = "RIGHT"
