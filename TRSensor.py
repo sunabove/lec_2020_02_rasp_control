@@ -282,7 +282,7 @@ class TRSensor :
 pass
 
 if __name__ == '__main__':
-    log.info("TRSensor")
+    print("TRSensor")
 
     tr = TRSensor()
 
@@ -294,11 +294,11 @@ if __name__ == '__main__':
     def signal_handler(signal, frame):
         print("", flush=True) 
         
-        log.info('You have pressed Ctrl-C.')
+        print('You have pressed Ctrl-C.')
 
         exit( 0 )
 
-        log.info( "Good bye!")
+        print( "Good bye!")
 
         import sys
         sys.exit( 0 )
