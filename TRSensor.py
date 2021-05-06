@@ -224,13 +224,14 @@ class TRSensor :
         
         pos, norm, area, move_state = self.sensor_pos(sensor, white, black)
 
-        sensor_text = ", ".join( [ f"{x:4}" for x in sensor ] )
-        road_text = self.to_sensors_text( norm )
-        norm_text = ", ".join( [ f"{x:.2f}" for x in norm ] )
-
         if debug : 
-            print( f"[{self.idx:04}] Sensor [ {sensor_text} ] [ {road_text} ] [{move_state}] {area}" )
-            print( f"[{self.idx:04}] Normal [ {norm_text} ] pos = {pos:.4}" )
+            sensor_text = ", ".join( [ f"{x:4}" for x in sensor ] )
+            norm_text = ", ".join( [ f"{x:.2f}" for x in norm ] )
+            road_text = self.to_sensors_text( norm, 5 )
+        
+            print( f"[{self.idx:04}] Sensor [ {sensor_text}  ] " )
+            print( f"[{self.idx:04}] Normal [ {norm_text}  ] pos = {pos:.4}" )
+            print( f"[{self.idx:04}] Line   [ {road_text} ] [{move_state}] {area}" )
             print()
         pass
 
@@ -254,7 +255,8 @@ class TRSensor :
             else :
                 n = (s -black)/wb_diff
             pass
-            norm[i] = n
+
+            norm[i] = 1 - n
         pass
 
         # -- nomalize
@@ -303,23 +305,20 @@ class TRSensor :
         return pos, norm, area, move_state
     pass # -- sensor_pos
 
-    def to_sensors_text(self, norm ) :
-        txt = ""
+    def to_sensors_text(self, norm, size=1) :
+        txt = [ ]
+        boxes = "▁▂▃▅▆▇"
+        len_boxes = len( boxes )
+
         for n in norm :
-            if n == 1 :
-                # white
-                t = "#"
-            elif n == 0 :
-                # black
-                t = "_"
-            else :
-                t = "|"
-            pass
+            i = (len_boxes - 1)*n
+            i = int( i + 0.5 )
+            t = boxes[i]
             
-            txt += t
+            txt.append( t*size )
         pass
 
-        return txt 
+        return " ".join( txt  )
     pass # -- to_sensors_text
 
 pass
