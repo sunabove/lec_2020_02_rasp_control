@@ -18,7 +18,7 @@ class TRSensor :
     DataOut = 23
     Button = 7
 
-    def __init__(self, white = 570, black=240, num_sensors = 5 ):
+    def __init__(self, white = 540, black=240, num_sensors = 5 ):
         self.white = white
         self.black = black
         self.num_sensors = num_sensors
@@ -221,89 +221,47 @@ class TRSensor :
         # 신호 위치
         white = self.white
         black = self.black
-        
-        pos, norm, area, move_state = self.sensor_pos(sensor, white, black)
+
+        norm = self.normalize( sensor, white, black )
+        pos = 1.0
 
         if debug : 
             sensor_text = ", ".join( [ f"{x:4}" for x in sensor ] )
             norm_text = ", ".join( [ f"{x:.2f}" for x in norm ] )
             road_text = self.to_sensors_text( norm, 5 )
         
-            print( f"[{self.idx:04}] Sensor [ {sensor_text}  ] " )
-            print( f"[{self.idx:04}] Normal [ {norm_text}  ] pos = {pos:.4}" )
-            print( f"[{self.idx:04}] Line   [ {road_text} ] [{move_state}] {area}" )
+            print( f"[{idx:04}] Sensor [ {sensor_text}  ] " )
+            print( f"[{idx:04}] Normal [ {norm_text}  ] pos = {pos:.4}" )
+            print( f"[{idx:04}] Line   [ {road_text} ]" )
             print()
         pass
 
-        return pos, area, norm
+        return pos, norm
     pass # -- read_sensor
 
-    def sensor_pos(self, sensor, white, black) :
+    def normalize(self, sensor, white, black) :
         # 신호 위치
         pos = 0
         
         # normalize
-        norm = np.array( sensor, np.float32 )
+        norm = np.zeros( len( sensor ), np.float32 )
         wb_diff = white - black
 
         for i, s in enumerate( sensor ):
             n = 0
-            if s > white :
+            if s < black :
                 n = 1 
-            elif s < black :
+            elif s > white :
                 n = 0
             else :
-                n = (s -black)/wb_diff
+                n = (white - s)/wb_diff
             pass
 
-            norm[i] = 1 - n
-        pass
-
-        # -- nomalize
-
-        len_norm = len(norm)
-        mid = len_norm // 2
-
-        dir = 0 
-
-        left_pos  = sum( [ n*(len_norm - i) for i, n in enumerate( norm ) ] )
-        right_pos = sum( [ n*(i + 1) for i, n in enumerate( norm ) ] )
-
-        area = ""
-        move_state = ""
-        
-        if np.all( norm < 0.32 ) :
-            pos = 0
-
-            area = "black"
-            move_state = "FORE"
-        elif np.all( norm > 0.7 ) :
-            pos = -5 if self.prev_pos < 0 else  5
-
-            area = "white"
-            move_state = "STOP"
-        elif left_pos > right_pos : 
-            pos = - sum( n for n in norm if n > 0.1  )
-
-            area = "mixed"
-            move_state = "RIGHT"
-        elif left_pos < right_pos : 
-            pos = sum( n for n in norm if n > 0.1 ) 
-
-            area = "mixed"
-            move_state = "RIGHT"
+            norm[i] = n
         pass 
 
-        #pos = pos / len_norm
-
-        pos += 0.0
-
-        if pos != self.prev_pos :
-            self.prev_pos = pos
-        pass
-
-        return pos, norm, area, move_state
-    pass # -- sensor_pos
+        return norm
+    pass # -- normalize
 
     def to_sensors_text(self, norm, size=1) :
         txt = [ ]
@@ -326,7 +284,7 @@ pass
 if __name__ == '__main__':
     log.info("TRSensor")
 
-    tr = TRSensor(white = 570, black=240)
+    tr = TRSensor()
 
     def exit( result ) :
         tr.finish()
@@ -350,7 +308,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
 
     while True:
-        pos, area, norm = tr.read_sensor() 
+        tr.read_sensor() 
         time.sleep(0.2) 
     pass
 pass
