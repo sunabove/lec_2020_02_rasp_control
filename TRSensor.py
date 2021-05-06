@@ -32,11 +32,11 @@ class TRSensor :
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
 
-        GPIO.setup(self.Clock,GPIO.OUT)
-        GPIO.setup(self.Address,GPIO.OUT)
-        GPIO.setup(self.CS,GPIO.OUT)
-        GPIO.setup(self.DataOut,GPIO.IN,GPIO.PUD_UP)
-        GPIO.setup(self.Button,GPIO.IN,GPIO.PUD_UP)
+        GPIO.setup(self.Clock, GPIO.OUT)
+        GPIO.setup(self.Address, GPIO.OUT)
+        GPIO.setup(self.CS, GPIO.OUT)
+        GPIO.setup(self.DataOut, GPIO.IN, GPIO.PUD_UP)
+        GPIO.setup(self.Button, GPIO.IN, GPIO.PUD_UP)
     pass # -- __init__
 
     def __del__(self):
@@ -68,9 +68,9 @@ class TRSensor :
             for i in range(0, 4):
                 #sent 4-bit Address
                 if ((s) >> (3 - i)) & 0x01 :
-                    GPIO.output(address,GPIO.HIGH)
+                    GPIO.output(address, GPIO.HIGH)
                 else:
-                    GPIO.output(address,GPIO.LOW)
+                    GPIO.output(address, GPIO.LOW)
                 pass
 
                 #read MSB 4-bit data
@@ -80,8 +80,8 @@ class TRSensor :
                     value[s] |= 0x01
                 pass
 
-                GPIO.output(clock,GPIO.HIGH)
-                GPIO.output(clock,GPIO.LOW)
+                GPIO.output(clock, GPIO.HIGH)
+                GPIO.output(clock, GPIO.LOW)
             pass
 
             for i in range(0, 6):
@@ -92,8 +92,8 @@ class TRSensor :
                     value[s] |= 0x01
                 pass
 
-                GPIO.output(clock,GPIO.HIGH)
-                GPIO.output(clock,GPIO.LOW)
+                GPIO.output(clock, GPIO.HIGH)
+                GPIO.output(clock, GPIO.LOW)
             pass
 
             time.sleep(0.0001)
@@ -224,11 +224,14 @@ class TRSensor :
         
         pos, norm, area, move_state = self.sensor_pos(sensor, white, black)
 
-        txt = self.to_sensors_text( norm )
-        
-        if debug :
-            print( f"[{self.idx:04}] {sensor} {txt} [{move_state}] {area}" )
-            print( f"[{self.idx:04}] {np.around(norm, decimals=2)} pos = {pos:.4}" )
+        sensor_text = ", ".join( [ f"{x:4}" for x in sensor ] )
+        road_text = self.to_sensors_text( norm )
+        norm_text = ", ".join( [ f"{x:.2f}" for x in norm ] )
+
+        if debug : 
+            print( f"[{self.idx:04}] Sensor [ {sensor_text} ] [ {road_text} ] [{move_state}] {area}" )
+            print( f"[{self.idx:04}] Normal [ {norm_text} ] pos = {pos:.4}" )
+            print()
         pass
 
         return pos, area, norm
@@ -290,6 +293,8 @@ class TRSensor :
         pass 
 
         #pos = pos / len_norm
+
+        pos += 0.0
 
         if pos != self.prev_pos :
             self.prev_pos = pos
