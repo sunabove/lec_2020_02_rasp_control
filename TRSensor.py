@@ -18,9 +18,9 @@ class TRSensor :
     DataOut = 23
     Button = 7
 
-    def __init__(self, white = 540, black=240, num_sensors = 5 ):
-        self.white = white
-        self.black = black
+    def __init__(self, white_signal = 540, black_signal=240, num_sensors = 5 ):
+        self.white_signal = white_signal
+        self.black_signal = black_signal
         self.num_sensors = num_sensors
         self.idx = 0 
         self.prev_pos = 0
@@ -210,7 +210,7 @@ class TRSensor :
         return self.last_value, sensors
     pass # -- read_line
 
-    def read_sensor(self, debug=1) : 
+    def read_sensor(self, sum_norm_min = 0.09, debug=1) : 
         self.idx += 1
 
         idx = self.idx
@@ -219,16 +219,17 @@ class TRSensor :
         sensor = self.read_analog()
 
         # 신호 위치
-        white = self.white
-        black = self.black
+        white_signal = self.white_signal
+        black_signal = self.black_signal
 
-        norm = self.normalize( sensor, white, black )
+        # 신호 정규화
+        norm = self.normalize( sensor, white_signal, black_signal )
         pos = 0.0
 
         sum_norm = sum( norm )
 
-        if sum_norm : 
-
+        if sum_norm > sum_norm_min :
+            # sum_norm_min 이상의 신호일 때만, 라인위의 위치를 감지한다.
             for i, n in enumerate( norm ) :
                 pos += (i+1)*n
             pass
@@ -237,6 +238,7 @@ class TRSensor :
 
             pos = pos - 3.0
         else :
+            # sum_norm_min 이하이면, 라인위에 있지 않은 것으로 간주한다.
             pos = -3
         pass
 
@@ -246,30 +248,30 @@ class TRSensor :
             road_text = self.to_sensors_text( norm, 5 )
         
             print( f"[{idx:04}] Sensor [ {sensor_text}  ] " )
-            print( f"[{idx:04}] Normal [ {norm_text}  ] pos = {pos:.2g}" )
-            print( f"[{idx:04}] Line   [ {road_text} ]" )
+            print( f"[{idx:04}] Normal [ {norm_text}  ] sum = {sum_norm:.2g}" )
+            print( f"[{idx:04}] Line   [ {road_text} ] pos = {pos:.2g}" )
             print()
         pass
 
         return pos, norm
     pass # -- read_sensor
 
-    def normalize(self, sensor, white, black) :
+    def normalize(self, sensor, white_signal, black_signal) :
         # 신호 위치
         pos = 0
         
         # normalize
         norm = np.zeros( len( sensor ), np.float32 )
-        wb_diff = white - black
+        wb_diff = white_signal - black_signal
 
         for i, s in enumerate( sensor ):
             n = 0
-            if s < black :
+            if s < black_signal :
                 n = 1 
-            elif s > white :
+            elif s > white_signal :
                 n = 0
             else :
-                n = (white - s)/wb_diff
+                n = (white_signal - s)/wb_diff
             pass
 
             norm[i] = n
