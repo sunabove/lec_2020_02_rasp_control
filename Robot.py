@@ -12,6 +12,7 @@ from Servo import Servo
 from IRRemote import IRRemote
 from rpi_ws281x import Color
 from JoyStick import JoyStick
+from ObstacleSensor import ObstacleSensor
 import Functions as funtions
 
 log.basicConfig(
@@ -23,15 +24,14 @@ class Robot :
     def __init__(self): 
         super().__init__()
 
-        robot = self 
-
+        self.service = None
         self.buzzer     = Buzzer(4)   # 부저
         self.motor      = Motor()
         self.rgb_led    = RGB_LED()
         self.camera     = Camera( motor = self.motor )
         self.servo      = Servo()
         self.joyStick   = JoyStick( self.servo )
-        #self.irremote   = IRRemote( robot, buzzer=self.buzzer )
+        #self.irremote   = IRRemote( self, buzzer=self.buzzer )
 
         # 시동 소리 내기
         self.rgb_led.light_effect( "flash", Color(0, 255, 0), duration=3 )         
@@ -47,6 +47,8 @@ class Robot :
 
     def finish(self) :
         log.info(inspect.currentframe().f_code.co_name) 
+
+        self.stop_service()
         
         self.buzzer.close()
         log.info( "buzzer finished" ) 
@@ -71,6 +73,15 @@ class Robot :
         self.joyStick.finish()
         log.info( "joyStick finished" )
     pass
+
+    def stop_service(self) :
+        service = self.service 
+        self.service = None
+
+        if service :
+            service.stop()
+        pass
+    pass # -- stop_service
 
     def stop(self) :
         self.stop_robot()
@@ -220,6 +231,7 @@ def service() :
         if cmd == "stop":
             robot.stop_robot()
             robot.stop_servo()
+            robot.stop_service()
         elif cmd == "forward":
             robot.forward( speed )
         elif cmd == "backward":
@@ -240,6 +252,10 @@ def service() :
             robot.servo_stop()
         elif cmd == "shutdown" :
             funtions.shutdown(robot.buzzer)
+        elif cmd == "obstacle_sensor" :
+            robot.stop_service()
+            robot.service = ObstacleSensor( robot )
+            robot.service.start()
         pass
 
         return "OK"
