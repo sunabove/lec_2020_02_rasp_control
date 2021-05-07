@@ -80,7 +80,7 @@ class LineTracker :
         sleep( 1 )
 
         # 라인 센서
-        tr = TRSensor(white_signal=self.white_signal, black_signal=self.black_signal)
+        tr = TRSensor(white_signal=self.white_signal, black_signal=self.black_signal, debug=1)
 
         interval = 0.01
         
@@ -91,13 +91,13 @@ class LineTracker :
             
             pos, norm = tr.read_sensor()
 
-            if abs( pos ) < 0.1 :
+            if abs( pos ) < 0.8 :
                 log.info( "ROBOT forward")
                 robot.forward()
-            elif pos < 0 :
+            elif pos > 0 :
                 log.info( "ROBOT right")
                 robot.right( turn_speed )
-            elif pos > 0 :
+            elif pos < 0 :
                 log.info( "ROBOT left")
                 robot.left( turn_speed )
             pass

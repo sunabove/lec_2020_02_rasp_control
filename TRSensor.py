@@ -18,7 +18,9 @@ class TRSensor :
     DataOut = 23
     Button = 7
 
-    def __init__(self, white_signal = 540, black_signal=240, num_sensors = 5 ):
+    def __init__(self, white_signal = 540, black_signal=240, num_sensors = 5, debug=0):
+        self.debug = debug
+
         self.white_signal = white_signal
         self.black_signal = black_signal
         self.num_sensors = num_sensors
@@ -210,7 +212,7 @@ class TRSensor :
         return self.last_value, sensors
     pass # -- read_line
 
-    def read_sensor(self, sum_norm_min = 0.09, debug=1) : 
+    def read_sensor(self, sum_norm_min = 0.09) : 
         self.idx += 1
 
         idx = self.idx
@@ -244,7 +246,7 @@ class TRSensor :
 
         self.prev_pos = pos
 
-        if debug : 
+        if self.debug : 
             sensor_text = ", ".join( [ f"{x:4}" for x in sensor ] )
             norm_text = ", ".join( [ f"{x:.2f}" for x in norm ] )
             road_text = self.to_sensors_text( norm, 5 )
