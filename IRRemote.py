@@ -271,8 +271,7 @@ class IRRemote :
             lineTracker.is_running() and lineTracker.stop()
 
             if obstacleSensor.is_running() :
-                log.info( "Obstacle Sensor is running already. Obstacle Sensor stop." )
-                obstacleSensor.stop()
+                log.info( "Obstacle Sensor is running already." )
             else :
                 log.info( "Obstacle Sensor start" )
                 obstacleSensor.start() 
@@ -283,8 +282,7 @@ class IRRemote :
             obstacleSensor.is_running() and obstacleSensor.stop()
 
             if lineTracker.is_running() :
-                log.info( "LineTracker is running already. LineTracker stop." )
-                lineTracker.stop()
+                log.info( "LineTracker is running already." )
             else :
                 log.info( "LineTracker start")
                 lineTracker.start()
