@@ -16,6 +16,7 @@ log.basicConfig(
 class LineTracker :
 
     def __init__(self, robot, signal_range=[240, 540], buzzer = None, debug=0 ):
+        self.debug = debug
         self.robot = robot
         self.signal_range = signal_range
 
@@ -80,7 +81,7 @@ class LineTracker :
         sleep( 1 )
 
         # 라인 센서
-        tr = TRSensor(signal_range=self.signal_range, debug=1)
+        tr = TRSensor(signal_range=self.signal_range, debug=self.debug)
 
         interval = 0.01
         

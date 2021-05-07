@@ -15,10 +15,10 @@ log.basicConfig(
 
 class LineTracker :
 
-    def __init__(self, robot, white = 570, black=240, buzzer = None ):
+    def __init__(self, robot, signal_range=[240, 540], buzzer = None, debug=0 ):
+        self.debug = debug
         self.robot = robot
-        self.white = white
-        self.black = black 
+        self.signal_range = signal_range
 
         if buzzer is None : 
             self.buzzer = Buzzer(4)
@@ -81,7 +81,7 @@ class LineTracker :
         sleep( 1 )
 
         # 라인 센서
-        tr = TRSensor(white=self.white, black=self.black)
+        tr = TRSensor(signal_range=self.signal_range, debug=self.debug)
 
         then = time()
         interval = 0.01
@@ -181,9 +181,6 @@ if __name__ == '__main__':
     def exit( result ) :
         lineTracker.stop()
         sleep( 0.5 ) 
-
-        GPIO.setmode(GPIO.BCM)
-        GPIO.cleanup();
 
         log.info( "Good bye!")
 

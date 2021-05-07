@@ -81,7 +81,7 @@ class LineTracker :
         sleep( 1 )
 
         # 라인 센서
-        tr = TRSensor(signal_range=self.signal_range, debug=1)
+        tr = TRSensor(signal_range=self.signal_range, debug=self.debug)
 
         interval = 0.01
         
@@ -129,7 +129,7 @@ if __name__ == '__main__':
 
     robot = Motor()
     
-    lineTracker = LineTracker( robot=robot )
+    lineTracker = LineTracker( robot=robot, debug=1 )
 
     lineTracker.start()
 
