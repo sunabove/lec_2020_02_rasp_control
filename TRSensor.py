@@ -239,8 +239,10 @@ class TRSensor :
             pos = pos - 3.0
         else :
             # sum_norm_min 이하이면, 라인위에 있지 않은 것으로 간주한다.
-            pos = -3
+            pos = -3 if self.prev_pos < 0 else 3 
         pass
+
+        self.prev_pos = pos
 
         if debug : 
             sensor_text = ", ".join( [ f"{x:4}" for x in sensor ] )

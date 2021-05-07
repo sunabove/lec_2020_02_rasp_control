@@ -15,10 +15,10 @@ log.basicConfig(
 
 class LineTracker :
 
-    def __init__(self, robot, white = 570, black=240, buzzer = None ):
+    def __init__(self, robot, white_signal = 540, black_signal=240, buzzer = None ):
         self.robot = robot
-        self.white = white
-        self.black = black 
+        self.white_signal = white_signal
+        self.black_signal = black_signal 
 
         if buzzer is None : 
             self.buzzer = Buzzer(4)
@@ -46,7 +46,7 @@ class LineTracker :
     def start(self):
         log.info(inspect.currentframe().f_code.co_name)
 
-        if True :
+        if 1 :
             self.thread = threading.Thread(name='self.pulse_checker', target=self.robot_move )
             self.thread.start()
         return
@@ -80,7 +80,7 @@ class LineTracker :
         sleep( 1 )
 
         # 라인 센서
-        tr = TRSensor(white=self.white, black=self.black)
+        tr = TRSensor(white_signal=self.white_signal, black_signal=self.black_signal)
 
         interval = 0.01
         
@@ -89,17 +89,17 @@ class LineTracker :
         while self._running :             
             start = time()
             
-            pos, area, norm = tr.read_sensor()
+            pos, norm = tr.read_sensor()
 
             if abs( pos ) < 0.1 :
                 log.info( "ROBOT forward")
                 robot.forward()
             elif pos < 0 :
                 log.info( "ROBOT right")
-                robot.right(turn_speed)
+                robot.right( turn_speed )
             elif pos > 0 :
                 log.info( "ROBOT left")
-                robot.left(turn_speed)
+                robot.left( turn_speed )
             pass
 
             now = time()
