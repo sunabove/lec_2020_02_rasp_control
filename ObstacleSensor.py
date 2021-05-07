@@ -18,8 +18,9 @@ class ObstacleSensor :
     LEFT_GPIO  = 19    # 왼   쪽 센서 GPIO 번호
     RIGHT_GPIO = 16    # 오른 쪽 센서 GPIO 번호
 
-    def __init__(self, motor):
+    def __init__(self, motor, debug=0):
         self.motor = motor
+        self.debug = debug
 
         self.event_no = 0 
         self.turn_count = 0
@@ -98,7 +99,7 @@ class ObstacleSensor :
 
         state = 2*left_obstacle + right_obstacle
 
-        log.info( f"state={state}, prev={self.prev_state}, LEFT={left_obstacle:d}, RIGHT={right_obstacle:d}" )
+        self.debug and log.info( f"state={state}, prev={self.prev_state}, LEFT={left_obstacle:d}, RIGHT={right_obstacle:d}" )
 
         if state == self.prev_state :
             log.info( "state is not changed. do nothing!" )

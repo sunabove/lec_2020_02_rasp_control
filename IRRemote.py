@@ -26,8 +26,8 @@ class IRRemote :
             self.buzzer = buzzer
         pass
 
-        self.obstacleSensor = obstacleSensor if obstacleSensor else ObstacleSensor( robot )
-        self.lineTracker = lineTracker if lineTracker else LineTracker( robot, buzzer=self.buzzer )
+        self.obstacleSensor = obstacleSensor if obstacleSensor else ObstacleSensor( robot, debug=0 )
+        self.lineTracker = lineTracker if lineTracker else LineTracker( robot, buzzer=self.buzzer, debug=0 )
 
         self.prev_key = 0 
         self.repeat_cnt = 0 

@@ -71,6 +71,8 @@ class LineTracker :
     def robot_move (self) :
         log.info(inspect.currentframe().f_code.co_name)
 
+        debug = self.debug
+
         self._running = 1 
 
         robot = self.robot 
@@ -96,13 +98,13 @@ class LineTracker :
             pos, norm = tr.read_sensor()
 
             if abs( pos ) < 0.8 :
-                log.info( "ROBOT forward")
+                debug and log.info( "ROBOT forward")
                 robot.forward()
             elif pos < 0 :
-                log.info( "ROBOT left")
+                debug and log.info( "ROBOT left")
                 robot.left( turn_speed )
             elif pos > 0 :
-                log.info( "ROBOT right")
+                debug and log.info( "ROBOT right")
                 robot.right( turn_speed )
             pass
 
