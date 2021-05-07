@@ -6,6 +6,7 @@ from random import random
 from time import sleep, time
 from gpiozero import Buzzer
 from TRSensor import TRSensor
+from LineTracker import LineTracker
 
 import logging as log
 log.basicConfig(
@@ -13,63 +14,12 @@ log.basicConfig(
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO 
     ) 
 
-class LineTracker :
-
-    def __init__(self, robot, signal_range=[240, 540], buzzer = None, debug=0 ):
-        self.debug = debug
-        self.robot = robot
-        self.signal_range = signal_range
-
-        if buzzer is None : 
-            self.buzzer = Buzzer(4)
-        elif buzzer is not None : 
-            self.buzzer = buzzer
-        pass
-
-        self._running = False  
-    pass
-
-    def __del__(self):
-        self.finish()
-    pass
-
-    def finish(self) :
-        log.info(inspect.currentframe().f_code.co_name)
-        
-        self.stop()
-        self.buzzer.close()
-    pass
-
-    def join(self) :
-        pass
-    pass
-
-    def start(self):
-        log.info(inspect.currentframe().f_code.co_name)
-
-        if True :
-            self.thread = threading.Thread(name='self.pulse_checker', target=self.robot_move )
-            self.thread.start()
-        return
-    pass 
-
-    def stop( self ) :
-        log.info(inspect.currentframe().f_code.co_name)
-
-        self._running = False 
-
-        thread = self.thread
-        if thread is not None :
-            thread.join()
-        pass
-    pass
-
-    def is_running(self):
-        return self._running
-    pass  
+class LineTrackerPIDFull( LineTracker ) :
 
     def robot_move (self) :
         log.info(inspect.currentframe().f_code.co_name)
+
+        debug = self.debug
 
         self._running = True 
 
@@ -101,12 +51,14 @@ class LineTracker :
         kp = -6
         ki = -0.01
         kd = 5
+
+        idx = 0 
         
-        # 30 초 동안만 주행 
+        # 40 초 동안만 주행 
         while self._running and ( time() - move_start < 40 ) : 
             start = time()
             
-            pos, area, norm = tr.read_sensor()
+            pos, norm = tr.read_sensor()
 
             error = pos - 0 
             
@@ -134,7 +86,9 @@ class LineTracker :
             right_speed = min( right_speed, max_speed )
             right_speed = max( right_speed, min_speed )
 
-            log.info( f"P={error:.2f}, D={error_derivative:.2f}, corr={correction:.2f}, left={left_speed:.2f}, right={right_speed:.2f}" )
+            if debug :
+                print( f"[{idx:05}] P={error:.2f}, D={error_derivative:.2f}, corr={correction:.2f}, left={left_speed:.2f}, right={right_speed:.2f}" )
+            pass
 
             robot.move( left_speed, right_speed )
             
@@ -148,6 +102,8 @@ class LineTracker :
             if remaining_time > 0 :
                 sleep( remaining_time )
             pass
+
+            idx += 1
         pass
 
         robot.stop()
@@ -160,13 +116,12 @@ class LineTracker :
         self._running = False
 
         self.thread = None
-
-    pass 
+    pass  # -- robot_move
 
 pass
 
 if __name__ == '__main__':
-    log.info( "Hello..." ) 
+    print( "Hello..." ) 
 
     GPIO.setwarnings(False)
 
@@ -174,7 +129,7 @@ if __name__ == '__main__':
 
     robot = Motor()
     
-    lineTracker = LineTracker( robot=robot )
+    lineTracker = LineTrackerPIDFull( robot=robot, debug = 1 )
 
     lineTracker.start()
 
@@ -182,7 +137,7 @@ if __name__ == '__main__':
         lineTracker.stop()
         sleep( 0.5 ) 
 
-        log.info( "Good bye!")
+        print( "Good bye!")
 
         import sys
         sys.exit( 0 )
@@ -191,7 +146,7 @@ if __name__ == '__main__':
     def signal_handler(signal, frame):
         print("", flush=True) 
         
-        log.info('You have pressed Ctrl-C.')
+        print('You have pressed Ctrl-C.')
 
         exit( 0 )
     pass
