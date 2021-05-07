@@ -27,7 +27,7 @@ class IRRemote :
         pass
 
         self.obstacleSensor = obstacleSensor if obstacleSensor else ObstacleSensor( robot )
-        self.lineTracker = lineTracker if lineTracker else LineTracker( robot )
+        self.lineTracker = lineTracker if lineTracker else LineTracker( robot, buzzer=self.buzzer )
 
         self.prev_key = 0 
         self.repeat_cnt = 0 
@@ -271,7 +271,8 @@ class IRRemote :
             lineTracker.is_running() and lineTracker.stop()
 
             if obstacleSensor.is_running() :
-                log.info( "Obstacle Sensor is running already." )
+                log.info( "Obstacle Sensor is running already. Obstacle Sensor stop." )
+                obstacleSensor.stop()
             else :
                 log.info( "Obstacle Sensor start" )
                 obstacleSensor.start() 
@@ -279,8 +280,11 @@ class IRRemote :
         elif key == 0xff629d : # line tracker
             log.info( "Line Tracker" )
 
+            obstacleSensor.is_running() and obstacleSensor.stop()
+
             if lineTracker.is_running() :
-                log.info( "LineTracker is running already." )
+                log.info( "LineTracker is running already. LineTracker stop." )
+                lineTracker.stop()
             else :
                 log.info( "LineTracker start")
                 lineTracker.start()
