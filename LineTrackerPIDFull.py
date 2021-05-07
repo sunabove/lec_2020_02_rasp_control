@@ -46,7 +46,6 @@ class LineTrackerPIDFull( LineTracker ) :
         move_start = time() 
         start_prev = None
 
-        #kp = -20
         kp = -6
         ki = -0.01
         kd = 5

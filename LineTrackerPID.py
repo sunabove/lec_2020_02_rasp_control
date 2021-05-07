@@ -38,7 +38,6 @@ class LineTrackerPID(LineTracker) :
         max_speed = 20
         min_speed = -20
         
-        #kp = -20
         kp = -6
         kd = 5
 
