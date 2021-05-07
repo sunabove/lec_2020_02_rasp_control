@@ -26,7 +26,7 @@ class LineTracker :
             self.buzzer = buzzer
         pass
 
-        self._running = False  
+        self._running = 0  
     pass
 
     def __del__(self):
@@ -55,7 +55,7 @@ class LineTracker :
     def stop( self ) :
         log.info(inspect.currentframe().f_code.co_name)
 
-        self._running = False 
+        self._running = 0 
 
         thread = self.thread
         if thread is not None :
@@ -70,7 +70,7 @@ class LineTracker :
     def robot_move (self) :
         log.info(inspect.currentframe().f_code.co_name)
 
-        self._running = True 
+        self._running = 1 
 
         robot = self.robot 
         buzzer = self.buzzer
@@ -113,7 +113,7 @@ class LineTracker :
 
         robot.stop()
 
-        self._running = False
+        self._running = 0
         self.thread = None
     pass 
 
