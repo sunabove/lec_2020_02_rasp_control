@@ -236,9 +236,9 @@ def service() :
             robot.forward( speed )
         elif cmd == "backward":
             robot.backward( speed )
-        elif cmd == "turnleft":
+        elif cmd == "turn_left":
             robot.left()
-        elif cmd == "turnright":
+        elif cmd == "turn_right":
             robot.right()
         elif cmd == "servo_left":
             robot.servo_left()

@@ -10,12 +10,12 @@
     <script> 
 		
         $(function(){
-            $("button.motor").bind( "mousedown", function(){
+            $(".motor").bind( "mousedown", function(){
                 $.post("/cmd",{ cmd: this.id, speed: $("#speed").val() }, function(data,status){
                 });
             });
 
-			$("button.motor").bind( "mouseup",function(){
+			$("motor").bind( "mouseup",function(){
                 $.post("/cmd",{ cmd:"stop" }, function(data,status){
                 });
             }); 
@@ -51,10 +51,11 @@
 			<div class="col">
 				<img src="{{ url_for('video_feed') }}" width="640" height="480" usemap="#workmap" />
 				<map name="workmap">
-					<area shape="poly" coords="0,0, 320,240, 640,0" alt="Foreward" href="#foreward" >
-					<area shape="poly" coords="0,0, 320,240, 0,640" alt="Left" href="#left" >
-					<area shape="poly" coords="640,0, 320,240, 640,640" alt="Right" href="#right" >
-					<area shape="poly" coords="0,640, 320,240, 640,640" alt="Backward" href="#backward" >
+					<area id="forward"    class="motor" shape="poly" coords="0,0, 213,160, 426,160,  640,0" 		alt="Foreward"  href="#foreward" >
+					<area id="turn_left"  class="motor" shape="poly" coords="0,0, 213,160, 213,320,  0,640" 		alt="Left"      href="#left" >
+					<area id="stop"       class="motor" shape="rect" coords="213,160,  426,320"             		alt="Stop"      href="#stop" >
+					<area id="turn_right" class="motor" shape="poly" coords="640,0,  426,160,  426,320, 640,640" 	alt="Right" 	href="#right" >
+					<area id="backward"   class="motor" shape="poly" coords="0,640,  213,320,  426,320,  640,640" 	alt="Backward" 	href="#backward" >
 				</map>
 			</div>
 		</div>
@@ -96,13 +97,13 @@
 						</tr>
 						<tr>
 							<td>
-								<button id='turnleft' class="motor btn btn-lg btn-primary">&llarr;</button>
+								<button id='turn_left' class="motor btn btn-lg btn-primary">&llarr;</button>
 							</td>
 							<td>
 								<button id='stop' class="motor btn btn-lg btn-danger">Stop</button>
 							</td>
 							<td>
-								<button id='turnright' class="motor btn btn-lg btn-primary">&rrarr;</button>
+								<button id='turn_right' class="motor btn btn-lg btn-primary">&rrarr;</button>
 							</td>
 						</tr>
 						<tr>
