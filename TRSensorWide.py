@@ -18,9 +18,14 @@ class TRSensor :
     DataOut = 23
     Button = 7
 
-    def __init__(self, white = 570, black=240, num_sensors = 5 ):
-        self.white = white
-        self.black = black
+    def __init__(self, signal_range=[240, 540], num_sensors = 5, debug=0 ):
+        
+        self.debug = debug
+
+        self.signal_range = signal_range
+        self.white_signal = max( signal_range )
+        self.black_signal = min( signal_range )
+
         self.num_sensors = num_sensors
         self.idx = 0 
         self.prev_pos = 0
@@ -219,10 +224,10 @@ class TRSensor :
         sensor = self.read_analog()
 
         # 신호 위치
-        white = self.white
-        black = self.black
+        white_signal = self.white_signal
+        black_signal = self.black_signal
         
-        pos, norm, area, move_state = self.sensor_pos(sensor, white, black)
+        pos, norm, area, move_state = self.sensor_pos(sensor, white_signal, black_signal)
 
         txt = self.to_sensors_text( norm )
         
@@ -234,22 +239,22 @@ class TRSensor :
         return pos, area, norm
     pass # -- read_sensor
 
-    def sensor_pos(self, sensor, white, black) :
+    def sensor_pos(self, sensor, white_signal, black_signal) :
         # 신호 위치
         pos = 0
         
         # normalize
         norm = np.array( sensor, np.float32 )
-        wb_diff = white - black
+        wb_diff = white_signal - black_signal
 
         for i, s in enumerate( sensor ):
             n = 0
-            if s > white :
+            if s > white_signal :
                 n = 1 
-            elif s < black :
+            elif s < black_signal :
                 n = 0
             else :
-                n = (s -black)/wb_diff
+                n = (s -black_signal)/wb_diff
             pass
             norm[i] = n
         pass
