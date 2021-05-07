@@ -1,7 +1,6 @@
 # coding: utf-8
 
-import RPi.GPIO as GPIO
-import time, threading , inspect
+import RPi.GPIO as GPIO, time, threading , inspect
 from time import sleep
 from gpiozero import Buzzer
 from ObstacleSensor import ObstacleSensor
@@ -263,12 +262,12 @@ class IRRemote :
         elif key == 0xffe01f:
             log.info( f'speed down')
             robot.speed_down( 5 )
-        elif key == 0xffe21d :
+        elif key == 0xffe21d : # shutdown 
             log.info( f"shut down, repeat_cnt={self.repeat_cnt}" )
             if self.repeat_cnt > 10 : 
                 self.system_shutdown()
             pass
-        elif key == 0xffa25d :
+        elif key == 0xffa25d : # obstacle avoidance
             log.info( f'Obstacle Sensor')
 
             if obstacleSensor.is_running() :
