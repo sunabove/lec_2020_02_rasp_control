@@ -192,7 +192,7 @@ def service() :
     global app 
     global robot 
 
-    app = Flask(__name__, static_url_path='', static_folder='html/static', template_folder='html/templates')
+    app = Flask(__name__, static_url_path='', static_folder='html', template_folder='html')
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     
     robot = Robot()
