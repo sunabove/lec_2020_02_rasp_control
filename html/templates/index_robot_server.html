@@ -6,10 +6,17 @@
 	<link href="/bootstrap.min.css" rel="stylesheet" media="screen">
 	<script src="/jquery-3.6.0.min.js"></script>
 	<script src="/popper.min.js"></script>
-	<script src="/bootstrap.min.js"></script>
+	<script src="/bootstrap.min.js"></script> 
     <script> 
 		
         $(function(){
+			// tooltip init
+			var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+			var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+				return new bootstrap.Tooltip(tooltipTriggerEl)
+			});
+			// -- tooltip init
+
             $(".motor").bind( "mousedown", function(){
                 $.post("/cmd",{ cmd: this.id, speed: $("#speed").val() }, function(data,status){
                 });
