@@ -77,8 +77,7 @@ class LineTracker :
         buzzer = self.buzzer
 
         # 시작음
-        buzzer.beep(on_time=0.5, off_time=0.2, n = 2, background=False)
-        sleep( 1 )
+        buzzer.beep(on_time=0.5, off_time=0.2, n = 2, background=True)
 
         # 라인 센서
         tr = TRSensor(signal_range=self.signal_range, debug=self.debug)

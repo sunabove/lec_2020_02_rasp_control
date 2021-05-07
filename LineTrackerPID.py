@@ -28,7 +28,6 @@ class LineTrackerPID(LineTracker) :
 
         # 시작음
         buzzer.beep(on_time=0.5, off_time=0.2, n = 2, background=False)
-        sleep( 1 )
 
         # 라인 센서
         tr = TRSensor(signal_range=self.signal_range, debug=self.debug)
@@ -49,12 +48,13 @@ class LineTrackerPID(LineTracker) :
 
         idx = 0 
 
-        while self._running and ( time() - move_start < 40 ) : 
+        # 30초 동안만 주행함.
+        while self._running and ( time() - move_start < 30 ) : 
             start = time()
             
             pos, norm = tr.read_sensor()
 
-            error = pos - 0 
+            error = 0.0 - pos 
             error_derivative = error - last_error
             correction = kp*error + kd*error_derivative
 
@@ -68,7 +68,7 @@ class LineTrackerPID(LineTracker) :
             right_speed = max( right_speed, min_speed )
 
             if debug : 
-                print( f"[{idx:05}] P={error:.2f}, D={error_derivative:.2f}, corr={correction:.2f}, left={left_speed:.2f}, right={right_speed:.2f}" )
+                print( f"[{idx:05}] P={error:5.2f}, D={error_derivative:5.2f}, corr={correction:5.2f}, left={left_speed:5.2f}, right={right_speed:5.2f}" )
             pass
 
             robot.move( left_speed, right_speed )
