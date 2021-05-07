@@ -53,19 +53,22 @@ class IRRemote :
         GPIO.setwarnings(False)
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.GPIO_NO,GPIO.IN)
-        GPIO.add_event_detect(17,GPIO.BOTH,callback=self.detect_gpio)
+        GPIO.setup(self.GPIO_NO, GPIO.IN)
+        GPIO.add_event_detect(self.GPIO_NO, GPIO.BOTH, callback=self.detect_gpio)
 
         time.sleep( 0.1 )
 
         log.info('Setting up callback')
         
         self.callback = self.remote_callback
-        self.set_repeat(True) 
-    
-    pass
+        self.set_repeat(True)    
+    pass # -- init
 
     def __del__(self):
+        self.finish()
+    pass
+    
+    def finish(self):
         self.running = False 
 
         thread = self.thread
@@ -74,8 +77,8 @@ class IRRemote :
         pass
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.cleanup(16)
-    pass
+        GPIO.cleanup(self.GPIO_NO)
+    pass # -- finish
 
     def detect_gpio(self, pin):
         self.pList.append(time.time()-self.timer)
@@ -203,18 +206,8 @@ class IRRemote :
     pass
 
     def beep_warning(self) :
-        buzzer = self.buzzer
-
-        cnt = 9 
-        for frq in range( 1, cnt ) : 
-            frq = cnt - frq
-            t = 1/frq
-            buzzer.beep(on_time=t, off_time=t/4, n = int(frq), background=False)
-            sleep( 1 )
-        pass
-
-        buzzer.beep(on_time=5, off_time=1, n = 1, background=False)
-        sleep( 1 )
+        import Functions as fun
+        fun.beep_warning()
     pass
 
     def system_shutdown(self) :
