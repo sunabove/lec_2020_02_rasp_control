@@ -4,6 +4,7 @@ import RPi.GPIO as GPIO, time, threading , inspect
 from time import sleep
 from gpiozero import Buzzer
 from ObstacleSensor import ObstacleSensor
+from LineTracker import LineTracker
 
 import logging as log
 log.basicConfig(
@@ -15,7 +16,7 @@ class IRRemote :
 
     GPIO_NO = 17
 
-    def __init__(self, robot, buzzer=None, obstacleSensor=None):
+    def __init__(self, robot, buzzer=None, obstacleSensor=None, lineTracker=None):
 
         self.robot = robot
         
@@ -25,11 +26,8 @@ class IRRemote :
             self.buzzer = buzzer
         pass
 
-        if obstacleSensor is None :
-            self.obstacleSensor = ObstacleSensor( self.robot ) 
-        else :
-            self.obstacleSensor = obstacleSensor
-        pass
+        self.obstacleSensor = obstacleSensor if obstacleSensor else obstacleSensor( robot )
+        self.lineTracker = lineTracker if lineTracker else LineTracker( robot )
 
         self.prev_key = 0 
         self.repeat_cnt = 0 
@@ -233,15 +231,15 @@ class IRRemote :
         robot = self.robot
 
         obstacleSensor = self.obstacleSensor
+        lineTracker = self.lineTracker
 
         if key == 0xff38c7 :
             log.info( f'stop')
             
             robot.stop()
 
-            if obstacleSensor.is_running() : 
-                obstacleSensor.stop()
-            pass
+            obstacleSensor.is_running() and obstacleSensor.stop()
+            lineTracker.is_running() and lineTracker.stop()
 
             robot.stop()
         elif key in [ 0xff9867, 0xff18e7 ]:
@@ -270,11 +268,22 @@ class IRRemote :
         elif key == 0xffa25d : # obstacle avoidance
             log.info( f'Obstacle Sensor')
 
+            lineTracker.is_running() and lineTracker.stop()
+
             if obstacleSensor.is_running() :
                 log.info( "Obstacle Sensor is running already." )
             else :
                 log.info( "Obstacle Sensor start" )
                 obstacleSensor.start() 
+            pass
+        elif key == 0xff629d : # line tracker
+            log.info( "Line Tracker" )
+
+            if lineTracker.is_running() :
+                log.info( "LineTracker is running already." )
+            else :
+                log.info( "LineTracker start")
+                lineTracker.start()
             pass
         pass
 
