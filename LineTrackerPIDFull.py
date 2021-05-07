@@ -51,10 +51,10 @@ class LineTrackerPIDFull( LineTracker ) :
         ki = -0.01
         kd = 5
 
-        idx = 0 
-        
-        # 30 초 동안만 주행 
-        while self._running and ( time() - move_start < 30 ) : 
+        idx = 0        
+        max_run_time = self.max_run_time
+
+        while self._running and ( not max_run_time or time() - move_start < max_run_time ) :
             start = time()
             
             pos, norm = tr.read_sensor()
@@ -113,8 +113,11 @@ class LineTrackerPIDFull( LineTracker ) :
         log.info( f"Move stopped." )
 
         self._running = False
-
         self.thread = None
+
+        if max_run_time :
+            print( "Enter to quit." )
+        pass
     pass  # -- robot_move
 
 pass
@@ -128,7 +131,7 @@ if __name__ == '__main__':
 
     robot = Motor()
     
-    lineTracker = LineTrackerPIDFull( robot=robot, debug = 1 )
+    lineTracker = LineTrackerPIDFull( robot=robot, max_run_time=15, debug = 1 )
 
     lineTracker.start()
 

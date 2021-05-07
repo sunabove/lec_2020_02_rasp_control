@@ -15,11 +15,11 @@ log.basicConfig(
 
 class LineTracker :
 
-    def __init__(self, robot, signal_range=[240, 540], buzzer = None, debug=0 ):
+    def __init__(self, robot, signal_range=[240, 540], buzzer=None, max_run_time=0, debug=0 ):
         self.debug = debug
         self.robot = robot
-
         self.signal_range = signal_range
+        self.max_run_time = max_run_time
 
         if buzzer is None : 
             self.buzzer = Buzzer(4)
@@ -86,7 +86,11 @@ class LineTracker :
         
         turn_speed = 15
 
-        while self._running :             
+        move_start = time()
+
+        max_run_time = self.max_run_time
+
+        while self._running and ( not max_run_time or time() - move_start < max_run_time ) :
             start = time()
             
             pos, norm = tr.read_sensor()
@@ -115,12 +119,16 @@ class LineTracker :
 
         self._running = 0
         self.thread = None
+
+        if max_run_time :
+            print( "Enter to quit." )
+        pass
     pass 
 
 pass
 
 if __name__ == '__main__':
-    log.info( "Hello..." ) 
+    print( "Hello..." ) 
 
     GPIO.setwarnings(False)
 
@@ -128,7 +136,7 @@ if __name__ == '__main__':
 
     robot = Motor()
     
-    lineTracker = LineTracker( robot=robot, debug=1 )
+    lineTracker = LineTracker( robot=robot, max_run_time=10, debug=1 )
 
     lineTracker.start()
 
@@ -136,7 +144,7 @@ if __name__ == '__main__':
         lineTracker.stop()
         sleep( 0.5 ) 
 
-        log.info( "Good bye!")
+        print( "Good bye!")
 
         import sys
         sys.exit( 0 )
@@ -145,7 +153,7 @@ if __name__ == '__main__':
     def signal_handler(signal, frame):
         print("", flush=True) 
         
-        log.info('You have pressed Ctrl-C.')
+        print('You have pressed Ctrl-C.')
 
         exit( 0 )
     pass
