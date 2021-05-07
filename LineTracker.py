@@ -94,12 +94,12 @@ class LineTracker :
             if abs( pos ) < 0.8 :
                 log.info( "ROBOT forward")
                 robot.forward()
-            elif pos > 0 :
-                log.info( "ROBOT right")
-                robot.right( turn_speed )
             elif pos < 0 :
                 log.info( "ROBOT left")
                 robot.left( turn_speed )
+            elif pos > 0 :
+                log.info( "ROBOT right")
+                robot.right( turn_speed )
             pass
 
             now = time()
