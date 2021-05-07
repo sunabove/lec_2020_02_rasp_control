@@ -204,7 +204,7 @@ class IRRemote :
 
     def beep_warning(self) :
         import Functions as fun
-        fun.beep_warning()
+        fun.beep_warning( self.buzzer )
     pass
 
     def system_shutdown(self) :
