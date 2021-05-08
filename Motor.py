@@ -115,7 +115,7 @@ class Motor:
         self.mode = "forward" 
 
         if left is None :
-            left = min(self.PA, self.min_speed )
+            left = self.min_speed
         pass
 
         self.move( left, right )
@@ -177,13 +177,7 @@ class Motor:
 
         self.mode = "left" 
 
-        self.PWMA.ChangeDutyCycle(turn_speed)
-        self.PWMB.ChangeDutyCycle(turn_speed)
-        
-        GPIO.output(self.AIN1, GPIO.HIGH)
-        GPIO.output(self.AIN2, GPIO.LOW)
-        GPIO.output(self.BIN1, GPIO.LOW)
-        GPIO.output(self.BIN2, GPIO.HIGH)
+        self.move( -turn_speed, turn_speed )
     pass 
 
     def right(self, turn_speed=20):
@@ -191,13 +185,7 @@ class Motor:
 
         self.mode = "right"
 
-        self.PWMA.ChangeDutyCycle(turn_speed)
-        self.PWMB.ChangeDutyCycle(turn_speed)
-        
-        GPIO.output(self.AIN1, GPIO.LOW)
-        GPIO.output(self.AIN2, GPIO.HIGH)
-        GPIO.output(self.BIN1, GPIO.HIGH)
-        GPIO.output(self.BIN2, GPIO.LOW)
+        self.move( turn_speed, -turn_speed )
     pass
 
     def stop_motor(self):
