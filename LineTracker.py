@@ -123,6 +123,8 @@ class LineTracker :
 
         robot.stop()
 
+        buzzer.beep(on_time=0.7, off_time=0.05, n = 3, background=True)
+
         self._running = 0
         self.thread = None
 

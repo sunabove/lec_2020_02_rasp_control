@@ -119,8 +119,7 @@ class LineTrackerPID( LineTracker ) :
 
         robot.stop()
 
-        buzzer.beep(on_time=0.7, off_time=0.05, n = 3, background=False)
-        sleep( 2 )
+        buzzer.beep(on_time=0.7, off_time=0.05, n = 3, background=True)
 
         log.info( f"Move stopped." )
 

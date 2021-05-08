@@ -72,7 +72,7 @@ class ObstacleSensor :
 
         self._running = False
 
-        self.motor.stop()  
+        self.motor.stop()
 
         GPIO.setmode(GPIO.BCM)
 
