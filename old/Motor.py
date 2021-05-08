@@ -81,14 +81,22 @@ class Motor:
         pass
 
         left = self.PA + dv
-
-        left = min( max(left, 0 ), 100 )
+        
+        if left < 0 :
+            left = 0 
+        elif left > 100 :
+            left = 100
+        pass
 
         self.PA = left
 
         right = self.PB + dv
-
-        right = min( max(right, 0), 100 )
+        
+        if right < 0 :
+            right = 0 
+        elif right > 100 :
+            right = 100
+        pass
 
         self.PB = right
 
@@ -109,20 +117,15 @@ class Motor:
         pass
     pass # -- speed_up
 
-    def forward(self, left=None, right=None):
+    def forward(self, left = None, right=None):
         self.debug and log.info(inspect.currentframe().f_code.co_name)
 
         self.mode = "forward" 
-
-        if left is None :
-            left = min(self.PA, self.min_speed )
-        pass
-
         self.move( left, right )
     pass
     
     def move(self, left = None, right=None):
-        # self.debug and log.info(inspect.currentframe().f_code.co_name)
+        self.debug and log.info(inspect.currentframe().f_code.co_name)
         
         if left is None :
             left = self.PA
@@ -161,31 +164,51 @@ class Motor:
         self.mode = "backward"
         min_speed = self.min_speed
 
-        if left is None :
-            left = max( abs( self.PA ), self.min_speed )
-        pass
-
         if left is not None and right is None :
             right = left
         pass
 
-        self.move( -left, -right )
-    pass 
+        self.PA = self.PA if left is None else left
+        self.PB = self.PB if right is None else right
 
+        self.PA = self.PA if self.PA > min_speed else min_speed 
+        self.PB = self.PB if self.PB > min_speed else min_speed  
+
+        self.PWMA.ChangeDutyCycle(self.PA)
+        self.PWMB.ChangeDutyCycle(self.PB)
+
+        GPIO.output(self.AIN1, GPIO.HIGH)
+        GPIO.output(self.AIN2, GPIO.LOW)
+        GPIO.output(self.BIN1, GPIO.HIGH)
+        GPIO.output(self.BIN2, GPIO.LOW)
+    pass 
+        
     def left(self, turn_speed=20):
         self.debug and log.info(inspect.currentframe().f_code.co_name)
 
         self.mode = "left" 
 
-        self.move( - turn_speed, turn_speed )
-    pass  
+        self.PWMA.ChangeDutyCycle(turn_speed)
+        self.PWMB.ChangeDutyCycle(turn_speed)
+        
+        GPIO.output(self.AIN1, GPIO.HIGH)
+        GPIO.output(self.AIN2, GPIO.LOW)
+        GPIO.output(self.BIN1, GPIO.LOW)
+        GPIO.output(self.BIN2, GPIO.HIGH)
+    pass 
 
     def right(self, turn_speed=20):
         self.debug and log.info(inspect.currentframe().f_code.co_name)
 
         self.mode = "right"
 
-        self.move( turn_speed, - turn_speed )
+        self.PWMA.ChangeDutyCycle(turn_speed)
+        self.PWMB.ChangeDutyCycle(turn_speed)
+        
+        GPIO.output(self.AIN1, GPIO.LOW)
+        GPIO.output(self.AIN2, GPIO.HIGH)
+        GPIO.output(self.BIN1, GPIO.HIGH)
+        GPIO.output(self.BIN2, GPIO.LOW)
     pass
 
     def stop_motor(self):
@@ -197,14 +220,12 @@ class Motor:
 
         self.mode = "stop"
 
-        if self.PWMA :
-            self.PWMA.ChangeDutyCycle(0)        
+        if self.PWMA and self.PWMB :
+            self.PWMA.ChangeDutyCycle(0)
+            self.PWMB.ChangeDutyCycle(0)
+        
             GPIO.output(self.AIN1, GPIO.LOW)
             GPIO.output(self.AIN2, GPIO.LOW)
-        pass
-
-        if self.PWMB :
-            self.PWMB.ChangeDutyCycle(0)        
             GPIO.output(self.BIN1, GPIO.LOW)
             GPIO.output(self.BIN2, GPIO.LOW)
         pass
@@ -214,7 +235,7 @@ class Motor:
         self.backward()
     pass 
 
-    def test_all(self, duration=4) :    
+    def test_all(self, duration=3) :    
         self.forward()
         sleep(duration)
         self.backward()
