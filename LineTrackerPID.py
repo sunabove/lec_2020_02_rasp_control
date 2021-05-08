@@ -64,6 +64,7 @@ class LineTrackerPID( LineTracker ) :
             
             pos, norm = tr.read_sensor()
 
+            # 현재 에러
             error = 0 - pos
             
             if len( errors ) > errors_max : 
@@ -72,18 +73,21 @@ class LineTrackerPID( LineTracker ) :
 
             errors.append( error )
 
+            # 에러 누적량
             error_integral = 0
 
             if ki :
                 error_integral = sum( errors )
             pass
         
+            # 에러 변화량
             error_derivative = error - last_error 
 
-            correction = kp*error + ki*error_integral + kd*error_derivative
+            # 현재 에러, 에러 누적량, 에러 변화량으로 부터 제어값 결정 
+            control = kp*error + ki*error_integral + kd*error_derivative
 
-            left_speed = base_speed + correction
-            right_speed = base_speed - correction
+            left_speed = base_speed + control
+            right_speed = base_speed - control
 
             left_speed = min( left_speed, max_speed )
             left_speed = max( left_speed, min_speed )
@@ -93,7 +97,7 @@ class LineTrackerPID( LineTracker ) :
 
             if debug :
                 print( f"[{idx:05}] kp = {kp}, ki = {ki}, kd = {kd}" )
-                print( f"[{idx:05}] P = {error:5.2f}, I = {error_integral:5.2f} D = {error_derivative:5.2f}, corr = {correction:5.2f}, left = {left_speed:5.2f}, right = {right_speed:5.2f}" )
+                print( f"[{idx:05}] P = {error:5.2f}, I = {error_integral:5.2f} D = {error_derivative:5.2f}, control = {control:5.2f}, left = {left_speed:5.2f}, right = {right_speed:5.2f}" )
             pass
 
             robot.move( left_speed, right_speed )
