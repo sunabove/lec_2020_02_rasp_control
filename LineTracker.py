@@ -15,15 +15,11 @@ log.basicConfig(
 
 class LineTracker :
 
-    def __init__(self, robot, signal_range=[240, 540], buzzer=None, kp=-6.0, ki=0.0, kd=4.0, max_run_time=0, debug=0 ):
+    def __init__(self, robot, signal_range=[240, 540], buzzer=None, max_run_time=0, debug=0 ):
         self.debug = debug
         self.robot = robot
         self.signal_range = signal_range
         self.max_run_time = max_run_time
-
-        self.kp = kp
-        self.ki = ki
-        self.kd = kd
 
         if buzzer is None : 
             self.buzzer = Buzzer(4)

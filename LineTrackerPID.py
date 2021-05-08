@@ -16,6 +16,12 @@ log.basicConfig(
 
 class LineTrackerPID( LineTracker ) :
 
+    def __init__(self, robot, signal_range, buzzer=None, pid=[-6, 0, 4], max_run_time=0, debug=0 ):
+        super().__init__( robot, signal_range, buzzer, max_run_time, debug )
+        
+        self.pid = pid
+    pass
+
     def robot_move (self ) :
         log.info(inspect.currentframe().f_code.co_name)
 
@@ -46,9 +52,11 @@ class LineTrackerPID( LineTracker ) :
         move_start = time() 
         start_prev = None
 
-        kp=self.kp
-        ki=self.ki
-        kd=self.kd
+        pid = self.pid
+
+        kp = pid[0]
+        ki = pid[1]
+        kd = pid[2] 
 
         #kp = -6
         #ki = -0.01
@@ -149,13 +157,16 @@ if __name__ == '__main__':
 
     argv = sys.argv[1:]
 
+    pid = None
+
     if argv :
-        if len( argv ) > 0 : kp = float( argv[0] )            
-        if len( argv ) > 1 : ki = float( argv[1] )
-        if len( argv ) > 2 : kd = float( argv[2] )
+        pid =[0]*3
+        if len( argv ) > 0 : pid[0] = float( argv[0] )
+        if len( argv ) > 1 : pid[1] = float( argv[1] )
+        if len( argv ) > 2 : pid[2] = float( argv[2] )
     pass
     
-    lineTracker = LineTrackerPID( robot=robot, max_run_time=20, kp=kp, ki=ki, kd=kd, debug = 1 )
+    lineTracker = LineTrackerPID( robot=robot, max_run_time=20, pid=pid, debug=1 )
 
     lineTracker.start()
 
