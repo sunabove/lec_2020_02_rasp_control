@@ -50,8 +50,11 @@ class LineTrackerPIDFull( LineTracker ) :
         #ki = -0.01
         #kd = 5
 
-        idx = 0        
+        idx = 0
         max_run_time = self.max_run_time
+
+        debug and print()
+        print( f"PID coefficients : kp = {kp}, ki = {ki}, kd = {kd}" )
 
         while self._running and ( not max_run_time or time() - move_start < max_run_time ) :
             start = time()
@@ -66,8 +69,9 @@ class LineTrackerPIDFull( LineTracker ) :
 
             errors.append( error )
 
-            error_integral = 0 
-            if not ki :
+            error_integral = 0
+
+            if ki :
                 error_integral = sum( errors )
             pass
         
