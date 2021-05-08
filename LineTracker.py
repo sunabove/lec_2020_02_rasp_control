@@ -21,11 +21,7 @@ class LineTracker :
         self.signal_range = signal_range
         self.max_run_time = max_run_time
 
-        if buzzer is None : 
-            self.buzzer = Buzzer(4)
-        elif buzzer is not None : 
-            self.buzzer = buzzer
-        pass
+        self.buzzer = buzzer if buzzer else Buzzer(4)
 
         self._running = 0  
     pass

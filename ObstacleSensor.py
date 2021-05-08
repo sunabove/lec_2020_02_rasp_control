@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import RPi.GPIO as GPIO, threading, signal, inspect
-from gpiozero import Button
+from gpiozero import Button, Buzzer
 from random import random
 from time import sleep, time
 
@@ -19,8 +19,8 @@ class ObstacleSensor :
     RIGHT_GPIO = 16    # 오른 쪽 센서 GPIO 번호
 
     def __init__(self, motor, debug=0):
-        self.motor = motor
         self.debug = debug
+        self.motor = motor
 
         self.event_no = 0 
         self.turn_count = 0
