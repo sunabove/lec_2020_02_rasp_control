@@ -16,7 +16,7 @@ log.basicConfig(
 
 class LineTrackerPID( LineTracker ) :
 
-    def robot_move (self, kp=-6, ki=0, kd=5 ) :
+    def robot_move (self ) :
         log.info(inspect.currentframe().f_code.co_name)
 
         debug = self.debug
@@ -46,13 +46,9 @@ class LineTrackerPID( LineTracker ) :
         move_start = time() 
         start_prev = None
 
-        argv = sys.argv[1:]
-
-        if argv :
-            if len( argv ) > 0 : kp = float( argv[0] )            
-            if len( argv ) > 1 : ki = float( argv[1] )
-            if len( argv ) > 2 : kd = float( argv[2] )
-        pass
+        kp=self.kp
+        ki=self.ki
+        kd=self.kd
 
         #kp = -6
         #ki = -0.01
@@ -141,8 +137,21 @@ if __name__ == '__main__':
     from Motor import Motor 
 
     robot = Motor()
+
+    kp = -6.0
+    ki = -0.
+    #ki = -0.01
+    kd = 5.0
+
+    argv = sys.argv[1:]
+
+    if argv :
+        if len( argv ) > 0 : kp = float( argv[0] )            
+        if len( argv ) > 1 : ki = float( argv[1] )
+        if len( argv ) > 2 : kd = float( argv[2] )
+    pass
     
-    lineTracker = LineTrackerPID( robot=robot, max_run_time=15, debug = 1 )
+    lineTracker = LineTrackerPID( robot=robot, max_run_time=15, kp=kp, ki=ki, kd=kd, debug = 1 )
 
     lineTracker.start()
 
