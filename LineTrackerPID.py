@@ -16,7 +16,7 @@ log.basicConfig(
 
 class LineTrackerPID( LineTracker ) :
 
-    def __init__(self, robot, signal_range, buzzer=None, pid=[-6, 0, 4], max_run_time=0, debug=0 ):
+    def __init__(self, robot, signal_range=[240, 540], buzzer=None, pid=[-6, 0, 4], max_run_time=0, debug=0 ):
         super().__init__( robot, signal_range, buzzer, max_run_time, debug )
         
         self.pid = pid
@@ -150,14 +150,9 @@ if __name__ == '__main__':
 
     robot = Motor()
 
-    kp = -6.0
-    ki = -0.0
-    #ki = -0.01
-    kd = 4.0
+    pid=[-6, 0, 4]
 
     argv = sys.argv[1:]
-
-    pid = None
 
     if argv :
         pid =[0]*3
