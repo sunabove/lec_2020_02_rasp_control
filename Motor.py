@@ -177,15 +177,27 @@ class Motor:
 
         self.mode = "left" 
 
-        self.move( - turn_speed, turn_speed )
-    pass  
+        self.PWMA.ChangeDutyCycle(turn_speed)
+        self.PWMB.ChangeDutyCycle(turn_speed)
+        
+        GPIO.output(self.AIN1, GPIO.HIGH)
+        GPIO.output(self.AIN2, GPIO.LOW)
+        GPIO.output(self.BIN1, GPIO.LOW)
+        GPIO.output(self.BIN2, GPIO.HIGH)
+    pass 
 
     def right(self, turn_speed=20):
         self.debug and log.info(inspect.currentframe().f_code.co_name)
 
         self.mode = "right"
 
-        self.move( turn_speed, - turn_speed )
+        self.PWMA.ChangeDutyCycle(turn_speed)
+        self.PWMB.ChangeDutyCycle(turn_speed)
+        
+        GPIO.output(self.AIN1, GPIO.LOW)
+        GPIO.output(self.AIN2, GPIO.HIGH)
+        GPIO.output(self.BIN1, GPIO.HIGH)
+        GPIO.output(self.BIN2, GPIO.LOW)
     pass
 
     def stop_motor(self):
