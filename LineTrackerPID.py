@@ -139,9 +139,9 @@ if __name__ == '__main__':
     robot = Motor()
 
     kp = -6.0
-    ki = -0.
+    ki = -0.0
     #ki = -0.01
-    kd = 5.0
+    kd = 4.0
 
     argv = sys.argv[1:]
 
