@@ -86,6 +86,7 @@ class LineTrackerPID( LineTracker ) :
             # 현재 에러, 에러 누적량, 에러 변화량으로 부터 제어값 결정 
             control = kp*error + ki*error_integral + kd*error_derivative
 
+            # 모터 속도
             left_speed = base_speed + control
             right_speed = base_speed - control
 
