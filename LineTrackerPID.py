@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 
-import RPi.GPIO as GPIO, threading, signal, inspect
+import RPi.GPIO as GPIO, threading, signal, inspect, sys
 import numpy as np
 from random import random
 from time import sleep, time
@@ -46,6 +46,14 @@ class LineTrackerPID( LineTracker ) :
         move_start = time() 
         start_prev = None
 
+        argv = sys.argv[1:]
+
+        if argv :
+            if len( argv ) > 0 : kp = float( argv[0] )            
+            if len( argv ) > 1 : ki = float( argv[1] )
+            if len( argv ) > 2 : kd = float( argv[2] )
+        pass
+
         #kp = -6
         #ki = -0.01
         #kd = 5
@@ -53,8 +61,7 @@ class LineTrackerPID( LineTracker ) :
         idx = 0
         max_run_time = self.max_run_time
 
-        debug and print()
-        print( f"PID coefficients : kp = {kp}, ki = {ki}, kd = {kd}" )
+        debug and print()        
 
         while self._running and ( not max_run_time or time() - move_start < max_run_time ) :
             start = time()
@@ -89,6 +96,7 @@ class LineTrackerPID( LineTracker ) :
             right_speed = max( right_speed, min_speed )
 
             if debug :
+                print( f"[{idx:05}] kp = {kp}, ki = {ki}, kd = {kd}" )
                 print( f"[{idx:05}] P = {error:5.2f}, I = {error_integral:5.2f} D = {error_derivative:5.2f}, corr = {correction:5.2f}, left = {left_speed:5.2f}, right = {right_speed:5.2f}" )
             pass
 
