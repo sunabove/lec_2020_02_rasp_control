@@ -14,7 +14,7 @@ log.basicConfig(
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO 
     ) 
 
-class LineTrackerPIDFull( LineTracker ) :
+class LineTrackerPID( LineTracker ) :
 
     def robot_move (self, kp=-6, ki=0, kd=5 ) :
         log.info(inspect.currentframe().f_code.co_name)
@@ -134,7 +134,7 @@ if __name__ == '__main__':
 
     robot = Motor()
     
-    lineTracker = LineTrackerPIDFull( robot=robot, max_run_time=15, debug = 1 )
+    lineTracker = LineTrackerPID( robot=robot, max_run_time=15, debug = 1 )
 
     lineTracker.start()
 
