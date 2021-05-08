@@ -156,7 +156,7 @@ if __name__ == '__main__':
         if len( argv ) > 2 : kd = float( argv[2] )
     pass
     
-    lineTracker = LineTrackerPID( robot=robot, max_run_time=15, kp=kp, ki=ki, kd=kd, debug = 1 )
+    lineTracker = LineTrackerPID( robot=robot, max_run_time=20, kp=kp, ki=ki, kd=kd, debug = 1 )
 
     lineTracker.start()
 
