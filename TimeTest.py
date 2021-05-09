@@ -21,5 +21,5 @@ print("Time in seconds since the epoch:", time_sec)
 # in nanoseconds since the epoch
 for i in range( 1, 10 ) :
     time_nanosec = time.time_ns()
-    print( f"[{i:04}] Time in nanose:", time_nanosec)
+    print( f"[{i:04}] Time in nanose:", time_nanosec, " ", time.time() )
     time.sleep( i )

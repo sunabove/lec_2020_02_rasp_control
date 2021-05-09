@@ -3,7 +3,7 @@
 import RPi.GPIO as GPIO, threading, signal, inspect, sys
 import numpy as np
 from random import random
-from time import sleep, time
+from time import sleep, time, time_ns
 from gpiozero import Buzzer
 from TRSensor import TRSensor
 from LineTracker import LineTracker
@@ -40,64 +40,68 @@ class LineTrackerPID( LineTracker ) :
 
         debug and print()
 
-        then = time()
-        interval = 0.01
+        interval = 0 # 0.01
         
         base_speed = 10
         max_speed = 20
-        min_speed = -20
         
-        last_error = 0.0 
-        errors = []
-        errors_max = 80
-
-        move_start = time() 
-        start_prev = None
-
-        pid = self.pid
-
-        kp = pid[0]  # 현재 에러 반영 계수
-        ki = pid[1]  # 에러 누적 반영 계수
-        kd = pid[2]  # 에러 변화 반영 계수
+        move_start = time()
 
         idx = 0
         max_run_time = self.max_run_time
 
-        while self._running and ( not max_run_time or time() - move_start < max_run_time ) :
-            start = time()
-            
-            pos, norm = tr.read_sensor()  # 라인 센서 데이트 획득
+        pid = self.pid
+
+        kp = pid[0]       # 현재 에러 반영 계수
+        ki = pid[1]*0.01  # 에러 누적 반영 계수
+        kd = pid[2]*0.01  # 에러 변화 반영 계수
+
+        last_error = None
+        error_integral = 0.0
+        error_derivative = 0.0
+
+        errors = []
+        times = []
+        errors_max = 5
+        dt = 0.0 
+
+        check_time = time()
+
+        while self._running and ( not max_run_time or check_time - move_start < max_run_time ) :
+            pos, norm, check_time = tr.read_sensor()  # 라인 센서 데이트 획득
 
             # 현재 에러
             error = 0 - pos
             
             if len( errors ) > errors_max : 
                 errors.pop( 0 )
+                times.pop( 0 )
             pass
 
             errors.append( error )
+            times.append( check_time )
 
             # 에러 누적량
-            error_integral = sum( errors ) if ki else 0
-        
-            # 에러 변화량
-            error_derivative = error - last_error 
+            if last_error :
+                dt = times[-1] - times[-2]
+                error_integral += ( last_error + error )/2*dt
+
+                # 에러 변화량
+                error_derivative = ( error - last_error )/dt
+            pass
 
             # 현재 에러, 에러 누적량, 에러 변화량으로 부터 제어값 결정 
             control = kp*error + ki*error_integral + kd*error_derivative
 
             # 모터 속도
-            left_speed = base_speed + control
+            left_speed  = base_speed + control
             right_speed = base_speed - control
 
-            left_speed = min( left_speed, max_speed )
-            left_speed = max( left_speed, min_speed )
-
-            right_speed = min( right_speed, max_speed )
-            right_speed = max( right_speed, min_speed )
+            left_speed  = max( min( left_speed, max_speed ), -max_speed )
+            right_speed = max( min( right_speed, max_speed ), -max_speed )
 
             if debug :
-                print( f"[{idx:05}] kp = {kp}, ki = {ki}, kd = {kd}" )
+                print( f"[{idx:05}] kp = {kp}, ki = {ki}, kd = {kd}, dt = {dt:.6} checktime = {check_time%60:.6}" )
                 print( f"[{idx:05}] P = {error:5.2f}, I = {error_integral:5.2f} D = {error_derivative:5.2f}, control = {control:5.2f}, left = {left_speed:5.2f}, right = {right_speed:5.2f}" )
             pass
 
@@ -105,12 +109,9 @@ class LineTrackerPID( LineTracker ) :
             
             last_error = error
 
-            start_prev = start
-            now = time()
-            elapsed = now - start
-            remaining_time = interval - elapsed
-            
-            if remaining_time > 0 :
+            if interval :
+                elapsed = time() - check_time
+                remaining_time = interval - elapsed
                 sleep( remaining_time )
             pass
 
@@ -142,7 +143,7 @@ if __name__ == '__main__':
 
     robot = Motor()
 
-    pid=[-6, 0, 4]
+    pid=[-6, 0, 4] # [-6, 0, 4]
 
     argv = sys.argv[1:]
 

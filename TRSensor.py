@@ -1,8 +1,8 @@
 # -*- coding:utf-8 -*-
 import RPi.GPIO as GPIO
-import time, inspect, numpy as np
+import inspect, numpy as np
 
-from time import sleep
+from time import sleep, time
 
 import logging as log
 log.basicConfig(
@@ -66,7 +66,7 @@ class TRSensor :
         dataOut = self.DataOut
         clock = self.Clock
 
-        for s in range(0, num_sensors + 1):
+        for s in range( num_sensors + 1 ):
             GPIO.output( cs, GPIO.LOW )
 
             for i in range(0, 4):
@@ -100,11 +100,11 @@ class TRSensor :
                 GPIO.output(clock, GPIO.LOW)
             pass
 
-            time.sleep(0.0001)
-            GPIO.output(cs,GPIO.HIGH)
+            sleep(0.0001)
+            GPIO.output(cs, GPIO.HIGH)
         pass
 
-        return np.array( value[1:] )
+        return np.array( value[1:] ), time()
     pass # -- read_analog
 
     def calibrate(self):
@@ -115,7 +115,7 @@ class TRSensor :
 
         for j in range(0,10):
         
-            sensor_values = self.read_analog();
+            sensor_values, check_time = self.read_analog();
             
             for i in range(0, num_sensors):
             
@@ -146,7 +146,7 @@ class TRSensor :
     def read_calibrated(self):
         value = 0
         #read the needed values
-        sensor_values = self.read_analog();
+        sensor_values, check_time = self.read_analog();
 
         num_sensors = self.num_sensors
 
@@ -167,52 +167,7 @@ class TRSensor :
         pass
         
         return sensor_values
-    pass # -- read_calibrated
-
-    def read_line(self, white_line = 0):
-
-        sensors = self.read_calibrated()
-
-        num_sensors = self.num_sensors
-
-        avg = 0
-        sum = 0
-        on_line = 0
-
-        for i in range(0, num_sensors):
-            value = sensors[i]
-            if(white_line):
-                value = 1000-value
-            pass
-
-            # keep track of whether we see the line at all
-            if value > 200 :
-                on_line = 1
-            pass
-                
-            # only average in values that are above a noise threshold
-            if value > 50 :
-                avg += value * (i * 1000);  # this is for the weighted total,
-                sum += value;                  #this is for the denominator 
-            pass
-        pass
-
-        if on_line != 1 :
-            if self.last_value < (num_sensors - 1)*1000/2 :
-                # If it last read to the left of center, return 0.            
-                #print("left")
-                self.last_value = 0;
-            else:
-                # If it last read to the right of center, return the max.            
-                #print("right")
-                self.last_value = (num_sensors - 1)*1000
-            pass
-        else:
-            self.last_value = avg/sum
-        pass
-        
-        return self.last_value, sensors
-    pass # -- read_line
+    pass # -- read_calibrated 
 
     def read_sensor(self, sum_norm_min = 0.09, debug=0) : 
         self.idx += 1
@@ -220,7 +175,7 @@ class TRSensor :
         idx = self.idx
         
         # 신호 읽기
-        sensor = self.read_analog()
+        sensor, check_time = self.read_analog()
 
         # 신호 위치
         white_signal = self.white_signal
@@ -259,7 +214,7 @@ class TRSensor :
             print()
         pass
 
-        return pos, norm
+        return pos, norm, check_time
     pass # -- read_sensor
 
     def normalize(self, sensor, white_signal, black_signal) :
@@ -332,6 +287,6 @@ if __name__ == '__main__':
 
     while True:
         tr.read_sensor( debug=1 ) 
-        time.sleep(0.2) 
+        sleep(0.1) 
     pass
 pass
