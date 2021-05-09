@@ -93,7 +93,7 @@ class LineTracker :
             
             pos, norm = tr.read_sensor()
 
-            if abs( pos ) < 0.8 :
+            if abs( pos ) < 1.2 :
                 debug and log.info( "ROBOT forward")
                 robot.forward()
             elif pos < 0 :
