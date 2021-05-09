@@ -136,7 +136,7 @@ if __name__ == '__main__':
 
     robot = Motor()
     
-    lineTracker = LineTracker( robot=robot, max_run_time=20, debug=1 )
+    lineTracker = LineTracker( robot=robot, max_run_time=40, debug=1 )
 
     lineTracker.start()
 
