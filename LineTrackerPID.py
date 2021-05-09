@@ -38,6 +38,8 @@ class LineTrackerPID( LineTracker ) :
         # 라인 센서
         tr = TRSensor(signal_range=self.signal_range, debug=self.debug)
 
+        debug and print()
+
         then = time()
         interval = 0.01
         
@@ -54,23 +56,17 @@ class LineTrackerPID( LineTracker ) :
 
         pid = self.pid
 
-        kp = pid[0]
-        ki = pid[1]
-        kd = pid[2] 
-
-        #kp = -6
-        #ki = -0.01
-        #kd = 5
+        kp = pid[0]  # 현재 에러 반영 계수
+        ki = pid[1]  # 에러 누적 반영 계수
+        kd = pid[2]  # 에러 변화 반영 계수
 
         idx = 0
         max_run_time = self.max_run_time
 
-        debug and print()        
-
         while self._running and ( not max_run_time or time() - move_start < max_run_time ) :
             start = time()
             
-            pos, norm = tr.read_sensor()
+            pos, norm = tr.read_sensor()  # 라인 센서 데이트 획득
 
             # 현재 에러
             error = 0 - pos
@@ -82,11 +78,7 @@ class LineTrackerPID( LineTracker ) :
             errors.append( error )
 
             # 에러 누적량
-            error_integral = 0
-
-            if ki :
-                error_integral = sum( errors )
-            pass
+            error_integral = sum( errors ) if ki else 0
         
             # 에러 변화량
             error_derivative = error - last_error 
