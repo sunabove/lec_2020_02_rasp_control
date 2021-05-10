@@ -40,7 +40,7 @@ class LineTrackerPID( LineTracker ) :
 
         debug and print()
 
-        interval = 0 # 0.01
+        interval = 0.01 # 0.01
         
         base_speed = 10
         max_speed = 20
@@ -62,7 +62,7 @@ class LineTrackerPID( LineTracker ) :
 
         errors = []
         dts = []
-        errors_max = 8_000
+        errors_max = 800
         dt = 0.0 
 
         check_time = time()
@@ -119,7 +119,8 @@ class LineTrackerPID( LineTracker ) :
 
             if interval :
                 elapsed = time() - check_time
-                remaining_time = interval - elapsed
+                #remaining_time = interval - elapsed
+                remaining_time = max( 0, ( interval if not dts else 2*interval - sum(dts)/len(dts) ) - elapsed )
                 sleep( remaining_time )
             pass
 
