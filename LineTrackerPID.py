@@ -61,30 +61,37 @@ class LineTrackerPID( LineTracker ) :
         error_derivative = 0.0
 
         errors = []
-        times = []
-        errors_max = 5
+        dts = []
+        errors_max = 8_000
         dt = 0.0 
 
         check_time = time()
+        last_check_time = check_time
 
         while self._running and ( not max_run_time or check_time - move_start < max_run_time ) :
             pos, norm, check_time = tr.read_sensor()  # 라인 센서 데이트 획득
 
             # 현재 에러
             error = 0 - pos
+            dt = check_time - last_check_time
             
             if len( errors ) > errors_max : 
                 errors.pop( 0 )
-                times.pop( 0 )
+                dts.pop( 0 )
             pass
 
             errors.append( error )
-            times.append( check_time )
+            dts.append( dt )
 
             # 에러 누적량
             if last_error :
-                dt = times[-1] - times[-2]
-                error_integral += ( last_error + error )/2*dt
+                error_integral = 0
+                error_prev = 0 
+                
+                for error, dt in zip( errors, dts ) :
+                    error_integral += (error_prev + error)/2*dt
+                    error_prev = error
+                pass
 
                 # 에러 변화량
                 error_derivative = ( error - last_error )/dt
@@ -108,6 +115,7 @@ class LineTrackerPID( LineTracker ) :
             robot.move( left_speed, right_speed )
             
             last_error = error
+            last_check_time = check_time
 
             if interval :
                 elapsed = time() - check_time
