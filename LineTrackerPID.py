@@ -52,8 +52,8 @@ class LineTrackerPID( LineTracker ) :
 
         pid = self.pid
 
-        kp = pid[0]       # 현재 에러 반영 계수
-        ki = pid[1]*0.01  # 에러 누적 반영 계수
+        kp = - pid[0]       # 현재 에러 반영 계수
+        ki = - pid[1]       # 에러 누적 반영 계수
         kd = pid[2]*0.01  # 에러 변화 반영 계수
 
         last_error = None
@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
     robot = Motor()
 
-    pid=[-6, 0, 4] # [-6, 0, 4]
+    pid=[6, 1, 4] # [-6, 0, 4]
 
     argv = sys.argv[1:]
 
