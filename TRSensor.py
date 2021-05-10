@@ -262,6 +262,9 @@ pass
 if __name__ == '__main__':
     print("TRSensor")
 
+    GPIO.setwarnings(False)
+    GPIO.cleanup()
+
     tr = TRSensor()
 
     def exit( result ) :

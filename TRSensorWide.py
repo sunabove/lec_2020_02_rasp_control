@@ -327,6 +327,9 @@ pass
 if __name__ == '__main__':
     log.info("TRSensor")
 
+    GPIO.setwarnings(False)
+    GPIO.cleanup()
+
     tr = TRSensor(white = 570, black=240)
 
     def exit( result ) :
