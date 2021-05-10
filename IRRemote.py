@@ -1,7 +1,7 @@
 # coding: utf-8
 
-import RPi.GPIO as GPIO, time, threading , inspect
-from time import sleep
+import RPi.GPIO as GPIO, threading , inspect
+from time import time, sleep
 from gpiozero import Buzzer
 from ObstacleSensor import ObstacleSensor
 from LineTracker import LineTracker
@@ -16,7 +16,8 @@ class IRRemote :
 
     GPIO_NO = 17
 
-    def __init__(self, robot, buzzer=None, obstacleSensor=None, lineTracker=None):
+    def __init__(self, robot, buzzer=None, obstacleSensor=None, lineTracker=None, debug=0):
+        self.debug = debug
 
         self.robot = robot
         
@@ -34,11 +35,11 @@ class IRRemote :
 
         self.decoding = False
         self.pList = []
-        self.timer = time.time()
+        self.timer = time()
         
         self.callback = self.print_ir_code
 
-        self.checkTime = 150  # time in milliseconds
+        self.checkTime = 0.15
         
         self.repeatCodeOn = True
         self.lastIRCode = 0
@@ -53,7 +54,7 @@ class IRRemote :
         GPIO.setup(self.GPIO_NO, GPIO.IN)
         GPIO.add_event_detect(self.GPIO_NO, GPIO.BOTH, callback=self.detect_gpio)
 
-        time.sleep( 0.1 )
+        sleep( 0.1 )
 
         log.info('Setting up callback')
         
@@ -78,8 +79,8 @@ class IRRemote :
     pass # -- finish
 
     def detect_gpio(self, pin):
-        self.pList.append(time.time()-self.timer)
-        self.timer = time.time()        
+        self.pList.append( time()-self.timer )
+        self.timer = time()        
 
         if self.decoding == False and self.running :
             self.decoding = True
@@ -90,11 +91,11 @@ class IRRemote :
     pass
 
     def pulse_checker(self):
-        timer = time.time()
+        timer = time()
         debug = False 
 
         while self.running :                
-            check = (time.time()-timer)*1000
+            check = time()-timer
 
             if check > self.checkTime:                    
                 debug and log.info( f"check={check}, pList len={len(self.pList)}" )
@@ -220,7 +221,10 @@ class IRRemote :
     pass # system_shutdown
 
     def remote_callback(self, key ):
-        log.info( f"key = {hex(key)}" )
+        debug = self.debug
+
+        debug and log.info( "#"*40 )
+        debug and log.info( f"key = {hex(key)}" )
 
         if key and self.prev_key == key :
             self.repeat_cnt += 1
@@ -234,7 +238,7 @@ class IRRemote :
         lineTracker = self.lineTracker
 
         if key == 0xff38c7 :
-            log.info( f'stop')
+            debug and log.info( f'stop')
             
             robot.stop()
 
@@ -243,48 +247,48 @@ class IRRemote :
 
             robot.stop()
         elif key in [ 0xff9867, 0xff18e7 ]:
-            log.info( f"forward" ) 
+            debug and log.info( f"forward" ) 
             robot.forward()
         elif key in [ 0xff4ab5 , 0xff42bd, 0xff52ad ]:
-            log.info( f'backward' )
+            debug and log.info( f'backward' )
             robot.backward()
         elif key in [ 0xff10ef, 0xff30cf, 0xff6897 ]:
-            log.info( f'left' )
+            debug and log.info( f'left' )
             robot.left()
         elif key in [ 0xff5aa5, 0xff7a85, 0xffb04f ]:
-            log.info( f'right' )
+            debug and log.info( f'right' )
             robot.right()
         elif key == 0xffa857 :
-            log.info( f"speed up" )
+            debug and log.info( f"speed up" )
             robot.speed_up( 5 )
         elif key == 0xffe01f:
-            log.info( f'speed down')
+            debug and log.info( f'speed down')
             robot.speed_down( 5 )
         elif key == 0xffe21d : # shutdown 
-            log.info( f"shut down, repeat_cnt={self.repeat_cnt}" )
+            debug and log.info( f"shut down, repeat_cnt={self.repeat_cnt}" )
             if self.repeat_cnt > 10 : 
                 self.system_shutdown()
             pass
         elif key == 0xffa25d : # obstacle avoidance
-            log.info( f'Obstacle Sensor')
+            debug and log.info( f'Obstacle Sensor')
 
             lineTracker.is_running() and lineTracker.stop()
 
             if obstacleSensor.is_running() :
-                log.info( "Obstacle Sensor is running already." )
+                debug and log.info( "Obstacle Sensor is running already." )
             else :
-                log.info( "Obstacle Sensor start" )
+                debug and log.info( "Obstacle Sensor start" )
                 obstacleSensor.start() 
             pass
         elif key == 0xff629d : # line tracker
-            log.info( "Line Tracker" )
+            debug and log.info( "Line Tracker" )
 
             obstacleSensor.is_running() and obstacleSensor.stop()
 
             if lineTracker.is_running() :
-                log.info( "LineTracker is running already." )
+                debug and log.info( "LineTracker is running already." )
             else :
-                log.info( "LineTracker start")
+                debug and log.info( "LineTracker start")
                 lineTracker.start()
             pass
         pass
@@ -304,9 +308,9 @@ if __name__ == "__main__":
 
     robot = Motor()
     
-    ir = IRRemote( robot )  
+    ir = IRRemote( robot, debug=1 )  
             
-    input( "Enter to quit..." )
+    input( "Use Remote Controller to control robot!\nEnter to quit...\n" )
 
     log.info('Removing callback and cleaning up GPIO') 
 
