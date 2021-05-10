@@ -1,6 +1,6 @@
 # coding: utf-8
-
-import signal, time, threading, inspect
+import RPi.GPIO as GPIO
+import signal, threading, inspect
 
 from time import sleep
 from rpi_ws281x import Adafruit_NeoPixel, Color
@@ -93,7 +93,7 @@ class RGB_LED :
 
         time_to = None 
         if duration is not None :
-            time_to = time.time() + duration
+            time_to = time() + duration
         pass
 
         self.req_no += 1 
@@ -124,7 +124,7 @@ class RGB_LED :
 
             if time_to is not None :
                 # 일정 시간이 지나면, LED를 끈다.
-                now = time.time()
+                now = time()
 
                 if now > time_to and light_type is not None :
                     time_to = None 
@@ -270,6 +270,9 @@ class RGB_LED :
 pass
 
 if __name__ == "__main__":
+    GPIO.setwarnings(False)
+    GPIO.cleanup()
+
     rgb_led = RGB_LED()
     #rgb_led.begin()
 

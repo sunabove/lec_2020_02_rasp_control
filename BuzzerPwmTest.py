@@ -1,6 +1,12 @@
 #coding: utf-8
+
+import RPi.GPIO as GPIO
+
 from gpiozero import *
 from time import sleep
+
+GPIO.setwarnings(False)
+GPIO.cleanup()
 
 bz = PWMLED(4)
 

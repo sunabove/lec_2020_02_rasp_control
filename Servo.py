@@ -160,6 +160,9 @@ class Servo :
 pass
 
 if __name__=='__main__':
+
+    GPIO.setwarnings(False)
+    GPIO.cleanup()
     
     servo = Servo( debug=0 ) 
 

@@ -31,7 +31,7 @@ class Robot :
         self.camera     = Camera( motor = self.motor )
         self.servo      = Servo()
         self.joyStick   = JoyStick( self.servo )
-        #self.irremote   = IRRemote( self, buzzer=self.buzzer )
+        self.irremote   = IRRemote( self, buzzer=self.buzzer )
 
         # 시동 소리 내기
         self.rgb_led.light_effect( "flash", Color(0, 255, 0), duration=3 )         
@@ -122,15 +122,15 @@ class Robot :
         self.motor.backward( speed )
     pass
 
-    def left(self) : # 좌회전
+    def left(self, turn_speed=None) : # 좌회전
         # 경고음 
         self.buzzer.beep(on_time=0.1, off_time=0.1, n = 2)
 
-        self.motor.left()
+        self.motor.left(turn_speed)
         # LED 깜빡이기
     pass
 
-    def right(self): # 우회전 
+    def right(self, turn_speed=None): # 우회전 
         # 경고음 
         self.buzzer.beep(on_time=0.1, off_time=0.1, n = 2)
 
@@ -269,6 +269,9 @@ def service() :
 pass # -- service
 
 if __name__=='__main__':    
+    GPIO.setwarnings(False)
+    GPIO.cleanup()
+
     def signal_handler(signal, frame): 
         stop() 
 
@@ -278,8 +281,6 @@ if __name__=='__main__':
     pass
 
     signal.signal(signal.SIGINT, signal_handler)
-    
-    GPIO.setwarnings(False)
-    GPIO.cleanup()
+
     service()
 pass

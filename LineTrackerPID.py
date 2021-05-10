@@ -147,6 +147,7 @@ if __name__ == '__main__':
     print( "Hello..." ) 
 
     GPIO.setwarnings(False)
+    GPIO.cleanup()
 
     from Motor import Motor 
 

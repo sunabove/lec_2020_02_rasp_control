@@ -1,7 +1,11 @@
 #coding: utf-8
+import RPi.GPIO as GPIO
 
 from gpiozero import Buzzer
 from time import sleep
+
+GPIO.setwarnings(False)
+GPIO.cleanup()
 
 buzzer = Buzzer(4)
 

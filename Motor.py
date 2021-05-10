@@ -177,6 +177,10 @@ class Motor:
 
         self.mode = "left" 
 
+        if turn_speed is None :
+            turn_speed = 20
+        pass
+
         self.move( -turn_speed, turn_speed )
     pass 
 
@@ -184,6 +188,10 @@ class Motor:
         self.debug and log.info(inspect.currentframe().f_code.co_name)
 
         self.mode = "right"
+
+        if turn_speed is None :
+            turn_speed = 20
+        pass
 
         self.move( turn_speed, -turn_speed )
     pass
@@ -232,6 +240,7 @@ if __name__=='__main__':
     log.info( "Hello" )
 
     GPIO.setwarnings(False)
+    GPIO.cleanup()
     
     motor = Motor(debug=True)
 

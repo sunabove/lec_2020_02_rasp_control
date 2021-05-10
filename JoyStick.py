@@ -116,6 +116,9 @@ def stop():
 pass
 
 if __name__ == '__main__':
+    GPIO.setwarnings(False)
+    GPIO.cleanup()
+    
     print( "Use the joyStick to control servos." )
     service(debug=0)
 pass

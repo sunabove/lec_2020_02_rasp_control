@@ -301,8 +301,10 @@ class IRRemote :
 pass
 
 if __name__ == "__main__":
-
     log.info('Starting IR remote senssor ...')
+    
+    GPIO.setwarnings(False)
+    GPIO.cleanup()
 
     from Motor import Motor
 
