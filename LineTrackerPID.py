@@ -40,7 +40,7 @@ class LineTrackerPID( LineTracker ) :
 
         debug and print()
 
-        interval = 0.01 # 0.01
+        interval = 0.001 # 0.01
         
         base_speed = 10
         max_speed = 20
@@ -53,8 +53,8 @@ class LineTrackerPID( LineTracker ) :
         pid = self.pid
 
         kp = - pid[0]       # 현재 에러 반영 계수
-        ki = - pid[1]*0.1   # 에러 누적 반영 계수
-        kd = pid[2]*0.01    # 에러 변화 반영 계수
+        ki = - pid[1]*0.01   # 에러 누적 반영 계수
+        kd = pid[2]*0.0001    # 에러 변화 반영 계수
 
         last_error = None
         error_integral = 0.0
@@ -62,7 +62,7 @@ class LineTrackerPID( LineTracker ) :
 
         errors = []
         dts = []
-        errors_max = 5
+        errors_max = 500 # 100 # 5
         dt = 0.0 
 
         check_time = time()
@@ -85,7 +85,7 @@ class LineTrackerPID( LineTracker ) :
 
             # 에러 누적량
             if last_error :
-                if 0 : 
+                if errors_max > 5 : 
                     error_integral = 0
                     error_prev = 0 
                     
@@ -93,9 +93,9 @@ class LineTrackerPID( LineTracker ) :
                         error_integral += (error_prev + error)/2*dt
                         error_prev = error
                     pass
+                else :
+                    error_integral += (error + last_error)/2*dt
                 pass
-
-                error_integral += (error + last_error)/2*dt
 
                 # 에러 변화량
                 error_derivative = (error - last_error )/dt
@@ -157,7 +157,7 @@ if __name__ == '__main__':
 
     robot = Motor()
 
-    pid=[6, 1, 4] # [-6, 0, 4]
+    pid=[6, 1, 1] # [6, 1, 4] [6, 0, 4]
 
     argv = sys.argv[1:]
 
