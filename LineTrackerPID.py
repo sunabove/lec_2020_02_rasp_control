@@ -62,7 +62,7 @@ class LineTrackerPID( LineTracker ) :
 
         errors = []
         dts = []
-        errors_max = 500 # 100 # 5
+        errors_max = 50 # 100 # 5
         dt = 0.0 
 
         check_time = time()
