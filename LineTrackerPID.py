@@ -53,8 +53,8 @@ class LineTrackerPID( LineTracker ) :
         pid = self.pid
 
         kp = - pid[0]       # 현재 에러 반영 계수
-        ki = - pid[1]       # 에러 누적 반영 계수
-        kd = pid[2]*0.01  # 에러 변화 반영 계수
+        ki = - pid[1]*0.1   # 에러 누적 반영 계수
+        kd = pid[2]*0.01    # 에러 변화 반영 계수
 
         last_error = None
         error_integral = 0.0
@@ -62,7 +62,7 @@ class LineTrackerPID( LineTracker ) :
 
         errors = []
         dts = []
-        errors_max = 800
+        errors_max = 5
         dt = 0.0 
 
         check_time = time()
@@ -85,16 +85,20 @@ class LineTrackerPID( LineTracker ) :
 
             # 에러 누적량
             if last_error :
-                error_integral = 0
-                error_prev = 0 
-                
-                for error, dt in zip( errors, dts ) :
-                    error_integral += (error_prev + error)/2*dt
-                    error_prev = error
+                if 0 : 
+                    error_integral = 0
+                    error_prev = 0 
+                    
+                    for error, dt in zip( errors, dts ) :
+                        error_integral += (error_prev + error)/2*dt
+                        error_prev = error
+                    pass
                 pass
 
+                error_integral += (error + last_error)/2*dt
+
                 # 에러 변화량
-                error_derivative = ( error - last_error )/dt
+                error_derivative = (error - last_error )/dt
             pass
 
             # 현재 에러, 에러 누적량, 에러 변화량으로 부터 제어값 결정 
