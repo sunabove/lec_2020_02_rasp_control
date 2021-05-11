@@ -52,9 +52,9 @@ class LineTrackerPID( LineTracker ) :
 
         pid = self.pid
 
-        kp = - pid[0]       # 현재 에러 반영 계수
-        ki = - pid[1]*0.01   # 에러 누적 반영 계수
-        kd = pid[2]*0.0001    # 에러 변화 반영 계수
+        kp = pid[0]       # 현재 에러 반영 계수
+        ki = pid[1]*0.01   # 에러 누적 반영 계수
+        kd = - pid[2]*0.0001    # 에러 변화 반영 계수
 
         last_error = None
         error_integral = 0.0
@@ -105,8 +105,8 @@ class LineTrackerPID( LineTracker ) :
             control = kp*error + ki*error_integral + kd*error_derivative
 
             # 모터 속도
-            left_speed  = base_speed + control
-            right_speed = base_speed - control
+            left_speed  = base_speed - control
+            right_speed = base_speed + control
 
             left_speed  = max( min( left_speed, max_speed ), -max_speed )
             right_speed = max( min( right_speed, max_speed ), -max_speed )
