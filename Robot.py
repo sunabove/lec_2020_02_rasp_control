@@ -25,7 +25,7 @@ class Robot :
         super().__init__()
 
         self.service = None
-        self.beep_time = 0 
+        self.beep_time = [0]*4 # 전후좌우
 
         self.buzzer     = Buzzer(4)   # 부저
         self.motor      = Motor()
@@ -108,8 +108,8 @@ class Robot :
         # 전진
         # 전진 경고음
         now = time()
-        if now - self.beep_time > 3 : # 최소 5초후에 소리를 낸다.
-            self.beep_time = now 
+        if now - self.beep_time[0] > 3 : # 최소 5초후에 소리를 낸다.
+            self.beep_time[0] = now 
             self.buzzer.beep(on_time=0.5, off_time=0.5, n = 1)
 
             # 전진 라이트 
@@ -123,8 +123,8 @@ class Robot :
         # 후진 
         # 후진시 경고음 
         now = time()
-        if now - self.beep_time > 3 : # 최수 3초후에 소리를 낻다.
-            self.beep_time = now
+        if now - self.beep_time[1] > 3 : # 최수 3초후에 소리를 낻다.
+            self.beep_time[1] = now
             self.buzzer.beep(on_time=0.05, off_time=0.05, n = 3)
             
             # 후진시에는 빨간색으로 깜박인다.
@@ -137,8 +137,8 @@ class Robot :
     def left(self, turn_speed=None) : # 좌회전
         # 경고음 
         now = time()
-        if now - self.beep_time > 3 : # 최수 3초후에 소리를 낻다.
-            self.beep_time = now 
+        if now - self.beep_time[2] > 3 : # 최수 3초후에 소리를 낻다.
+            self.beep_time[2] = now 
             self.buzzer.beep(on_time=0.1, off_time=0.1, n = 2)
         pass
 
@@ -149,8 +149,8 @@ class Robot :
     def right(self, turn_speed=None): # 우회전 
         # 경고음 
         now = time()
-        if now - self.beep_time > 3 : # 최수 3초후에 소리를 낻다.
-            self.beep_time = now
+        if now - self.beep_time[3] > 3 : # 최수 3초후에 소리를 낻다.
+            self.beep_time[3] = now
             self.buzzer.beep(on_time=0.1, off_time=0.1, n = 2)
         pass
 
