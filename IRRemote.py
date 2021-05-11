@@ -46,7 +46,7 @@ class IRRemote :
         self.maxPulseListLength = 70
 
         self.running = True 
-        self.thread = False
+        self.thread = None 
 
         GPIO.setwarnings(False)
 
@@ -94,7 +94,7 @@ class IRRemote :
         timer = time()
         debug = False 
 
-        while self.running :                
+        while self.running :
             check = time()-timer
 
             if check > self.checkTime:                    
@@ -111,7 +111,7 @@ class IRRemote :
         if len(self.pList) > self.maxPulseListLength:
             decode = self.decode_pulse(self.pList)
             self.lastIRCode = decode
-        elif len(self.pList) < 10:        
+        elif len(self.pList) < 10:
             if self.repeatCodeOn == True:
                 decode = self.lastIRCode
             else:
