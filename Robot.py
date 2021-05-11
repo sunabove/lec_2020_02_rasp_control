@@ -102,7 +102,7 @@ class Robot :
         self.motor.speed_down( dv )
     pass
 
-    def forward(self, speed = 30) :
+    def forward(self, speed = None) :
         # 전진
         # 전진 경고음
         self.buzzer.beep(on_time=0.5, off_time=0.5, n = 1)
@@ -112,7 +112,7 @@ class Robot :
         self.motor.forward( speed )
     pass
 
-    def backward(self, speed = 30) :
+    def backward(self, speed = None) :
         # 후진 
         # 후진시 경고음 
         self.buzzer.beep(on_time=0.05, off_time=0.05, n = 3)
