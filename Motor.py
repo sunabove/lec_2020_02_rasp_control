@@ -36,6 +36,7 @@ class Motor:
         self.PWMA.start( self.PA )
         self.PWMB.start( self.PA ) 
 
+        self.stop()
     pass
 
     def __del__( self ) :
