@@ -37,7 +37,13 @@
                 });
             });
 
-			$( "#speed" ).change( function() { $('#speed_desc').html( $("#speed").val() ) } )
+			function show_speed() {
+				$('#speed_desc').html( $("#speed").val() )
+			}
+
+			$( "#speed" ).change( show_speed )
+
+			show_speed();
         });
 		
     </script>
@@ -126,7 +132,7 @@
 							<td colspan="100%">
 								<br/>
 								<h6>Speed : <span id="speed_desc">50</span></h6>
-								<input id="speed" type="range" class="form-label" min="20" max="100", value="50" style="margin:-10px; width:100%; "  >
+								<input id="speed" type="range" class="form-label" min="5" max="80", value="15" style="margin:-10px; width:100%; "  >
 							</td>
 						</tr>
 					</tfoot>
