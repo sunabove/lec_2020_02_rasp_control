@@ -13,6 +13,7 @@ from IRRemote import IRRemote
 from rpi_ws281x import Color
 from JoyStick import JoyStick
 from ObstacleSensor import ObstacleSensor
+from LineTrackerPID import LineTrackerPID
 import Functions as funtions
 
 log.basicConfig(
@@ -118,6 +119,10 @@ class Robot :
         
         self.motor.forward( speed )
     pass
+
+    def move(self, left = None, right=None):
+        self.motor.move( left, right )
+    pass # -- move
 
     def backward(self, speed = None) :
         # 후진 
@@ -248,7 +253,7 @@ def service() :
 
         log.info(f"cmd={cmd}, speed={speed}")
 
-        if cmd == "stop":
+        if cmd in ( "stop", "servo_stop" ):
             robot.stop_robot()
             robot.stop_servo()
             robot.stop_service()
@@ -268,13 +273,15 @@ def service() :
             robot.servo_up()
         elif cmd == "servo_down":
             robot.servo_down()
-        elif cmd == "servo_stop":
-            robot.servo_stop()
         elif cmd == "shutdown" :
             funtions.shutdown(robot.buzzer)
         elif cmd == "obstacle_sensor" :
             robot.stop_service()
             robot.service = ObstacleSensor( robot )
+            robot.service.start()
+        elif cmd == "line_tracking" :
+            robot.stop_service()
+            robot.service = LineTrackerPID( robot, buzzer = robot.buzzer )
             robot.service.start()
         pass
 

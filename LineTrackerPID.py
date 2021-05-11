@@ -16,7 +16,7 @@ log.basicConfig(
 
 class LineTrackerPID( LineTracker ) :
 
-    def __init__(self, robot, signal_range=[240, 540], buzzer=None, pid=[-6, 0, 4], max_run_time=0, debug=0 ):
+    def __init__(self, robot, signal_range=[240, 540], buzzer=None, pid=[6, 1, 4], max_run_time=0, debug=0 ):
         super().__init__( robot, signal_range, buzzer, max_run_time, debug )
         
         self.pid = pid
