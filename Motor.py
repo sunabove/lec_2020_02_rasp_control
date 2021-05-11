@@ -11,6 +11,8 @@ log.basicConfig(
 
 class Motor:
 
+    min_speed = 10
+
     def __init__(self, ain1=12, ain2=13, ena=6, bin1=20, bin2=21, enb=26, debug=False):
         self.debug = debug
 
@@ -26,10 +28,8 @@ class Motor:
         self.PWMA = GPIO.PWM(ena, 500)
         self.PWMB = GPIO.PWM(enb, 500)
 
-        self.min_speed = 10
-        
-        self.PA = self.min_speed  
-        self.PB = self.min_speed  
+        self.PA = self.min_speed
+        self.PB = self.min_speed
 
         self.mode = "stop"
 
@@ -221,6 +221,9 @@ class Motor:
             GPIO.output(self.BIN1, GPIO.LOW)
             GPIO.output(self.BIN2, GPIO.LOW)
         pass
+
+        self.PA = self.min_speed
+        self.PB = self.min_speed
     pass
 
     def back(self) :

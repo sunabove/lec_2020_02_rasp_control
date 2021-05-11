@@ -3,7 +3,7 @@
 import sys, cv2, numpy as np, threading, logging as log, inspect, signal
 import RPi.GPIO as GPIO    
 
-from time import  sleep
+from time import time, sleep
 from gpiozero import Buzzer
 from Motor import Motor
 from RGB_LED import RGB_LED
@@ -25,6 +25,8 @@ class Robot :
         super().__init__()
 
         self.service = None
+        self.beep_time = 0 
+
         self.buzzer     = Buzzer(4)   # 부저
         self.motor      = Motor()
         self.rgb_led    = RGB_LED()
@@ -105,9 +107,14 @@ class Robot :
     def forward(self, speed = None) :
         # 전진
         # 전진 경고음
-        self.buzzer.beep(on_time=0.5, off_time=0.5, n = 1)
-        # 전진 라이트 
-        self.rgb_led.light_effect( "breath", Color(0, 255, 0) )
+        now = time()
+        if now - self.beep_time > 5 : # 최소 5초후에 소리를 낸다.
+            self.beep_time = now 
+            self.buzzer.beep(on_time=0.5, off_time=0.5, n = 1)
+
+            # 전진 라이트 
+            self.rgb_led.light_effect( "breath", Color(0, 255, 0) )
+        pass        
         
         self.motor.forward( speed )
     pass
@@ -115,16 +122,25 @@ class Robot :
     def backward(self, speed = None) :
         # 후진 
         # 후진시 경고음 
-        self.buzzer.beep(on_time=0.05, off_time=0.05, n = 3)
-        # 후진시에는 빨간색으로 깜박인다.
-        self.rgb_led.light_effect( "flash", Color(255, 0, 0) ) 
+        now = time()
+        if now - self.beep_time > 3 : # 최수 3초후에 소리를 낻다.
+            self.beep_time = now
+            self.buzzer.beep(on_time=0.05, off_time=0.05, n = 3)
+            
+            # 후진시에는 빨간색으로 깜박인다.
+            self.rgb_led.light_effect( "flash", Color(255, 0, 0) ) 
+        pass
 
         self.motor.backward( speed )
     pass
 
     def left(self, turn_speed=None) : # 좌회전
         # 경고음 
-        self.buzzer.beep(on_time=0.1, off_time=0.1, n = 2)
+        now = time()
+        if now - self.beep_time > 3 : # 최수 3초후에 소리를 낻다.
+            self.beep_time = now 
+            self.buzzer.beep(on_time=0.1, off_time=0.1, n = 2)
+        pass
 
         self.motor.left(turn_speed)
         # LED 깜빡이기
@@ -132,7 +148,11 @@ class Robot :
 
     def right(self, turn_speed=None): # 우회전 
         # 경고음 
-        self.buzzer.beep(on_time=0.1, off_time=0.1, n = 2)
+        now = time()
+        if now - self.beep_time > 3 : # 최수 3초후에 소리를 낻다.
+            self.beep_time = now
+            self.buzzer.beep(on_time=0.1, off_time=0.1, n = 2)
+        pass
 
         self.motor.right()
     pass
