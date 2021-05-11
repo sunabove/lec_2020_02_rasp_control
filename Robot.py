@@ -108,7 +108,7 @@ class Robot :
         # 전진
         # 전진 경고음
         now = time()
-        if now - self.beep_time > 5 : # 최소 5초후에 소리를 낸다.
+        if now - self.beep_time > 3 : # 최소 5초후에 소리를 낸다.
             self.beep_time = now 
             self.buzzer.beep(on_time=0.5, off_time=0.5, n = 1)
 
