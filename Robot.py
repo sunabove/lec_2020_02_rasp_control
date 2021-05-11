@@ -68,10 +68,8 @@ class Robot :
         self.servo.finish()
         log.info( "servo finished" ) 
 
-        if hasattr( self, "irremote" ) : 
-            self.irremote.finish()
-            log.info( "irremote finished" ) 
-        pass
+        self.irremote.finish()
+        log.info( "irremote finished" ) 
 
         self.joyStick.finish()
         log.info( "joyStick finished" )
