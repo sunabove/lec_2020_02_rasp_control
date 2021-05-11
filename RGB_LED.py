@@ -2,7 +2,7 @@
 import RPi.GPIO as GPIO
 import signal, threading, inspect
 
-from time import sleep
+from time import time, sleep
 from rpi_ws281x import Adafruit_NeoPixel, Color
 
 import logging as log
