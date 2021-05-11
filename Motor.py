@@ -132,6 +132,10 @@ class Motor:
             right = left
         pass
 
+        if self.PWMA is None or self.PWMB is None :
+            return
+        pass
+
         self.PA = left
         self.PB = right
 
