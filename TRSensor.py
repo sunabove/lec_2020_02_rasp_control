@@ -169,7 +169,11 @@ class TRSensor :
         return sensor_values
     pass # -- read_calibrated 
 
-    def read_sensor(self, sum_norm_min = 0.09, debug=0) : 
+    def read_sensor(self, sum_norm_min = 0.09, debug=None) : 
+        if debug is None:
+            debug = self.debug
+        pass
+
         self.idx += 1
 
         idx = self.idx
@@ -281,8 +285,36 @@ if __name__ == '__main__':
     import signal
     signal.signal(signal.SIGINT, signal_handler)
 
+    import matplotlib as mpl
+    import matplotlib.pyplot as plt
+    mpl.rcParams['toolbar'] = 'None'
+    
+    x = []
+    y = []
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    
+    ax.scatter( x, y, marker='s' )
+
+    fig.show()
+    fig.canvas.draw()
+
+    #plt.show(block=0)
+    #plt.draw()
+
     while running :
-        tr.read_sensor( debug=1 ) 
+        pos, norm, check_time = tr.read_sensor( debug=1 ) 
+
+        x.append( check_time )
+        y.append( pos )
+        
+        ax.clear()
+        ax.scatter( x, y, marker='s' )
+        fig.canvas.draw()
+
+        plt.pause( 0.01 )
+        
         sleep(0.1) 
     pass
 
