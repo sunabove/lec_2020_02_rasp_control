@@ -265,31 +265,29 @@ if __name__ == '__main__':
     GPIO.setwarnings(False)
     GPIO.cleanup()
 
-    tr = TRSensor()
+    running = True
 
-    def exit( result ) :
-        tr.finish()
-        sleep( 0.5 )  
-    pass
+    tr = TRSensor()
 
     def signal_handler(signal, frame):
         print("", flush=True) 
         
         print('You have pressed Ctrl-C.')
 
-        exit( 0 )
-
-        print( "Good bye!")
-
-        import sys
-        sys.exit( 0 )
+        global running
+        running = False
     pass
 
     import signal
     signal.signal(signal.SIGINT, signal_handler)
 
-    while True:
+    while running :
         tr.read_sensor( debug=1 ) 
         sleep(0.1) 
     pass
+
+    tr.finish()
+    sleep( 0.5 )
+
+    print( "Good bye!")
 pass
