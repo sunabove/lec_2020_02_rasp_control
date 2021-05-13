@@ -288,8 +288,10 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     mpl.rcParams['toolbar'] = 'None'
     
-    x = []
-    ys = [ [], [], [], [], [], [] ]
+    xt = []
+    xs = [ [], [], [], [], [], ]
+    ys = [ [], [], [], [], [], ]
+    p = []
 
     def format_date( t, pos=None ) :
         t = t%60
@@ -299,7 +301,7 @@ if __name__ == '__main__':
     fig = plt.figure()
     ax = fig.add_subplot(111)
     
-    ax.scatter( x, ys[0], marker='s' )
+    ax.scatter( xs[0], ys[0], marker='s' )
 
     fig.show()
     fig.canvas.draw()
@@ -308,33 +310,42 @@ if __name__ == '__main__':
     while running :
         pos, norm, check_time = tr.read_sensor( debug=1 ) 
 
-        if len( x ) > 16 :
-            x.pop( 0 )
-            for y in ys :
-                y.pop( 0 )
+        if len( xt ) > 16 :
+            x0 = xt[0]
+            xt.pop( 0 )
+            p.pop( 0 )
+
+            for x, y in zip( xs, ys ) :
+                remove_cnt = 0 
+                while x0 in x :
+                    x.pop( 0 )
+                    y.pop( 0 )
+                pass
             pass
         pass
 
         # append time data
-        x.append( check_time )
+        xt.append( check_time )
 
         # append norma data
-        for ni, n in enumerate( norm ):
-            ys[ni].append( ni - 2 )
+        for n in norm :
+            i = int( n*4 )
+            xs[i].append( check_time )
+            ys[i].append( i - 2 )
         pass
 
         # append pos data
-        ys[5].append( pos )
+        p.append( pos )
         
         ax.clear()
 
         # plot norm sensor data
-        for y in ys :
+        for x, y in zip( xs, ys ) :
             ax.scatter( x, y, marker='s' )
         pass
 
         # plot pos data
-        ax.plot( x, ys[5] )
+        ax.plot( xt, p )
 
         ax.set_ylim( -3, 3 )
         ax.xaxis.set_major_formatter( format_date )
