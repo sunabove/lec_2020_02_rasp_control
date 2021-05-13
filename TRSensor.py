@@ -1,10 +1,9 @@
 # -*- coding:utf-8 -*-
 import RPi.GPIO as GPIO
-import inspect, numpy as np
+import inspect, numpy as np, logging as log
 
 from time import sleep, time
 
-import logging as log
 log.basicConfig(
     format='%(asctime)s, %(levelname)s [%(filename)s:%(lineno)04d] %(message)s',
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
@@ -300,22 +299,25 @@ if __name__ == '__main__':
     fig.show()
     fig.canvas.draw()
 
-    #plt.show(block=0)
-    #plt.draw()
-
+    interval = 0.01
     while running :
-        pos, norm, check_time = tr.read_sensor( debug=1 ) 
+        pos, norm, t = tr.read_sensor( debug=1 ) 
 
-        x.append( check_time )
+        if len( x ) > 20 :
+            x.pop( 0 )
+            y.pop( 0 )
+        pass
+
+        tf = t%60 + (t - int(t))
+        log.info( tf )
+        x.append( tf )
         y.append( pos )
         
         ax.clear()
         ax.scatter( x, y, marker='s' )
         fig.canvas.draw()
 
-        plt.pause( 0.01 )
-        
-        sleep(0.1) 
+        plt.pause( interval )
     pass
 
     tr.finish()
