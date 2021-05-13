@@ -347,7 +347,7 @@ if __name__ == '__main__':
         # plot pos data
         ax.plot( xt, p )
 
-        ax.set_ylim( -3, 3 )
+        ax.set_ylim( -3.1, 3.1 )
         ax.xaxis.set_major_formatter( format_date )
         fig.canvas.draw()
 
