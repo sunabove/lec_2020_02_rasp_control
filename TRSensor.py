@@ -289,7 +289,7 @@ if __name__ == '__main__':
     mpl.rcParams['toolbar'] = 'None'
     
     x = []
-    y = []
+    ys = [ [] ]*6
 
     def format_date( t, pos=None ) :
         t = t%60
@@ -299,7 +299,7 @@ if __name__ == '__main__':
     fig = plt.figure()
     ax = fig.add_subplot(111)
     
-    ax.scatter( x, y, marker='s' )
+    ax.scatter( x, ys[0], marker='s' )
 
     fig.show()
     fig.canvas.draw()
@@ -310,15 +310,31 @@ if __name__ == '__main__':
 
         if len( x ) > 20 :
             x.pop( 0 )
-            y.pop( 0 )
+            for y in ys :
+                y.pop( 0 )
+            pass
         pass
 
+        # append time data
         x.append( check_time )
-        y.append( pos )
+
+        # append norma data
+        for yi, y in enumerate( ys ):
+            ys[yi].append( norm[yi] )
+        pass
+
+        # append pos data
+        ys[5].append( pos )
         
         ax.clear()
-        ax.scatter( x, y, marker='s' )
-        ax.plot( x, y )
+
+        # plot norm sensor data
+        for y in ys :
+            ax.scatter( x, y, marker='s' )
+        pass
+
+        # plot pos data
+        ax.plot( x, ys[5] )
 
         ax.set_ylim( -3.5, 3.5 )
         ax.xaxis.set_major_formatter( format_date )
