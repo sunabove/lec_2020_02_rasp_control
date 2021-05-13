@@ -289,7 +289,7 @@ if __name__ == '__main__':
     mpl.rcParams['toolbar'] = 'None'
     
     x = []
-    ys = [ [] ]*6
+    ys = [ [], [], [], [], [], [] ]
 
     def format_date( t, pos=None ) :
         t = t%60
@@ -308,7 +308,7 @@ if __name__ == '__main__':
     while running :
         pos, norm, check_time = tr.read_sensor( debug=1 ) 
 
-        if len( x ) > 20 :
+        if len( x ) > 16 :
             x.pop( 0 )
             for y in ys :
                 y.pop( 0 )
@@ -336,7 +336,7 @@ if __name__ == '__main__':
         # plot pos data
         ax.plot( x, ys[5] )
 
-        ax.set_ylim( -3.5, 3.5 )
+        ax.set_ylim( -3, 3 )
         ax.xaxis.set_major_formatter( format_date )
         fig.canvas.draw()
 
