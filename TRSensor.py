@@ -291,6 +291,11 @@ if __name__ == '__main__':
     x = []
     y = []
 
+    def format_date( t, pos=None ) :
+        t = t%60
+        return int(t)
+    pass
+
     fig = plt.figure()
     ax = fig.add_subplot(111)
     
@@ -301,20 +306,22 @@ if __name__ == '__main__':
 
     interval = 0.01
     while running :
-        pos, norm, t = tr.read_sensor( debug=1 ) 
+        pos, norm, check_time = tr.read_sensor( debug=1 ) 
 
         if len( x ) > 20 :
             x.pop( 0 )
             y.pop( 0 )
         pass
 
-        tf = t%60 + (t - int(t))
-        log.info( tf )
-        x.append( tf )
+        x.append( check_time )
         y.append( pos )
         
         ax.clear()
         ax.scatter( x, y, marker='s' )
+        ax.plot( x, y )
+
+        ax.set_ylim( -3.5, 3.5 )
+        ax.xaxis.set_major_formatter( format_date )
         fig.canvas.draw()
 
         plt.pause( interval )
