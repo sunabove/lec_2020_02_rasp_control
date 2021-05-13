@@ -319,8 +319,8 @@ if __name__ == '__main__':
         x.append( check_time )
 
         # append norma data
-        for yi, y in enumerate( ys ):
-            ys[yi].append( norm[yi] )
+        for ni, n in enumerate( norm ):
+            ys[ni].append( ni - 2 )
         pass
 
         # append pos data
