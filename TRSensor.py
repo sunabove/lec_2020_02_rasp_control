@@ -211,7 +211,7 @@ class TRSensor :
             norm_text = ", ".join( [ f"{x:.2f}" for x in norm ] )
             road_text = self.to_sensors_text( norm, 5 )
         
-            print( f"[{idx:04}] Sensor [ {sensor_text}  ] time = {check_time%60:5.3}(s)" )
+            print( f"[{idx:04}] Sensor [ {sensor_text}  ] time = {check_time%60:.4f}(s)" )
             print( f"[{idx:04}] Normal [ {norm_text}  ] sum  = {sum_norm:.2g}" )
             print( f"[{idx:04}] Line   [ {road_text} ] pos  = {pos:.2g}" )
             print()
@@ -352,7 +352,7 @@ if __name__ == '__main__':
         ax.xaxis.set_major_formatter( format_date )
         ax.legend(title='', ncol=6, loc='lower center', fontsize='small' )
         ax.set_title( "Line Sensor\n" )
-        ax.set_ylabel( "Sensor" )
+        ax.set_ylabel( "Position" )
         ax.set_xlabel( "Time (s)" )
 
         plt.tight_layout()
