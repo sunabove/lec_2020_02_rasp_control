@@ -217,7 +217,7 @@ class LineSensor :
             print( f"[{idx:05}] Line   [ {road_text} ] pos  = {pos:.2g}" )
         pass
 
-        return pos, norm, check_time
+        return pos, norm, sum_norm, check_time
     pass # -- read_sensor
 
     def normalize(self, sensor, white_signal, black_signal) :
@@ -288,10 +288,10 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     mpl.rcParams['toolbar'] = 'None'
     
-    xt = []
-    xs = [ [], [], [], [], [], ]
-    ys = [ [], [], [], [], [], ]
-    p = []
+    xt = [] # times
+    xys = [ [ [], [] ], [ [], [] ], [ [], [] ], [ [], [] ], [ [], [] ], ]
+    p = [] # position
+    s = [] # signal
 
     def format_date( t, pos=None ) :
         t = t%60
@@ -301,22 +301,25 @@ if __name__ == '__main__':
     fig = plt.figure( "Line Sensor")
     ax = fig.add_subplot(111)
     
-    ax.scatter( xs[0], ys[0], marker='s' )
+    ax.scatter( xy[0][0], xy[0][1], marker='s' )
 
     fig.show()
     fig.canvas.draw()
 
     interval = 0.01
     while running :
-        pos, norm, check_time = lineSensor.read_sensor( debug=1 ) 
+        pos, norm, sum_norm, check_time = lineSensor.read_sensor( debug=1 ) 
 
         if len( xt ) > 16 :
             x0 = xt[0]
             xt.pop( 0 )
             p.pop( 0 )
+            s.pop( 0 )
 
-            for x, y in zip( xs, ys ) :
+            for xy in xys :
                 remove_cnt = 0 
+                x = xy[0]
+                y = xy[1]
                 while x and x0 == x[0] :
                     x.pop( 0 )
                     y.pop( 0 )
@@ -330,27 +333,29 @@ if __name__ == '__main__':
         # append norma data
         for i, n in enumerate( norm ) :
             idx = int( n*4 + 0.5 )
-            xs[idx].append( check_time )
-            ys[idx].append( i - 2 )
+            xys[idx][0].append( check_time )
+            xys[idx][1].append( i - 2 )
         pass
 
         # append pos data
         p.append( pos )
+        s.append( sum_norm )
         
         ax.clear()
 
         # plot norm sensor data
-        for i, [x, y] in enumerate( zip( xs, ys ) ):
+        for i, xy in enumerate( xys ):
             n = (i+1)/5
-            ax.scatter( x, y, marker='s', label=f'{n}' )
+            ax.scatter( xy[0], xy[1], marker='s', label=f'{n}' )
         pass
 
         # plot pos data
         ax.plot( xt, p, 'g', label='pos' )
+        ax.plot( xt, s, label='signal' )
 
-        ax.set_ylim( -3.8, 3.2 )
+        ax.set_ylim( -4.8, 3.2 )
         ax.xaxis.set_major_formatter( format_date )
-        ax.legend(title='', ncol=6, loc='lower center', fontsize='small' )
+        ax.legend(title='', ncol=7, loc='lower center', fontsize='small' )
         ax.set_title( "Line Sensor\n" )
         ax.set_ylabel( "Position" )
         ax.set_xlabel( "Time (s)" )
