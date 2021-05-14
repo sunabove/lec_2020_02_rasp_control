@@ -91,7 +91,7 @@ class LineTracker :
         while self._running and ( not max_run_time or time() - move_start < max_run_time ) :
             start = time()
             
-            pos, norm, check_time = lineSensor.read_sensor()
+            pos, norm, sum_norm, check_time = lineSensor.read_sensor()
 
             if abs( pos ) < 1.2 :
                 debug and log.info( "ROBOT forward")

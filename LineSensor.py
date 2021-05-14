@@ -298,10 +298,11 @@ if __name__ == '__main__':
         return int(t)
     pass
 
-    fig = plt.figure( "Line Sensor")
+    plt.style.use('seaborn-whitegrid')
+    fig = plt.figure( "Line Sensor", figsize=(8, 6) )
     ax = fig.add_subplot(111)
     
-    ax.scatter( xy[0][0], xy[0][1], marker='s' )
+    ax.scatter( xys[0][0], xys[0][1], marker='s' ) 
 
     fig.show()
     fig.canvas.draw()
@@ -337,9 +338,10 @@ if __name__ == '__main__':
             xys[idx][1].append( i - 2 )
         pass
 
+        signal = sum_norm/5
         # append pos data
         p.append( pos )
-        s.append( sum_norm )
+        s.append( signal - 4  )
         
         ax.clear()
 
@@ -350,8 +352,13 @@ if __name__ == '__main__':
         pass
 
         # plot pos data
-        ax.plot( xt, p, 'g', label='pos' )
-        ax.plot( xt, s, label='signal' )
+        ax.plot( xt, p, 'g', label='position' )
+        ax.plot( xt, s, 'r', label='signal strength' )
+
+        for x, y in zip( xt, s ) :
+            label = f"{(y + 4)*5:.2f}"
+            ax.annotate(label, (x,y), textcoords="offset points", xytext=(0,10),ha='center')
+        pass
 
         ax.set_ylim( -4.8, 3.2 )
         ax.xaxis.set_major_formatter( format_date )
