@@ -168,10 +168,8 @@ class LineSensor :
         return sensor_values
     pass # -- read_calibrated 
 
-    def read_sensor(self, sum_norm_min = 0.09, debug=None) : 
-        if debug is None:
-            debug = self.debug
-        pass
+    def read_sensor(self, sum_norm_min = 0.09) : 
+        debug = self.debug
 
         self.idx += 1
 
@@ -264,15 +262,15 @@ pass
 
 line_sensor_running = False
 
-def service() :
-    print("TRSensor")
+def service(debug=0) :
+    debug and print("TRSensor")
 
     GPIO.setwarnings(False)
     GPIO.cleanup()
 
     line_sensor_running = True
 
-    lineSensor = LineSensor()
+    lineSensor = LineSensor(debug=debug)
 
     def signal_handler(signal, frame):
         print("", flush=True) 
@@ -324,7 +322,7 @@ def service() :
 
     interval = 0.01
     while line_sensor_running :
-        pos, norm, sum_norm, check_time = lineSensor.read_sensor( debug=1 ) 
+        pos, norm, sum_norm, check_time = lineSensor.read_sensor() 
 
         if do_plot_chart == False :
             sleep( interval )
@@ -410,5 +408,5 @@ def stop():
 pass
 
 if __name__ == '__main__':
-    service()
+    service( debug = 1 )
 pass
