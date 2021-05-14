@@ -211,9 +211,9 @@ class TRSensor :
             norm_text = ", ".join( [ f"{x:.2f}" for x in norm ] )
             road_text = self.to_sensors_text( norm, 5 )
         
-            print( f"[{idx:04}] Sensor [ {sensor_text}  ] " )
-            print( f"[{idx:04}] Normal [ {norm_text}  ] sum = {sum_norm:.2g}" )
-            print( f"[{idx:04}] Line   [ {road_text} ] pos = {pos:.2g}" )
+            print( f"[{idx:04}] Sensor [ {sensor_text}  ] time = {check_time%60:5.3}(s)" )
+            print( f"[{idx:04}] Normal [ {norm_text}  ] sum  = {sum_norm:.2g}" )
+            print( f"[{idx:04}] Line   [ {road_text} ] pos  = {pos:.2g}" )
             print()
         pass
 
@@ -298,7 +298,7 @@ if __name__ == '__main__':
         return int(t)
     pass
 
-    fig = plt.figure()
+    fig = plt.figure( "Line Sensor")
     ax = fig.add_subplot(111)
     
     ax.scatter( xs[0], ys[0], marker='s' )
@@ -346,11 +346,16 @@ if __name__ == '__main__':
         pass
 
         # plot pos data
-        ax.plot( xt, p, label='position' )
+        ax.plot( xt, p, 'g', label='pos' )
 
-        ax.set_ylim( -3.2, 3.2 )
+        ax.set_ylim( -3.8, 3.2 )
         ax.xaxis.set_major_formatter( format_date )
-        ax.legend(loc = "lower center", ncol=6)
+        ax.legend(title='', ncol=6, loc='lower center', fontsize='small' )
+        ax.set_title( "Line Sensor\n" )
+        ax.set_ylabel( "Sensor" )
+        ax.set_xlabel( "Time (s)" )
+
+        plt.tight_layout()
         
         fig.canvas.draw()
 
