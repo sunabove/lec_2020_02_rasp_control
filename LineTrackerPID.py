@@ -1,14 +1,13 @@
 # -*- coding:utf-8 -*-
 
-import RPi.GPIO as GPIO, threading, signal, inspect, sys
+import RPi.GPIO as GPIO, threading, signal, inspect, sys, logging as log
 import numpy as np
 from random import random
 from time import sleep, time, time_ns
 from gpiozero import Buzzer
-from TRSensor import TRSensor
+from LineSensor import LineSensor
 from LineTracker import LineTracker
 
-import logging as log
 log.basicConfig(
     format='%(asctime)s, %(levelname)s [%(filename)s:%(lineno)04d] %(message)s',
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO 
@@ -36,7 +35,7 @@ class LineTrackerPID( LineTracker ) :
         buzzer.beep(on_time=0.5, off_time=0.2, n = 2, background=False)
 
         # 라인 센서
-        tr = TRSensor(signal_range=self.signal_range, debug=self.debug)
+        lineSensor = LineSensor(signal_range=self.signal_range, debug=self.debug)
 
         debug and print()
 
@@ -69,7 +68,7 @@ class LineTrackerPID( LineTracker ) :
         last_check_time = check_time
 
         while self._running and ( not max_run_time or check_time - move_start < max_run_time ) :
-            pos, norm, check_time = tr.read_sensor()  # 라인 센서 데이트 획득
+            pos, norm, check_time = lineSensor.read_sensor()  # 라인 센서 데이트 획득
 
             # 현재 에러
             error = 0 - pos
@@ -112,7 +111,7 @@ class LineTrackerPID( LineTracker ) :
             right_speed = max( min( right_speed, max_speed ), -max_speed )
 
             if debug :
-                print( f"[{idx:05}] kp = {kp}, ki = {ki}, kd = {kd}, dt = {dt:.6} checktime = {check_time%60:.6}" )
+                print( f"[{idx:05}] kp = {kp}, ki = {ki}, kd = {kd}, dt = {dt:.6}" )
                 print( f"[{idx:05}] P = {error:5.2f}, I = {error_integral:5.2f} D = {error_derivative:5.2f}, control = {control:5.2f}, left = {left_speed:5.2f}, right = {right_speed:5.2f}" )
             pass
 
@@ -132,6 +131,8 @@ class LineTrackerPID( LineTracker ) :
         pass
 
         robot.stop()
+
+        lineSensor.finish()
 
         buzzer.beep(on_time=0.7, off_time=0.05, n = 3, background=True)
 

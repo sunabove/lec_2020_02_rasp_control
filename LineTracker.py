@@ -5,7 +5,7 @@ import numpy as np
 from random import random
 from time import sleep, time
 from gpiozero import Buzzer
-from TRSensor import TRSensor
+from LineSensor import LineSensor
 
 import logging as log
 log.basicConfig(
@@ -75,10 +75,10 @@ class LineTracker :
         buzzer = self.buzzer
 
         # 시작음
-        buzzer.beep(on_time=0.5, off_time=0.2, n = 2, background=True)
+        buzzer.beep(on_time=0.5, off_time=0.2, n = 2, background=1)
 
         # 라인 센서
-        tr = TRSensor(signal_range=self.signal_range, debug=self.debug)
+        lineSensor = LineSensor(signal_range=self.signal_range, debug=self.debug)
 
         interval = 0.01
         
@@ -91,7 +91,7 @@ class LineTracker :
         while self._running and ( not max_run_time or time() - move_start < max_run_time ) :
             start = time()
             
-            pos, norm, check_time = tr.read_sensor()
+            pos, norm, check_time = lineSensor.read_sensor()
 
             if abs( pos ) < 1.2 :
                 debug and log.info( "ROBOT forward")
@@ -114,6 +114,8 @@ class LineTracker :
         pass
 
         robot.stop()
+
+        lineSensor.finish()
 
         buzzer.beep(on_time=0.7, off_time=0.05, n = 3, background=True)
 

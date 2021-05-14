@@ -9,7 +9,7 @@ log.basicConfig(
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
     )
 
-class TRSensor :
+class LineSensor :
 
     CS = 5
     Clock = 25
@@ -210,11 +210,11 @@ class TRSensor :
             sensor_text = ", ".join( [ f"{x:4}" for x in sensor ] )
             norm_text = ", ".join( [ f"{x:.2f}" for x in norm ] )
             road_text = self.to_sensors_text( norm, 5 )
-        
-            print( f"[{idx:04}] Sensor [ {sensor_text}  ] time = {check_time%60:.4f}(s)" )
-            print( f"[{idx:04}] Normal [ {norm_text}  ] sum  = {sum_norm:.2g}" )
-            print( f"[{idx:04}] Line   [ {road_text} ] pos  = {pos:.2g}" )
+
             print()
+            print( f"[{idx:05}] Sensor [ {sensor_text}  ] time = {check_time%60:.4f}(s)" )
+            print( f"[{idx:05}] Normal [ {norm_text}  ] sum  = {sum_norm:.2g}" )
+            print( f"[{idx:05}] Line   [ {road_text} ] pos  = {pos:.2g}" )
         pass
 
         return pos, norm, check_time
@@ -270,7 +270,7 @@ if __name__ == '__main__':
 
     running = True
 
-    tr = TRSensor()
+    lineSensor = LineSensor()
 
     def signal_handler(signal, frame):
         print("", flush=True) 
@@ -308,7 +308,7 @@ if __name__ == '__main__':
 
     interval = 0.01
     while running :
-        pos, norm, check_time = tr.read_sensor( debug=1 ) 
+        pos, norm, check_time = lineSensor.read_sensor( debug=1 ) 
 
         if len( xt ) > 16 :
             x0 = xt[0]
@@ -362,7 +362,7 @@ if __name__ == '__main__':
         plt.pause( interval )
     pass
 
-    tr.finish()
+    lineSensor.finish()
     sleep( 0.5 )
 
     print( "Good bye!")
