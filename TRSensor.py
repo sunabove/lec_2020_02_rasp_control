@@ -329,7 +329,7 @@ if __name__ == '__main__':
 
         # append norma data
         for i, n in enumerate( norm ) :
-            idx = int( n*4 )
+            idx = int( n*4 + 0.5 )
             xs[idx].append( check_time )
             ys[idx].append( i - 2 )
         pass
@@ -340,15 +340,17 @@ if __name__ == '__main__':
         ax.clear()
 
         # plot norm sensor data
-        for x, y in zip( xs, ys ) :
-            ax.scatter( x, y, marker='s' )
+        for i, [x, y] in enumerate( zip( xs, ys ) ):
+            n = (i+1)/5
+            ax.scatter( x, y, marker='s', label=f'{n}' )
         pass
 
         # plot pos data
-        ax.plot( xt, p )
+        ax.plot( xt, p, label='position' )
 
         ax.set_ylim( -3.2, 3.2 )
         ax.xaxis.set_major_formatter( format_date )
+        ax.legend(loc = "lower center", ncol=6)
         
         fig.canvas.draw()
 
