@@ -262,13 +262,15 @@ class LineSensor :
 
 pass
 
-if __name__ == '__main__':
+line_sensor_running = False
+
+def service() :
     print("TRSensor")
 
     GPIO.setwarnings(False)
     GPIO.cleanup()
 
-    running = True
+    line_sensor_running = True
 
     lineSensor = LineSensor()
 
@@ -277,8 +279,8 @@ if __name__ == '__main__':
         
         print('You have pressed Ctrl-C.')
 
-        global running
-        running = False
+        global line_sensor_running
+        line_sensor_running = False
     pass
 
     import signal
@@ -288,34 +290,52 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     mpl.rcParams['toolbar'] = 'None'
     
-    xt = [] # times
+    times = [] # times
+    # signal charts
     xys = [ [ [], [] ], [ [], [] ], [ [], [] ], [ [], [] ], [ [], [] ], ]
-    p = [] # position
-    s = [] # signal
+    position = [] # position
+    min_signal = [] # minimal signal
 
     def format_date( t, pos=None ) :
         t = t%60
         return int(t)
     pass
 
+    do_plot_chart = True
+
+    def on_plot_close(event):
+        print('Closed Figure!')
+        do_plot_chart = False
+        line_sensor_running = False
+    pass
+    
     plt.style.use('seaborn-whitegrid')
     fig = plt.figure( "Line Sensor", figsize=(8, 6) )
+    fig.canvas.mpl_connect('close_event', on_plot_close)
+
     ax = fig.add_subplot(111)
     
-    ax.scatter( xys[0][0], xys[0][1], marker='s' ) 
+    if 0 :
+        ax.scatter( xys[0][0], xys[0][1], marker='s' ) 
 
-    fig.show()
-    fig.canvas.draw()
+        fig.show()
+        fig.canvas.draw()
+    pass
 
     interval = 0.01
-    while running :
+    while line_sensor_running :
         pos, norm, sum_norm, check_time = lineSensor.read_sensor( debug=1 ) 
 
-        if len( xt ) > 16 :
-            x0 = xt[0]
-            xt.pop( 0 )
-            p.pop( 0 )
-            s.pop( 0 )
+        if do_plot_chart == False :
+            sleep( interval )
+            continue
+        pass
+
+        if len( times ) > 16 :
+            x0 = times[0]
+            times.pop( 0 )
+            position.pop( 0 )
+            min_signal.pop( 0 )
 
             for xy in xys :
                 remove_cnt = 0 
@@ -329,7 +349,7 @@ if __name__ == '__main__':
         pass
 
         # append time data
-        xt.append( check_time )
+        times.append( check_time )
 
         # append norma data
         for i, n in enumerate( norm ) :
@@ -340,8 +360,8 @@ if __name__ == '__main__':
 
         signal = sum_norm/5
         # append pos data
-        p.append( pos )
-        s.append( signal - 4  )
+        position.append( pos )
+        min_signal.append( signal - 4  )
         
         ax.clear()
 
@@ -352,10 +372,10 @@ if __name__ == '__main__':
         pass
 
         # plot pos data
-        ax.plot( xt, p, 'g', label='position' )
-        ax.plot( xt, s, 'r', label='signal strength' )
+        ax.plot( times, position, 'g', label='position' )
+        ax.plot( times, min_signal, 'r', label='signal strength' )
 
-        for x, y in zip( xt, s ) :
+        for x, y in zip( times, min_signal ) :
             label = f"{(y + 4)*5:.2f}"
             ax.annotate(label, (x,y), textcoords="offset points", xytext=(0,10),ha='center')
         pass
@@ -367,15 +387,28 @@ if __name__ == '__main__':
         ax.set_ylabel( "Position" )
         ax.set_xlabel( "Time (s)" )
 
-        plt.tight_layout()
-        
-        fig.canvas.draw()
-
-        plt.pause( interval )
+        if do_plot_chart :
+            try : 
+                plt.tight_layout()
+                fig.canvas.draw()
+                plt.pause( interval )
+            except :
+                do_plot_chart = False
+                line_sensor_running = False
+            pass
+        pass
     pass
 
     lineSensor.finish()
     sleep( 0.5 )
 
     print( "Good bye!")
+pass # -- service
+
+def stop():
+    line_sensor_running = False 
+pass
+
+if __name__ == '__main__':
+    service()
 pass
