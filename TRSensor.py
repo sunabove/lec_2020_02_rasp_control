@@ -317,7 +317,7 @@ if __name__ == '__main__':
 
             for x, y in zip( xs, ys ) :
                 remove_cnt = 0 
-                while x0 in x :
+                while x and x0 == x[0] :
                     x.pop( 0 )
                     y.pop( 0 )
                 pass
@@ -328,10 +328,10 @@ if __name__ == '__main__':
         xt.append( check_time )
 
         # append norma data
-        for n in norm :
-            i = int( n*4 )
-            xs[i].append( check_time )
-            ys[i].append( i - 2 )
+        for i, n in enumerate( norm ) :
+            idx = int( n*4 )
+            xs[idx].append( check_time )
+            ys[idx].append( i - 2 )
         pass
 
         # append pos data
@@ -347,8 +347,9 @@ if __name__ == '__main__':
         # plot pos data
         ax.plot( xt, p )
 
-        ax.set_ylim( -3.1, 3.1 )
+        ax.set_ylim( -3.2, 3.2 )
         ax.xaxis.set_major_formatter( format_date )
+        
         fig.canvas.draw()
 
         plt.pause( interval )
