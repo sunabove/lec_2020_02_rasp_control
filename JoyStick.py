@@ -67,7 +67,6 @@ class JoyStick :
                         self.running = False
                         funtions.shutdown(self.buzzer)
                         sleep( 1 )
-                        break
                     pass
                 pass
             pass

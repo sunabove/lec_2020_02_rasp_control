@@ -1,5 +1,5 @@
 [Unit]
-Description=MyScript
+Description=Robot Service
 After=network.target
 [Service]
 ExecStart=/usr/bin/python3 /home/pi/robot/Robot.py
