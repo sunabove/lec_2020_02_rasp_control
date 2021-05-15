@@ -38,7 +38,7 @@ class Robot :
 
         # 시동 소리 내기
         self.rgb_led.light_effect( "flash", Color(0, 255, 0), duration=3 )         
-        self.buzzer.beep(on_time=0.2, off_time=0.2, n = 3)
+        self.buzzer.beep(on_time=0.1, off_time=0.1, n = 4)
 
         # joystick service start
         threading.Thread(target=self.joyStick.service).start()
