@@ -5,6 +5,7 @@ from time import time, sleep
 from gpiozero import Buzzer
 from ObstacleSensor import ObstacleSensor
 from LineTracker import LineTracker
+import Functions as funtions
 
 import logging as log
 log.basicConfig(
@@ -203,21 +204,8 @@ class IRRemote :
         return
     pass
 
-    def beep_warning(self) :
-        import Functions as fun
-        fun.beep_warning( self.buzzer )
-    pass
-
     def system_shutdown(self) :
-        log.info(inspect.currentframe().f_code.co_name) 
-
-        # 시스템 셧다운
-        # 경고음
-        self.beep_warning()
-
-        from subprocess import check_call
-
-        check_call(['sudo', 'poweroff'])
+        funtions.shutdown(self.buzzer)
     pass # system_shutdown
 
     def remote_callback(self, key ):

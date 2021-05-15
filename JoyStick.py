@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
-from time import sleep
+from time import time, sleep
 from Servo import Servo
+import Functions as funtions
 
 class JoyStick : 
 
@@ -10,9 +11,11 @@ class JoyStick :
     C = 10
     D = 11
 
-    def __init__(self, target, debug = 0 ) :
+    def __init__(self, target, buzzer=None, debug = 0 ) :
         self.debug = debug
         self.target = target
+        self.buzzer = buzzer
+        
         self.running = 0
     pass
 
@@ -56,8 +59,16 @@ class JoyStick :
                     sleep( 0.01 )
                 pass
 
+                then = time()
                 while self.running and key and GPIO.input(key) == 0:
                     sleep(0.01)
+
+                    if key == self.CTR and time() - then > 3 :
+                        self.running = False
+                        funtions.shutdown(self.buzzer)
+                        sleep( 1 )
+                        break
+                    pass
                 pass
             pass
         except :

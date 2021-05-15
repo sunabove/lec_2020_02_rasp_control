@@ -33,7 +33,7 @@ class Robot :
         self.rgb_led    = RGB_LED()
         self.camera     = Camera( motor = self.motor )
         self.servo      = Servo()
-        self.joyStick   = JoyStick( self.servo )
+        self.joyStick   = JoyStick( self.servo, buzzer=self.buzzer )
         self.irremote   = IRRemote( self, buzzer=self.buzzer )
 
         # 시동 소리 내기
