@@ -257,7 +257,7 @@ def service() :
 
         log.info(f"cmd={cmd}, speed={speed}")
 
-        if cmd in ( "stop", "servo_stop" ):
+        if cmd in ( "stop", "servo_stop", "stop_service" ):
             robot.stop_robot()
             robot.stop_servo()
             robot.stop_service()
