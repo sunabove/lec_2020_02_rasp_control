@@ -1,0 +1,14 @@
+[Unit]
+Description=MyScript
+After=network.target
+[Service]
+ExecStart=/usr/bin/python3 /home/pi/robot/Robot.py
+ExecStop=/usr/bin/python3 /home/pi/robot/Robot.py stop
+WorkingDirectory=/home/pi
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=root
+StartLimitBurst=0
+[Install]
+WantedBy=multi-user.target

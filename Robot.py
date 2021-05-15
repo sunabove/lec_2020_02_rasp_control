@@ -193,11 +193,17 @@ robot = None
 def stop():
     print( "", flush=True) 
 
-    log.info( 'You have pressed Ctrl-C.' ) 
-    
-    robot.finish()
+    log.info( 'Robot stopping ...' ) 
 
-    app.do_teardown_appcontext()
+    global robot
+
+    if robot :    
+        robot.finish()
+    pass
+
+    if app : 
+        app.do_teardown_appcontext()
+    pass
 
     GPIO.setmode(GPIO.BCM)  
 
@@ -293,19 +299,26 @@ def service() :
     log.info( "Good bye!")
 pass # -- service
 
-if __name__=='__main__':    
-    GPIO.setwarnings(False)
-    GPIO.cleanup()
+if __name__=='__main__':
+    if 'stop' in sys.argv :
+        stop()
+    else :
+        GPIO.setwarnings(False)
+        GPIO.cleanup()
 
-    def signal_handler(signal, frame): 
-        stop() 
+        def signal_handler(signal, frame):
+            print()
+            print( 'You have pressed Ctrl-C.' ) 
 
-        sleep( 2 )
+            stop() 
 
-        sys.exit(0)
+            sleep( 2 )
+
+            sys.exit(0)
+        pass
+
+        signal.signal(signal.SIGINT, signal_handler)
+
+        service()
     pass
-
-    signal.signal(signal.SIGINT, signal_handler)
-
-    service()
 pass
