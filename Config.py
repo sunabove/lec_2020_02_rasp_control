@@ -3,10 +3,11 @@
 import configparser, os, io
 
 config = None
+robot_section = {}
+section_name = "robot"
+configfile_name = "robot.config"
 
-def get_config(key=None) :
-
-    configfile_name = "robot.config"
+def cfg(key, v=None) :
 
     # Check if there is already a configurtion file
     if not os.path.isfile( configfile_name ):
@@ -16,14 +17,10 @@ def get_config(key=None) :
         # Add content to the file
         config = configparser.ConfigParser()
         
-        section_name = "robot"
+        robot_section = {}
+        robot_section[ "name" ] = "alphabot"
 
-        robot = {}
-        robot[ "P" ] = "6"
-        robot[ "I" ] = "1"
-        robot[ "D" ] = "4"
-
-        config[ section_name ] = robot
+        config[ section_name ] = robot_section
 
         config.write(cfgfile)
 
@@ -33,26 +30,19 @@ def get_config(key=None) :
     # Load the configuration file
     with open( configfile_name ) as f:
         sample_config = f.read()
-        config = configparser.RawConfigParser(allow_no_value=True)
-        config.readfp(io.BytesIO(sample_config))
+        config = configparser.ConfigParser()
+        config.read( configfile_name )
 
-        # List all contents
-        print("List all contents")
-        for section in config.sections():
-            print("Section: %s" % section)
-            for options in config.options(section):
-                print(
-                    "x %s:::%s:::%s"
-                    % (options, config.get(section, options), str(type(options)))
-                )
+        robot_section = config[ section_name ]
 
-        # Print some contents
-        print("\nPrint some contents")
-        print(config.get("other", "use_anonymous"))  # Just get the value
-        print(config.getboolean("other", "use_anonymous"))  # You know the datatype?
+        for key in robot_section :
+            v = robot_section[ key ]
+            t = f"{key} : {v}"
+            print( t )
+        pass
     pass
 pass
 
 if __name__ == '__main__':
-    get_config( "" )
+    cfg( "", "" )
 pass
