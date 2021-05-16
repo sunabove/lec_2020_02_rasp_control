@@ -195,6 +195,9 @@ def stop():
 
     log.info( 'Robot stopping ...' ) 
 
+    buzzer = Buzzer(4)
+    buzzer.beep(on_time=1, off_time=1, n = 1, background=False)
+
     global robot
 
     if robot :    
@@ -204,8 +207,6 @@ def stop():
     if app : 
         app.do_teardown_appcontext()
     pass
-
-    GPIO.setmode(GPIO.BCM)  
 
     log.info( "Good bye!" )
 pass # -- stop
