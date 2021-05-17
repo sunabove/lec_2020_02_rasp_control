@@ -22,9 +22,7 @@ class LineSensor :
         self.debug = debug
 
         self.signal_range = signal_range
-        self.white_signal = max( signal_range )
-        self.black_signal = min( signal_range )
-
+        
         self.num_sensors = num_sensors
         self.idx = 0 
         self.prev_pos = 0
@@ -113,12 +111,10 @@ class LineSensor :
         max_sensor_values = [0]*num_sensors
         min_sensor_values = [0]*num_sensors
 
-        for j in range(0,10):
-        
+        for j in range(0,10):        
             sensor_values, check_time = self.read_analog();
             
-            for i in range(0, num_sensors):
-            
+            for i in range(0, num_sensors):            
                 # set the max we found THIS time
                 if((j == 0) or max_sensor_values[i] < sensor_values[i]):
                     max_sensor_values[i] = sensor_values[i]
@@ -150,7 +146,7 @@ class LineSensor :
 
         num_sensors = self.num_sensors
 
-        for i in range (0, num_sensors):
+        for i in range( num_sensors ):
             denominator = self.calibratedMax[i] - self.calibratedMin[i]
 
             if(denominator != 0):
@@ -180,8 +176,9 @@ class LineSensor :
         sensor, check_time = self.read_analog()
 
         # 신호 위치
-        white_signal = self.white_signal
-        black_signal = self.black_signal
+        signal_range = self.signal_range
+        white_signal = max( signal_range )
+        black_signal = min( signal_range )
 
         # 신호 정규화
         norm = self.normalize( sensor, white_signal, black_signal )
