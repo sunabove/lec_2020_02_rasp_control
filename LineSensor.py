@@ -376,6 +376,7 @@ def service(debug=0) :
         # plot pos data
         ax.plot( times, position, 'g', label='position' )
         ax.plot( times, min_signal, 'r', label='signal strength' )
+        #ax.bar( times, min_signal, label='signal strength')
 
         for x, y in zip( times, min_signal ) :
             label = f"{(y + 4)*5:.2f}"
