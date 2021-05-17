@@ -7,18 +7,15 @@ robot_section = None
 section_name = "robot"
 configfile_name = "robot.config"
 
-def cfg(key, v=None, debug=0) :
-
+def cfg(key, v=None, save=0, debug=0) :
     global robot_section
     global config
+    global section_name
+    global configfile_name
 
     if robot_section is None :
         # Check if there is already a configurtion file
         if not os.path.isfile( configfile_name ):
-            # Create the configuration file as it doesn't exist yet
-            cfgfile = open( configfile_name, "w" )
-
-            # Add content to the file
             config = configparser.ConfigParser()
             
             robot_section = {}
@@ -26,8 +23,8 @@ def cfg(key, v=None, debug=0) :
 
             config[ section_name ] = robot_section
 
+            cfgfile = open( configfile_name, "w" )
             config.write(cfgfile)
-
             cfgfile.close()
         else :
             # Load the configuration file
@@ -49,17 +46,19 @@ def cfg(key, v=None, debug=0) :
     pass
 
     if robot_section is not None :
-        if key in robot_section :
-            v = robot_section[ key ]
-        elif v is not None :
+        if save :
             debug and print( f"save ...{key} = {v}" )
 
-            robot_section[key] = v
+            robot_section[key] = f"{v}"
 
-            cfgfile = open( configfile_name, "w" )
+            config = configparser.ConfigParser()
             config[ section_name ] = robot_section
+            
+            cfgfile = open( configfile_name, "w" )
             config.write(cfgfile)
             cfgfile.close()
+        elif key in robot_section :
+            v = robot_section[ key ]
         pass
     pass
 
@@ -68,5 +67,9 @@ pass
 
 if __name__ == '__main__':
     v = cfg( "pid", [6,1,4], debug=1 )
+
+    print( v )
+
+    v = cfg( "pid", [6,1,5], save=1, debug=1 )
     print( v )
 pass
