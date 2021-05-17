@@ -50,7 +50,7 @@ class LineSensor :
     def finish(self):
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
-        for port in [ self.Clock, self.Address, self.CS, self.DataOut, self.Button ] :             
+        for port in [ self.Clock, self.Address, self.CS, self.DataOut, self.Button ] :
             GPIO.cleanup(port)
         pass
     pass # -- finish
@@ -324,6 +324,8 @@ def service(debug=0) :
         fig.canvas.draw()
     pass
 
+    bottom = -4
+
     interval = 0.01
     while line_sensor_running :
         pos, norm, sum_norm, check_time = lineSensor.read_sensor() 
@@ -363,7 +365,7 @@ def service(debug=0) :
         signal = sum_norm/5
         # append pos data
         position.append( pos )
-        min_signal.append( signal - 4  )
+        min_signal.append( signal + bottom  )
         
         ax.clear()
 
@@ -376,8 +378,7 @@ def service(debug=0) :
         # plot pos data
         ax.plot( times, position, 'g', label='position' )
         ax.plot( times, min_signal, 'r', label='signal strength' )
-        #ax.bar( times, min_signal, label='signal strength')
-
+        
         for x, y in zip( times, min_signal ) :
             label = f"{(y + 4)*5:.2f}"
             ax.annotate(label, (x,y), textcoords="offset points", xytext=(0,10),ha='center')
