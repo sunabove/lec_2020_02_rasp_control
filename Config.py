@@ -51,6 +51,11 @@ def cfg(key, v=None, save=0, debug=0) :
             cfgfile.close()
         elif key in robot_section :
             v = robot_section[ key ]
+
+            if v.startswith( "[") and v.endswith( "]" ):
+                import ast 
+                v = ast.literal_eval( v )
+            pass
         pass
     pass
 

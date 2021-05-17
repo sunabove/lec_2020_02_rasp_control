@@ -2,6 +2,7 @@
 import RPi.GPIO as GPIO
 import inspect, numpy as np, logging as log
 
+from Config import  cfg
 from time import sleep, time
 
 log.basicConfig(
@@ -17,7 +18,7 @@ class LineSensor :
     DataOut = 23
     Button = 7
 
-    def __init__(self, signal_range=[240, 540], num_sensors = 5, debug=0):
+    def __init__(self, signal_range=cfg("signal_range", [240, 540]), num_sensors = 5, debug=0):
         self.debug = debug
 
         self.signal_range = signal_range
@@ -261,6 +262,7 @@ class LineSensor :
 pass
 
 line_sensor_running = False
+do_plot_chart = False
 
 def service(debug=0) :
     debug and print("TRSensor")
@@ -268,6 +270,7 @@ def service(debug=0) :
     GPIO.setwarnings(False)
     GPIO.cleanup()
 
+    global line_sensor_running, do_plot_chart
     line_sensor_running = True
 
     lineSensor = LineSensor(debug=debug)
@@ -277,7 +280,6 @@ def service(debug=0) :
         
         print('You have pressed Ctrl-C.')
 
-        global line_sensor_running
         line_sensor_running = False
     pass
 
@@ -303,6 +305,8 @@ def service(debug=0) :
 
     def on_plot_close(event):
         print('Closed Figure!')
+        global line_sensor_running
+        global do_plot_chart
         do_plot_chart = False
         line_sensor_running = False
     pass
