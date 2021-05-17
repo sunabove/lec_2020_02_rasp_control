@@ -165,7 +165,7 @@ class LineSensor :
         return sensor_values
     pass # -- read_calibrated 
 
-    def read_sensor(self, sum_norm_min = 0.09) : 
+    def read_sensor(self) : 
         debug = self.debug
 
         self.idx += 1
@@ -183,6 +183,8 @@ class LineSensor :
         # 신호 정규화
         norm = self.normalize( sensor, white_signal, black_signal )
         pos = 0.0
+
+        sum_norm_min = cfg( 'sum_norm_min', 0.09 )
 
         sum_norm = sum( norm )
 

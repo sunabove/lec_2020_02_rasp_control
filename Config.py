@@ -54,9 +54,19 @@ def cfg(key, v=None, save=0, debug=0) :
         elif key in robot_section :
             v = robot_section[ key ]
 
+            print( "type = " , type(v) )
+
             if v.startswith( "[") and v.endswith( "]" ):
                 import ast 
                 v = ast.literal_eval( v )
+            else :
+                try : 
+                    vf = float( v )
+                    vi = int( vf )
+                    v = [ vf, vi ][vi == vf]
+                except :
+                    pass
+                pass
             pass
         pass
     pass
@@ -65,14 +75,19 @@ def cfg(key, v=None, save=0, debug=0) :
 pass
 
 if __name__ == '__main__':
-    v = cfg( "pid", [6,1,4], debug=1 )
+    v = cfg( 'pid', [6,1,4], debug=1 )
 
     print( v )
 
-    v = cfg( "pid", [6,1,5], save=1, debug=1 )
+    v = cfg( 'pid', [6,1,5], save=1, debug=1 )
     print( v )
 
-    v = cfg( "signal_range", [240, 540], save=1, debug=1 )
+    v = cfg( 'signal_range', [240, 540], save=1, debug=1 )
     print( v )
-    
+
+    v = cfg( 'sum_norm_min', 0.09, save=1 )
+    print( v )
+
+    v = cfg( 'sum_norm_min', 0.09 )
+    print( v )    
 pass
