@@ -13,6 +13,8 @@ def cfg(key, v=None, save=0, debug=0) :
     global section_name
     global configfile_name
 
+    key = key.lower()
+
     if robot_section is None :
         # Check if there is already a configurtion file
         if not os.path.isfile( configfile_name ):

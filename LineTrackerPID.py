@@ -7,6 +7,7 @@ from time import sleep, time, time_ns
 from gpiozero import Buzzer
 from LineSensor import LineSensor
 from LineTracker import LineTracker
+from Config import cfg
 
 log.basicConfig(
     format='%(asctime)s, %(levelname)s [%(filename)s:%(lineno)04d] %(message)s',
@@ -15,7 +16,11 @@ log.basicConfig(
 
 class LineTrackerPID( LineTracker ) :
 
-    def __init__(self, robot, signal_range=[240, 540], buzzer=None, pid=[6, 1, 4], max_run_time=0, debug=0 ):
+    def __init__(self, robot, signal_range=None, pid=None, buzzer=None, max_run_time=0, debug=0 ):
+
+        signal_range = signal_range if signal_range else cfg('signal_range', [240, 540])
+        pid = pid if pid else cfg( 'pid', [6, 1, 4]) 
+
         super().__init__( robot, signal_range, buzzer, max_run_time, debug )
         
         self.pid = pid
@@ -158,7 +163,7 @@ if __name__ == '__main__':
 
     robot = Motor()
 
-    pid=[6, 1, 1] # [6, 1, 4] [6, 0, 4]
+    pid = None # [6, 1, 1] # [6, 1, 4] [6, 0, 4]
 
     argv = sys.argv[1:]
 
