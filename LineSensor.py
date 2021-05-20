@@ -258,7 +258,7 @@ class LineSensor :
         return " ".join( txt  )
     pass # -- to_sensors_text
 
-pass
+pass # -- LineSensor
 
 line_sensor_running = False
 do_plot_chart = False
