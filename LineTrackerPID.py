@@ -73,7 +73,7 @@ class LineTrackerPID( LineTracker ) :
         last_check_time = check_time
 
         while self._running and ( not max_run_time or check_time - move_start < max_run_time ) :
-            pos, norm, sum_norm, check_time = lineSensor.read_sensor()  # 라인 센서 데이트 획득
+            pos, norm, sum_norm, sensor, check_time = lineSensor.read_sensor()  # 라인 센서 데이트 획득
 
             # 현재 에러
             error = 0 - pos

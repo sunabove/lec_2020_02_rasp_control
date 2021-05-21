@@ -215,7 +215,7 @@ class LineSensor :
             print( f"[{idx:05}] Line   [ {road_text} ] pos  = {pos:.2g}" )
         pass
 
-        return pos, norm, sum_norm, check_time
+        return pos, norm, sum_norm, sensor, check_time
     pass # -- read_sensor
 
     def normalize(self, sensor, white_signal, black_signal) :
@@ -289,7 +289,7 @@ def service(debug=0) :
     lineSensor = LineSensor(debug=debug)
 
     while line_sensor_running :
-        pos, norm, sum_norm, check_time = lineSensor.read_sensor() 
+        pos, norm, sum_norm, sensor, check_time = lineSensor.read_sensor() 
 
         sleep( interval )
     pass
