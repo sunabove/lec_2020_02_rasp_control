@@ -5,7 +5,7 @@ import configparser, os, io
 config = None
 robot_section = None
 section_name = "robot"
-configfile_name = "robot.config"
+configfile_name = "/home/pi/robot/robot.config"
 
 def cfg(key, v=None, save=0, debug=0) :
     global robot_section
