@@ -61,7 +61,6 @@ def service(debug=0) :
 
     ax = fig.add_subplot(111)
 
-    times = [] # times
     sensors = [ [], [], [], [], [] ]
     
     bottom = -4
@@ -77,16 +76,11 @@ def service(debug=0) :
             continue
         pass
 
-        if len( times ) > 16 :
-            times.pop( 0 ) 
-
+        if len( sensors[0] ) > 10 :
             for s in sensors :
                 s.pop( 0 )
             pass
         pass
-
-        # append time data
-        times.append( check_time )
 
         # append norma data
         for i, s in enumerate( sensor ) :
@@ -96,13 +90,13 @@ def service(debug=0) :
         ax.clear()
 
         # plot norm sensor data
+        slen = len( sensors[0] )
         for i, s in enumerate( sensors ):
-            ax.bar( np.array(times) + interval*i/6, s, width=0.35 )
+            ax.bar( np.arange(1, slen+1) + idx + i/6, s, width=1/6, label=f's{i}' )
         pass
 
-        #ax.set_ylim( -4.8, 3.2 )
-        ax.xaxis.set_major_formatter( format_date )
-        ax.legend(title='', loc='lower center', fontsize='small' )
+        ax.set_ylim( -100, 800 )
+        ax.legend(title='', ncol=5, loc='lower center', fontsize='small' )
         ax.set_title( "Line Sensor Range\n" )
         ax.set_ylabel( "Sensor" )
         ax.set_xlabel( "Time (s)" )
