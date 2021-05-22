@@ -56,14 +56,13 @@ def service(debug=0) :
     pass
     
     plt.style.use('seaborn-whitegrid')
-    fig = plt.figure( "Line Sensor", figsize=(8, 6) )
+    fig = plt.figure( "Line Sensor", figsize=(12, 6) )
     fig.canvas.mpl_connect('close_event', on_plot_close)
 
     ax = fig.add_subplot(111)
 
     sensors = [ [], [], [], [], [] ]
     
-    bottom = -4
     interval = 0.01
 
     idx = 0 
@@ -76,7 +75,7 @@ def service(debug=0) :
             continue
         pass
 
-        if len( sensors[0] ) > 10 :
+        if len( sensors[0] ) > 6 :
             for s in sensors :
                 s.pop( 0 )
             pass
@@ -90,9 +89,10 @@ def service(debug=0) :
         ax.clear()
 
         # plot norm sensor data
-        slen = len( sensors[0] )
+        x = np.arange( len(sensors[0]) )
         for i, s in enumerate( sensors ):
-            ax.bar( np.arange(1, slen+1) + idx + i/6, s, width=1/6, label=f's{i}' )
+            rect = ax.bar( x + idx + i/6, s, width=1/6, label=f's{i}' )
+            ax.bar_label( rect, padding=3, fontsize='small')
         pass
 
         ax.set_ylim( -100, 800 )
