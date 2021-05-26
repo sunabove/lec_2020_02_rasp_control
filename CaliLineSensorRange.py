@@ -64,6 +64,7 @@ def service(debug=0) :
     sensors = [ [], [], [], [], [] ]
     
     interval = 0.01
+    max_len = 6
 
     idx = 0 
 
@@ -75,7 +76,7 @@ def service(debug=0) :
             continue
         pass
 
-        if len( sensors[0] ) > 6 :
+        if len( sensors[0] ) > max_len :
             for s in sensors :
                 s.pop( 0 )
             pass
@@ -91,12 +92,13 @@ def service(debug=0) :
         # plot norm sensor data
         x = np.arange( len(sensors[0]) )
         for i, s in enumerate( sensors ):
-            rect = ax.bar( x + idx + i/6, s, width=1/6, label=f's{i}' )
+            rect = ax.bar( x + idx + (i-2)/6, s, width=1/6, label=f's{i}' )
             ax.bar_label( rect, padding=3, fontsize='small')
         pass
 
-        ax.set_ylim( -100, 800 )
-        ax.legend(title='', ncol=5, loc='lower center', fontsize='small' )
+        ax.set_xlim( idx -0.5, idx + max_len + 0.5 )
+        ax.set_ylim( 0, 800 )
+        ax.legend(title='', ncol=5, fontsize='small' )
         ax.set_title( "Line Sensor Range\n" )
         ax.set_ylabel( "Sensor" )
         ax.set_xlabel( "Time (s)" )
