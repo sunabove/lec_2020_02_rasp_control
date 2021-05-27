@@ -63,7 +63,9 @@ def service(debug=0) :
 
     sensors = [ [], [], [], [], [] ]
     data = [ [], [] ]
-    
+    len_sensors = len( sensors )
+    colors = [ ( c/len_sensors, c/len_sensors, c/len_sensors ) for c in range( len_sensors ) ][::-1]
+            
     interval = 0.01
     max_len = 6
 
@@ -99,9 +101,9 @@ def service(debug=0) :
         ax.clear()
 
         # plot norm sensor data
-        x = np.arange( len(sensors[0]) )
+        x = np.arange( len(sensors[0]))
         for i, s in enumerate( sensors ):
-            rect = ax.bar( x + (i-2)/6, s, width=1/6, label=f's{i}' )
+            rect = ax.bar( x + (i-2)/6, s, color=colors[i], width=1/6, label=f's{i}' )
             ax.bar_label( rect, padding=3, fontsize='small')
         pass
 
