@@ -62,11 +62,18 @@ def service(debug=0) :
     ax = fig.add_subplot(111)
 
     sensors = [ [], [], [], [], [] ]
+    data = [ [], [] ]
     
     interval = 0.01
     max_len = 6
 
     idx = 0 
+
+    def format_xaxis( t, pos=None ) :
+        t = t + idx
+        ti = int( t )
+        return ti if ti == t else t
+    pass
 
     while line_sensor_running :
         pos, norm, sum_norm, sensor, check_time = lineSensor.read_sensor() 
@@ -85,6 +92,8 @@ def service(debug=0) :
         # append norma data
         for i, s in enumerate( sensor ) :
             sensors[i].append( s )
+            data[0].append( 0 )
+            data[1].append( s )
         pass
         
         ax.clear()
@@ -92,11 +101,12 @@ def service(debug=0) :
         # plot norm sensor data
         x = np.arange( len(sensors[0]) )
         for i, s in enumerate( sensors ):
-            rect = ax.bar( x + idx + (i-2)/6, s, width=1/6, label=f's{i}' )
+            rect = ax.bar( x + (i-2)/6, s, width=1/6, label=f's{i}' )
             ax.bar_label( rect, padding=3, fontsize='small')
         pass
 
-        ax.set_xlim( idx -0.5, idx + max_len + 0.5 )
+        ax.xaxis.set_major_formatter( format_xaxis )
+        ax.set_xlim( -0.5, max_len + 0.5 )
         ax.set_ylim( 0, 800 )
         ax.legend(title='', ncol=5, fontsize='small' )
         ax.set_title( "Line Sensor Range\n" )
