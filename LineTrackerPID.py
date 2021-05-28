@@ -17,7 +17,6 @@ log.basicConfig(
 class LineTrackerPID( LineTracker ) :
 
     def __init__(self, robot, signal_range=None, pid=None, buzzer=None, max_run_time=0, debug=0 ):
-
         signal_range = signal_range if signal_range else cfg('signal_range', [240, 540])
         pid = pid if pid else cfg( 'pid', [6, 1, 4]) 
 
@@ -26,7 +25,7 @@ class LineTrackerPID( LineTracker ) :
         self.pid = pid
     pass
 
-    def robot_move (self ) :
+    def robot_move(self) :
         log.info(inspect.currentframe().f_code.co_name)
 
         debug = self.debug
@@ -156,7 +155,7 @@ pass
 if __name__ == '__main__':
     print( "Hello..." ) 
 
-    GPIO.setwarnings(False)
+    GPIO.setwarnings( 0 )
     GPIO.cleanup()
 
     from Motor import Motor 

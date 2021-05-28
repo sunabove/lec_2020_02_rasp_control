@@ -64,7 +64,7 @@ class LineTracker :
         return self._running
     pass  
 
-    def robot_move (self) :
+    def robot_move(self) :
         log.info(inspect.currentframe().f_code.co_name)
 
         debug = self.debug
@@ -132,7 +132,7 @@ pass
 if __name__ == '__main__':
     print( "Hello..." ) 
 
-    GPIO.setwarnings(False)
+    GPIO.setwarnings( 0 )
     GPIO.cleanup()
 
     from Motor import Motor 
