@@ -87,163 +87,158 @@
 
 	<ul class="nav nav-tabs" id="myTab" role="tablist">
 		<li class="nav-item">
-			<a class="nav-link active" id="home-tab" data-toggle="tab" href="#motor" role="tab" aria-controls="motor"
+			<a class="nav-link active" id="motor-tab" data-toggle="tab" href="#motor" role="tab" aria-controls="motor"
 				aria-selected="true">Motor</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="profile-tab" data-toggle="tab" href="#servo" role="tab" aria-controls="servo"
+			<a class="nav-link" id="servo-tab" data-toggle="tab" href="#servo" role="tab" aria-controls="servo"
 				aria-selected="false">Servo</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact"
-				aria-selected="false">Contact</a>
+			<a class="nav-link" id="obstacle-tab" data-toggle="tab" href="#obstacle" role="tab" aria-controls="obstacle"
+				aria-selected="false">장애물 회피</a>
 		</li>
+		<li class="nav-item">
+			<a class="nav-link" id="line_sensor-tab" data-toggle="tab" href="#line_sensor" role="tab" aria-controls="line_sensor"
+				aria-selected="false">라인 추적 (센서)</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" id="line_camera-tab" data-toggle="tab" href="#line_camera" role="tab" aria-controls="line_camera"
+				aria-selected="false">라인 추적 (카메라)</a>
+		</li>
+
+		<div class="btn-group">
+			<button type="button" class="btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+				메뉴
+			</button>
+			<ul class="dropdown-menu">
+				<li><a id="stop_service" class="menu dropdown-item menu">Stop</a></li>
+				<li><hr class="dropdown-divider"></li>
+				<li><a id="shutdown" class="menu dropdown-item">Shut down</a></li>
+			</ul>
+		</div>
 	</ul>
-	<div class="tab-content" id="myTabContent">
-		<div class="tab-pane fade show active" id="motor" role="tabpanel" aria-labelledby="motor-tab">
-			My Motor
-		</div>
-		<div class="tab-pane fade" id="servo" role="tabpanel" aria-labelledby="servo-tab">
-			My Servo
-		</div>
-		<div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-			C
-		</div>
-	</div>
 
 	<br/>
-
-	<div class="container" class="width: 120px;">
-		<div class="row">
-			<div class="col">
-				&nbsp;
-			</div>
-
-			<div class="col">
-				&nbsp;
-			</div>
-
-			<div class="col">
-				<table class="text-center" >
-					<colgroup>
-						<col width="56px" />
-						<col width="56px" />
-						<col width="56px" />
-					</colgroup>
-					<thead>
-						<tr>
-							<td colspan="100%" >
-								<h6 class="text-center text-nowrap">Motor Control</h6>
-							</td>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>&nbsp;</td>
-							<td>
-								<button id="forward" class="motor btn btn-lg btn-primary">&uuarr;</button>
-							</td>
-							<td>&nbsp;</td>
-						</tr>
-						<tr>
-							<td>
-								<button id='turn_left' class="motor btn btn-lg btn-primary">&llarr;</button>
-							</td>
-							<td>
-								<button id='stop' class="motor btn btn-lg btn-danger">Stop</button>
-							</td>
-							<td>
-								<button id='turn_right' class="motor btn btn-lg btn-primary">&rrarr;</button>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td>
-								<button id='backward' class="motor btn btn-lg btn-primary">&ddarr;</button>
-							</td>
-							<td>&nbsp;</td>
-						</tr>
-					</tbody>
-					<tfoot>
-						<tr>
-							<td colspan="100%">
-								<br/>
-								<h6>Speed : <span id="speed_desc">50</span></h6>
-								<input id="speed" type="range" class="form-label" min="5" max="80", value="15" style="margin:-10px; width:100%; "  >
-							</td>
-						</tr>
-					</tfoot>
-				</table>
-			</div>
-
-			<div class="col">
-				<table class="text-center" >
-					<colgroup>
-						<col width="56px" />
-						<col width="56px" />
-						<col width="56px" />
-					</colgroup>
-					<thead>
-						<tr>
-							<td colspan="100%" >
-								<h6 class="text-center text-nowrap">Servo Control</h6>
-							</td>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>&nbsp;</td>
-							<td>
-								<button id="servo_up" class="servo btn btn-lg btn-success">&uuarr;</button>
-							</td>
-							<td>&nbsp;</td>
-						</tr>
-						<tr>
-							<td>
-								<button id='servo_left' class="servo btn btn-lg btn-success">&llarr;</button>
-							</td>
-							<td>
-								<button id='servo_stop' class="servo btn btn-lg btn-danger">Stop</button>
-							</td>
-							<td>
-								<button id='servo_right' class="servo btn btn-lg btn-success">&rrarr;</button>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td>
-								<button id='servo_down' class="servo btn btn-lg btn-success">&ddarr;</button>
-							</td>
-							<td>&nbsp;</td> 
-						</tr>
-					</tbody>
-				</table>
-			</div>
-
-			<div class="col text-left">
-				<div class="btn-group">
-					<button type="button" class="btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-						메뉴
-					</button>
-					<ul class="dropdown-menu">
-						<li><a id="obstacle_sensor" class="menu dropdown-item">장애물 회피</a></li> 
-						<li><a id="line_tracking" class="menu dropdown-item">라인 트래킹 (센서)</a></li> 
-						<li><a id="line_tracking_cam" class="menu disabled dropdown-item">라인 트래킹 (카메라)</a></li>
-						<li><hr class="dropdown-divider"></li>
-						<li><a id="stop_service" class="menu dropdown-item menu">Stop</a></li>
-						<li><hr class="dropdown-divider"></li>
-						<li><a id="shutdown" class="menu dropdown-item">Shut down</a></li>
-					</ul>
-				</div>
-			</div>
-
-			<div class="col">
-				&nbsp;
-			</div>
-
+				
+	<div class="tab-content" id="myTabContent">
+		<div class="tab-pane fade show active" id="motor" role="tabpanel" aria-labelledby="motor-tab">
+			<!-- # motor -->
+			<table class="text-center" >
+				<colgroup>
+					<col width="56px" />
+					<col width="56px" />
+					<col width="56px" />
+				</colgroup>
+				<thead>
+					<tr>
+						<td colspan="100%" >
+							<h6 class="text-center text-nowrap">Motor Control</h6>
+						</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>&nbsp;</td>
+						<td>
+							<button id="forward" class="motor btn btn-lg btn-primary">&uuarr;</button>
+						</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>
+							<button id='turn_left' class="motor btn btn-lg btn-primary">&llarr;</button>
+						</td>
+						<td>
+							<button id='stop' class="motor btn btn-lg btn-danger">Stop</button>
+						</td>
+						<td>
+							<button id='turn_right' class="motor btn btn-lg btn-primary">&rrarr;</button>
+						</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>
+							<button id='backward' class="motor btn btn-lg btn-primary">&ddarr;</button>
+						</td>
+						<td>&nbsp;</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="100%">
+							<br/>
+							<h6>Speed : <span id="speed_desc">50</span></h6>
+							<input id="speed" type="range" class="form-label" min="5" max="80", value="15" style="margin:-10px; width:100%; "  >
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+			<!-- # motor -->
 		</div>
-
-		<br/><br/>
+		<div class="tab-pane fade" id="servo" role="tabpanel" aria-labelledby="servo-tab">
+			<!-- servo -->
+			<table class="text-center" >
+				<colgroup>
+					<col width="56px" />
+					<col width="56px" />
+					<col width="56px" />
+				</colgroup>
+				<thead>
+					<tr>
+						<td colspan="100%" >
+							<h6 class="text-center text-nowrap">Servo Control</h6>
+						</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>&nbsp;</td>
+						<td>
+							<button id="servo_up" class="servo btn btn-lg btn-success">&uuarr;</button>
+						</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>
+							<button id='servo_left' class="servo btn btn-lg btn-success">&llarr;</button>
+						</td>
+						<td>
+							<button id='servo_stop' class="servo btn btn-lg btn-danger">Stop</button>
+						</td>
+						<td>
+							<button id='servo_right' class="servo btn btn-lg btn-success">&rrarr;</button>
+						</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>
+							<button id='servo_down' class="servo btn btn-lg btn-success">&ddarr;</button>
+						</td>
+						<td>&nbsp;</td> 
+					</tr>
+				</tbody>
+			</table>
+			<!-- # servo -->
+		</div>
+		<div class="tab-pane fade" id="obstacle" role="tabpanel" aria-labelledby="obstracle-tab">
+			<!-- obstacle -->
+			<button id="obstacle_sensor" class="menu btn btn-sm btn-success"> 장애물 회피 </button>
+			<button id='stop' class="menu btn btn-sm btn-danger">Stop</button> 
+			<!-- # obstacle -->
+		</div>
+		<div class="tab-pane fade" id="line_sensor" role="tabpanel" aria-labelledby="line_sensor-tab">
+			<!-- line sensor -->
+			<button id="line_tracking" class="menu btn btn-sm btn-success">라인 트래킹 (센서)</button>
+			<button id='stop' class="menu btn btn-sm btn-danger">Stop</button> 
+			<!-- # line sensor -->
+		</div>
+		<div class="tab-pane fade" id="line_camera" role="tabpanel" aria-labelledby="line_camera-tab">
+			<!-- line camera -->
+			<button id="line_camera" class="menu disabled btn btn-sm btn-success">라인 트래킹 (카메라)</button>
+			<button id='stop' class="menu btn btn-sm btn-danger">Stop</button> 
+			<!-- # line camera -->
+		</div>
 	</div>
 
 </div>
