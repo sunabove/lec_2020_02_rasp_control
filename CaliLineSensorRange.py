@@ -36,6 +36,8 @@ def service(debug=0) :
     import signal
     signal.signal(signal.SIGINT, signal_handler)
 
+    from scipy.cluster.vq import vq, kmeans, whiten
+
     import matplotlib as mpl
     import matplotlib.pyplot as plt
     mpl.rcParams['toolbar'] = 'None'
