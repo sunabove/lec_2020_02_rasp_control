@@ -68,7 +68,7 @@ def service(debug=0) :
             
     interval = 0.01
     max_len = 6
-    max_count = 0 
+    max_cnt = 1 
 
     idx = 0 
 
@@ -105,8 +105,9 @@ def service(debug=0) :
                 data[0].append( -1 )
             else :
                 t = d[s] = d[s] + 1
-                if d[s] > max_count :
-                    max_count = d[s]
+                if d[s] > max_cnt :
+                    max_cnt = t
+                pass
             pass
         pass
         
@@ -121,6 +122,7 @@ def service(debug=0) :
 
         if 1 : 
             s = np.array( list(data[1].values()) )
+            s = s*(100/max_cnt)
             ax.scatter( data[0], data[1].keys(), s=s, label='data', color='darkorange' )
         pass
 
