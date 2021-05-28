@@ -62,19 +62,20 @@ def service(debug=0) :
     ax = fig.add_subplot(111)
 
     sensors = [ [], [], [], [], [] ]
-    data = [ [], [] ]
+    data = [ [], {} ]
     len_sensors = len( sensors )
     colors = [ ( c/len_sensors, c/len_sensors, c/len_sensors ) for c in range( len_sensors ) ][::-1]
             
     interval = 0.01
     max_len = 6
+    max_count = 0 
 
     idx = 0 
 
     def format_xaxis( t, pos=None ) :
         if t == -1 :
-            return ''
-            
+            return 0
+
         t = t + idx
         ti = int( t )
         return ti if ti == t else t
@@ -97,8 +98,16 @@ def service(debug=0) :
         # append norma data
         for i, s in enumerate( sensor ) :
             sensors[i].append( s )
-            data[0].append( -1 )
-            data[1].append( s )
+
+            d = data[1]
+            if s not in d :
+                d[s] = 1
+                data[0].append( -1 )
+            else :
+                t = d[s] = d[s] + 1
+                if d[s] > max_count :
+                    max_count = d[s]
+            pass
         pass
         
         ax.clear()
@@ -110,7 +119,10 @@ def service(debug=0) :
             ax.bar_label( rect, padding=3, fontsize='small')
         pass
 
-        ax.scatter( data[0], data[1], label='data' )
+        if 1 : 
+            s = np.array( list(data[1].values()) )
+            ax.scatter( data[0], data[1].keys(), s=s, label='data', color='darkorange' )
+        pass
 
         ax.xaxis.set_major_formatter( format_xaxis )
         ax.set_xlim( -1.5, max_len + 0.5 )
