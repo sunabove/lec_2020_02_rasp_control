@@ -14,6 +14,7 @@ from rpi_ws281x import Color
 from JoyStick import JoyStick
 from ObstacleSensor import ObstacleSensor
 from LineTrackerPID import LineTrackerPID
+from LineCamera import LineCamera
 import Functions as funtions
 
 log.basicConfig(
@@ -251,13 +252,14 @@ def service() :
         cmd = request.form.get("cmd")
         speed = request.form.get("speed")
 
+        log.info(f"cmd={cmd}")
+
         if speed :
             speed = int( speed )
+            log.info(f"speed={speed}")
         else :
             speed = 50 
         pass
-
-        log.info(f"cmd={cmd}, speed={speed}")
 
         if cmd in ( "stop", "servo_stop", "stop_service" ):
             robot.stop_robot()
@@ -288,6 +290,10 @@ def service() :
         elif cmd == "line_tracking" :
             robot.stop_service()
             robot.service = LineTrackerPID( robot, buzzer = robot.buzzer )
+            robot.service.start()
+        elif cmd == "line_camera" :
+            robot.stop_service()
+            robot.service = LineCamera( robot, buzzer = robot.buzzer )
             robot.service.start()
         pass
 
