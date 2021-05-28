@@ -191,6 +191,8 @@ app = None
 robot = None 
 
 def stop():
+    global robot 
+    
     print( "", flush=True) 
 
     log.info( 'Robot stopping ...' ) 
@@ -198,8 +200,6 @@ def stop():
     buzzer = robot.buzzer if robot else Buzzer( 4 ) 
 
     buzzer.beep(on_time=1, off_time=1, n = 1, background=False)
-
-    global robot
 
     if robot :    
         robot.finish()
