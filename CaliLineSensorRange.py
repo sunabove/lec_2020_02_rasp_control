@@ -72,6 +72,9 @@ def service(debug=0) :
     idx = 0 
 
     def format_xaxis( t, pos=None ) :
+        if t == -1 :
+            return ''
+            
         t = t + idx
         ti = int( t )
         return ti if ti == t else t
@@ -94,25 +97,25 @@ def service(debug=0) :
         # append norma data
         for i, s in enumerate( sensor ) :
             sensors[i].append( s )
-            data[0].append( 0 )
+            data[0].append( -1 )
             data[1].append( s )
         pass
         
         ax.clear()
 
         # plot norm sensor data
-        ax.scatter( data[0], data[1] )
-        
         x = np.arange( len(sensors[0]))
         for i, s in enumerate( sensors ):
             rect = ax.bar( x + (i-2)/6, s, color=colors[i], width=1/6, label=f's{i}' )
             ax.bar_label( rect, padding=3, fontsize='small')
         pass
 
+        ax.scatter( data[0], data[1], label='data' )
+
         ax.xaxis.set_major_formatter( format_xaxis )
-        ax.set_xlim( -0.5, max_len + 0.5 )
+        ax.set_xlim( -1.5, max_len + 0.5 )
         ax.set_ylim( 0, 800 )
-        ax.legend(title='', ncol=5, fontsize='small' )
+        ax.legend(title='', ncol=7, fontsize='small' )
         ax.set_title( "Line Sensor Range\n" )
         ax.set_ylabel( "Sensor" )
         ax.set_xlabel( "Time (s)" )
