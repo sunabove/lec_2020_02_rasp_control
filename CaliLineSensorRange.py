@@ -123,8 +123,9 @@ def service(debug=0) :
         pass
 
         if 1 : 
-            s = np.array( list(data[1].values()) )
-            s = s*(100/max_cnt)
+            cnts = np.array( list(data[1].values()) )
+            y = data[1].keys()
+            s = cnts*(100/max_cnt)
             ax.scatter( data[0], data[1].keys(), s=s, label='data', color='darkorange' )
         pass
 
