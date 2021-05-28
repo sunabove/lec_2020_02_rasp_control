@@ -16,6 +16,8 @@ print( np.std(features)*whitened )
 
 # Find 2 clusters in the data
 codebook, distortion = kmeans(whitened, 2)
+print( 'codebook = ', codebook )
+
 # Plot whitened data and cluster centers in red
 y = whitened[ :, 0]
 plt.scatter( [0]*len(y), y )

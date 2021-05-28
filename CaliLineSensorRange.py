@@ -65,6 +65,7 @@ def service(debug=0) :
 
     sensors = [ [], [], [], [], [] ]
     data = [ [], {} ]
+    features = []
     len_sensors = len( sensors )
     colors = [ ( c/len_sensors, c/len_sensors, c/len_sensors ) for c in range( len_sensors ) ][::-1]
             
@@ -111,6 +112,8 @@ def service(debug=0) :
                     max_cnt = t
                 pass
             pass
+
+            features.append( [s] )
         pass
         
         ax.clear()
@@ -123,10 +126,20 @@ def service(debug=0) :
         pass
 
         if 1 : 
-            cnts = np.array( list(data[1].values()) )
-            y = data[1].keys()
-            s = cnts*(100/max_cnt)
-            ax.scatter( data[0], data[1].keys(), s=s, label='data', color='darkorange' )
+            f = np.array( features )
+
+            std = np.std( f )
+
+            whitened = whiten( f )
+            codebook, distortion = kmeans(whitened, 2)
+            k = codebook[ :, 0]
+            k = std*k
+
+            print( "k = ", k )
+            
+            s = np.array( list(data[1].values()) )*(100/max_cnt)
+            ax.scatter( data[0], data[1].keys(), s=s, label='data' )
+            ax.scatter( [data[0][0]]*len(k), k, s=300, label='k' )
         pass
 
         ax.xaxis.set_major_formatter( format_xaxis )
