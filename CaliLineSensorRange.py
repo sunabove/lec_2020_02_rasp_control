@@ -101,6 +101,8 @@ def service(debug=0) :
         ax.clear()
 
         # plot norm sensor data
+        ax.scatter( data[0], data[1] )
+        
         x = np.arange( len(sensors[0]))
         for i, s in enumerate( sensors ):
             rect = ax.bar( x + (i-2)/6, s, color=colors[i], width=1/6, label=f's{i}' )
