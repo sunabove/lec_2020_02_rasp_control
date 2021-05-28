@@ -2,7 +2,11 @@
 import matplotlib.pyplot as plt, numpy as np
 from scipy.cluster.vq import vq, kmeans, whiten
 
-features  = np.array( [[1], [2], [3], [4]] )
+#features  = np.array( [[1], [2], [3], [4]] )
+
+features = np.array( [ 1, 2, 3, 4 ] )
+features = features.reshape( (-1, 1) )
+#features = features.reshape( (len(features), 1) )
 
 whitened = whiten(features)
 
