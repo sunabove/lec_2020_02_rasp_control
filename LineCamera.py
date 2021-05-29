@@ -45,25 +45,23 @@ class LineCamera( LineTracker ) :
         h = len( image )
         w = len( image[0] )
 
-        target = image
-        # get ROI(Region Of Interest) image
-        
-        rm = roi_margin = min(h, w)*5//100
-        roi = target[ rm : h - rm, rm : w - rm ]
-        
         # Convert to grayscale = 0.114B + 0.587G + 0.299R
         # opencv image color order is Blue Green Red
-        target = roi
+        target = image
         gcf = gray_conv_factor = [0.114, 0.587, 0.299]
         gray = gcf[0]*target[ :, :, 0 ] + gcf[1]*target[ :, :, 1 ] + gcf[2]*target[ :, :, 2 ]
 
-        target = image
+        # get ROI(Region Of Interest) image
+        target = gray
+        rm = roi_margin = min(h, w)*5//100
+        roi = target[ rm : h - rm, rm : w - rm ]*1
         
-        target[ rm : h - rm, rm : w - rm , 0 ] = gray/3
-        target[ rm : h - rm, rm : w - rm , 1 ] = gray/3
-        target[ rm : h - rm, rm : w - rm , 2 ] = gray/3
-
-        target = image
+        # convert graycale to color
+        target = gray
+        target *= 0.2
+        target[ rm : h - rm, rm : w - rm ] = roi
+        
+        target = gray
         image = target.astype(np.uint8)
 
         txt = f"Mode: LineTrack"
