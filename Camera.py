@@ -132,7 +132,7 @@ class Camera :
 
         lineCamera = self.lineCamera
         if lineCamera :
-            lineCamera.robot_move_by_camera( image=image, success=success, tx=tx, ty=ty + th, th=th )
+            image = lineCamera.robot_move_by_camera( image=image, success=success, tx=tx, ty=ty + th, th=th )
         pass
         
         self.putTextLine( image, txt , tx, ty )

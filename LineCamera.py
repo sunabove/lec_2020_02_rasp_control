@@ -59,9 +59,20 @@ class LineCamera( LineTracker ) :
         h = len( image )
         w = len( image[0] )
 
+        # Eyes are most sensitive to green light, less sensitive to red light, and the least sensitive to blue light.
+        # Therefore, the three colors should have different weights in the distribution.
+        # Grayscale  = 0.299R + 0.587G + 0.114B
+
+        # opencv image order is BGR
+        gray = 0.299*image[:,:,2] + 0.587*image[:,:,1] + 0.114*image[:,:,0]
+
         rm = roi_margin = min(h, w)*5//100
 
-        roi = image[ rm : h - rm, rm : w - rm, : ]
+        roi = gray[ rm : h - rm, rm : w - rm ]
+
+        target = gray
+
+        image = target.astype(np.uint8)
 
         txt = f"Mode: LineTrack"
         
