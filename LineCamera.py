@@ -56,12 +56,16 @@ class LineCamera( LineTracker ) :
         rm = roi_margin = min(h, w)*5//100
         roi = target[ rm : h - rm, rm : w - rm ]*1
         
-        # convert graycale to color
+        # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
         target = gray
-        target *= 0.2
+        target *= 0.7 
         target[ rm : h - rm, rm : w - rm ] = roi
+
+        # convert grayscale(1 channel) to rgb color(3 channel)
+        gray_color = np.empty( [h, w, 3] )
+        gray_color[ :, :, 0 ] = gray_color[ :, :, 1 ] = gray_color[ :, :, 2 ] = gray/3
         
-        target = gray
+        target = gray_color
         image = target.astype(np.uint8)
 
         txt = f"Mode: LineTrack"
