@@ -285,15 +285,15 @@ def service() :
             funtions.shutdown(robot.buzzer)
         elif cmd == "obstacle_sensor" :
             robot.stop_service()
-            robot.service = ObstacleSensor( robot )
+            robot.service = ObstacleSensor( robot=robot )
             robot.service.start()
         elif cmd == "line_tracking" :
             robot.stop_service()
-            robot.service = LineTrackerPID( robot, buzzer = robot.buzzer )
+            robot.service = LineTrackerPID( robot=robot, buzzer = robot.buzzer )
             robot.service.start()
         elif cmd == "line_camera" :
             robot.stop_service()
-            robot.service = LineCamera( robot, buzzer = robot.buzzer )
+            robot.service = LineCamera( robot=robot, camera=robot.camera, buzzer = robot.buzzer )
             robot.service.start()
         pass
 

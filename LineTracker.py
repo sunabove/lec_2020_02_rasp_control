@@ -44,7 +44,7 @@ class LineTracker :
         log.info(inspect.currentframe().f_code.co_name)
 
         if 1 :
-            self.thread = threading.Thread(name='self.pulse_checker', target=self.robot_move )
+            self.thread = threading.Thread(name='self.pulse_checker', target=self.robot_move)
             self.thread.start()
         return
     pass 
