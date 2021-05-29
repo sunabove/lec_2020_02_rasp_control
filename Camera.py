@@ -157,8 +157,8 @@ class Camera :
         fg_color = (255,   0,   0) # text foreground color
 
         if image is not None and len( image.shape ) == 2 : #gray scale
-            fg_color = (0, 0, 0)
-            bg_color = (255, 255, 255 )
+            bg_color = (255, 255, 255) # white
+            fg_color = (0, 0, 0)  # black
         pass
 
         cv2.putText(image, txt, (x, y), font, fs, bg_color, ft + 2, cv2.LINE_AA)
