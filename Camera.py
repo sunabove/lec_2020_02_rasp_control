@@ -45,6 +45,7 @@ class Camera :
         self._thread = None
         
         self.video = None
+        self.lineCamera = None
     pass 
     
     def __del__(self):
@@ -124,12 +125,17 @@ class Camera :
 
             txt = f"No Camera [{self.frame_cnt}]"
         pass
-        
-        x = 10   # text x position
-        y = 20   # text y position
-        h = 20   # line height
 
-        self.putTextLine( image, txt , x, y )
+        tx = 10   # text x position
+        ty = 20   # text y position
+        th = 20   # line height
+
+        lineCamera = self.lineCamera
+        if lineCamera :
+            lineCamera.robot_move_by_camera( image=image, success=success, tx=tx, ty=ty + th, th=th )
+        pass
+        
+        self.putTextLine( image, txt , tx, ty )
 
         return image
     pass

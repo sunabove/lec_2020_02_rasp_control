@@ -1,11 +1,9 @@
 # -*- coding:utf-8 -*-
 
 import RPi.GPIO as GPIO, threading, signal, inspect, sys, logging as log
-import numpy as np
+import numpy as np, cv2
 from random import random
 from time import sleep, time, time_ns
-from gpiozero import Buzzer
-from LineSensor import LineSensor
 from LineTracker import LineTracker
 from Config import cfg
 
@@ -34,15 +32,40 @@ class LineCamera( LineTracker ) :
         super().stop()
     pass
 
-    def robot_move_by_camera(self, image) :
-        log.info(inspect.currentframe().f_code.co_name)
+    def putTextLine(self, image, txt, x, y ) :
+        # opencv 이미지에 텍스트를 그린다.
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        fs = 0.4  # font size(scale)
+        ft = 1    # font thickness 
 
-        debug = self.debug
+        bg_color = (255, 255, 255) # text background color
+        fg_color = (255,   0,   0) # text foreground color
+
+        cv2.putText(image, txt, (x, y), font, fs, bg_color, ft + 2, cv2.LINE_AA)
+        cv2.putText(image, txt, (x, y), font, fs, fg_color, ft    , cv2.LINE_AA) 
+    pass
+
+    def robot_move_by_camera(self, image, tx = 10, ty = 30, th = 20, success=True, debug=0) :
+        debug and log.info(inspect.currentframe().f_code.co_name)
 
         self._running = True 
 
         robot = self.robot 
-        buzzer = self.buzzer 
+        buzzer = self.buzzer
+        camera = self.camera 
+
+        # get ROI(Region Of Interest) image
+
+        h = len( image )
+        w = len( image[0] )
+
+        rm = roi_margin = min(h, w)*5//100
+
+        roi = image[ rm : h - rm, rm : w - rm, : ]
+
+        txt = f"Mode: LineTrack"
+        
+        self.putTextLine( image, txt, tx, ty )
 
         self._running = False
         self.thread = None
