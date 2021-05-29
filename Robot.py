@@ -192,7 +192,7 @@ app = None
 robot = None 
 
 def stop():
-    global robot 
+    global robot, app
     
     print( "", flush=True) 
 
@@ -221,8 +221,7 @@ def service() :
 
     GPIO.setwarnings(False)
 
-    global app 
-    global robot 
+    global app, robot 
 
     app = Flask(__name__, static_url_path='', static_folder='html', template_folder='html')
     app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -264,7 +263,7 @@ def service() :
         if cmd in ( "stop", "servo_stop", "stop_service" ):
             robot.stop_robot()
             robot.stop_servo()
-            robot.stop_service()
+            robot.stop_service() 
         elif cmd == "forward":
             robot.forward( speed )
         elif cmd == "backward":

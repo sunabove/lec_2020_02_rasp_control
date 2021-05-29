@@ -18,12 +18,10 @@
 			// -- tooltip init
 
 			// tab
-
 			$('#myTab a').on('click', function (e) {
 				e.preventDefault()
 				$(this).tab('show')
 			})
-
 			// -- tab1
 
             $(".motor").bind( "mousedown", function(){
@@ -71,7 +69,7 @@
 	<div class="container" class="text-center">
 		<div class="row">
 			<div class="col">
-				<img src="{{ url_for('video_feed') }}" width="640" height="480" usemap="#workmap" />
+				<img src="{{ url_for('video_feed') }}" width="640" height="480" usemap_false="#workmap" />
 				<map name="workmap">
 					<area id="forward"    class="motor" shape="poly" coords="0,0, 213,160, 426,160,  640,0" 		title="Foreward"  _href="#foreward" >
 					<area id="turn_left"  class="motor" shape="poly" coords="0,0, 213,160, 213,320,  0,640" 		title="Left"      _href="#left" >
@@ -87,24 +85,19 @@
 
 	<ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
 		<li class="nav-item">
-			<a class="nav-link active" id="motor-tab" data-toggle="tab" href="#motor" role="tab" aria-controls="motor"
-				aria-selected="true">Motor</a>
+			<a class="nav-link active_" id="motor-tab" data-toggle="tab" href="#motor" role="tab" aria-controls="motor" aria-selected="false">Motor</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="servo-tab" data-toggle="tab" href="#servo" role="tab" aria-controls="servo"
-				aria-selected="false">Servo</a>
+			<a class="nav-link" id="servo-tab" data-toggle="tab" href="#servo" role="tab" aria-controls="servo" aria-selected="false">Servo</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="obstacle-tab" data-toggle="tab" href="#obstacle" role="tab" aria-controls="obstacle"
-				aria-selected="false">장애물 회피</a>
+			<a class="nav-link" id="obstacle-tab" data-toggle="tab" href="#obstacle" role="tab" aria-controls="obstacle" aria-selected="false">장애물 회피</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="line_sensor-tab" data-toggle="tab" href="#line_sensor" role="tab" aria-controls="line_sensor"
-				aria-selected="false">라인 추적 (센서)</a>
+			<a class="nav-link" id="line_sensor-tab" data-toggle="tab" href="#line_sensor" role="tab" aria-controls="line_sensor" aria-selected="false">라인 추적 (센서)</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="line_camera-tab" data-toggle="tab" href="#line_camera" role="tab" aria-controls="line_camera"
-				aria-selected="false">라인 추적 (카메라)</a>
+			<a class="nav-link active" id="line_camera-tab" data-toggle="tab" href="#line_camera" role="tab" aria-controls="line_camera" aria-selected="true">라인 추적 (카메라)</a>
 		</li>
 		&nbsp;
 		<div class="btn-group">
@@ -122,7 +115,7 @@
 	<br/>
 				
 	<div class="tab-content " id="myTabContent">
-		<div class="tab-pane fade show active" id="motor" role="tabpanel" aria-labelledby="motor-tab">
+		<div class="tab-pane fade show_ active_" id="motor" role="tabpanel" aria-labelledby="motor-tab">
 			<!-- # motor -->
 			<center>
 				<table class="text-center" >
@@ -178,6 +171,7 @@
 			</center>
 			<!-- # motor -->
 		</div>
+
 		<div class="tab-pane fade" id="servo" role="tabpanel" aria-labelledby="servo-tab">
 			<!-- servo -->
 			<center>
@@ -225,6 +219,7 @@
 			</center>
 			<!-- # servo -->
 		</div>
+
 		<div class="tab-pane fade" id="obstacle" role="tabpanel" aria-labelledby="obstracle-tab">
 			<!-- obstacle -->
 			<button id="obstacle_sensor" class="menu btn btn-sm btn-success"> 장애물 회피 </button>
@@ -232,6 +227,7 @@
 			<button id='stop' class="menu btn btn-sm btn-danger">Stop</button> 
 			<!-- # obstacle -->
 		</div>
+
 		<div class="tab-pane fade" id="line_sensor" role="tabpanel" aria-labelledby="line_sensor-tab">
 			<!-- line sensor -->
 			<button id="line_tracking" class="menu btn btn-sm btn-success">라인 추적 (센서)</button>
@@ -239,7 +235,8 @@
 			<button id='stop' class="menu btn btn-sm btn-danger">Stop</button> 
 			<!-- # line sensor -->
 		</div>
-		<div class="tab-pane fade" id="line_camera" role="tabpanel" aria-labelledby="line_camera-tab">
+
+		<div class="tab-pane fade show active" id="line_camera" role="tabpanel" aria-labelledby="line_camera-tab">
 			<!-- line camera -->
 			<button id="line_camera" class="menu btn btn-sm btn-success">라인 추적 (카메라)</button>
 			&nbsp;

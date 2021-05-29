@@ -41,27 +41,29 @@ class LineCamera( LineTracker ) :
         buzzer = self.buzzer
         camera = self.camera 
 
-        # Convert to gray scale color
-        # Eyes are most sensitive to green light, less sensitive to red light, and the least sensitive to blue light.
-        # Therefore, the three colors should have different weights in the distribution.
-        # Grayscale  = 0.299R + 0.587G + 0.114B
-
-        # opencv image color order is Blue Green Red
-        gray = 0.299*image[:,:,2] + 0.587*image[:,:,1] + 0.114*image[:,:,0]
-
-        0 and log.info( f"max = {np.max(gray)}" )
-
-        # get ROI(Region Of Interest) image
-
+        # image height and width
         h = len( image )
         w = len( image[0] )
+
+        target = image
+        # get ROI(Region Of Interest) image
         
         rm = roi_margin = min(h, w)*5//100
+        roi = target[ rm : h - rm, rm : w - rm ]
+        
+        # Convert to grayscale = 0.114B + 0.587G + 0.299R
+        # opencv image color order is Blue Green Red
+        target = roi
+        gcf = gray_conv_factor = [0.114, 0.587, 0.299]
+        gray = gcf[0]*target[ :, :, 0 ] + gcf[1]*target[ :, :, 1 ] + gcf[2]*target[ :, :, 2 ]
 
-        roi = gray[ rm : h - rm, rm : w - rm ]
+        target = image
+        
+        target[ rm : h - rm, rm : w - rm , 0 ] = gray/3
+        target[ rm : h - rm, rm : w - rm , 1 ] = gray/3
+        target[ rm : h - rm, rm : w - rm , 2 ] = gray/3
 
-        target = gray
-
+        target = image
         image = target.astype(np.uint8)
 
         txt = f"Mode: LineTrack"
