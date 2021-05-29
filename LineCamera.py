@@ -32,19 +32,6 @@ class LineCamera( LineTracker ) :
         super().stop()
     pass
 
-    def putTextLine(self, image, txt, x, y ) :
-        # opencv 이미지에 텍스트를 그린다.
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        fs = 0.4  # font size(scale)
-        ft = 1    # font thickness 
-
-        bg_color = (255, 255, 255) # text background color
-        fg_color = (255,   0,   0) # text foreground color
-
-        cv2.putText(image, txt, (x, y), font, fs, bg_color, ft + 2, cv2.LINE_AA)
-        cv2.putText(image, txt, (x, y), font, fs, fg_color, ft    , cv2.LINE_AA) 
-    pass
-
     def robot_move_by_camera(self, image, tx = 10, ty = 30, th = 20, success=True, debug=0) :
         debug and log.info(inspect.currentframe().f_code.co_name)
 
@@ -76,7 +63,7 @@ class LineCamera( LineTracker ) :
 
         txt = f"Mode: LineTrack"
         
-        self.putTextLine( image, txt, tx, ty )
+        camera.putTextLine( image, txt, tx, ty )
 
         self._running = False
         self.thread = None

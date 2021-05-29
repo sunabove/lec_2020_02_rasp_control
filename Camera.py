@@ -156,9 +156,15 @@ class Camera :
         bg_color = (255, 255, 255) # text background color
         fg_color = (255,   0,   0) # text foreground color
 
+        if image and len( image.shape ) == 2 : #gray scale
+            bg_color = (0, 0, 0) # text background color
+            fg_color = (255, 255, 255 ) # text foreground color
+        pass
+
         cv2.putText(image, txt, (x, y), font, fs, bg_color, ft + 2, cv2.LINE_AA)
         cv2.putText(image, txt, (x, y), font, fs, fg_color, ft    , cv2.LINE_AA) 
-    pass
+    pass 
+    
 pass # -- Camera
 
 def generate_frame(camera): 
