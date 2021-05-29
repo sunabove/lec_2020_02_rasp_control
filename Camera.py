@@ -156,7 +156,7 @@ class Camera :
         bg_color = (255, 255, 255) # text background color
         fg_color = (255,   0,   0) # text foreground color
 
-        if image and len( image.shape ) == 2 : #gray scale
+        if 0 and image and len( image.shape ) == 2 : #gray scale
             bg_color = (0, 0, 0) # text background color
             fg_color = (255, 255, 255 ) # text foreground color
         pass
