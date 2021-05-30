@@ -57,28 +57,39 @@ class LineCamera( LineTracker ) :
         rm = roi_margin = min(h, w)*5//100
         roi = np.copy( image[ rm : h - rm, rm : w - rm ] )
 
+        # blur image to remove noise by using filter
         image = roi
-        kernel = np.ones((5, 5), np.float32)/25
-        blur = cv2.filter2D(image, -1, kernel)
-        
+        #kernel = np.ones((5, 5), np.float32)/25
+        #blur = cv2.filter2D(image, -1, kernel)
+        #blur = cv2.bilateralFilter(image.astype(np.uint8), 5, 80, 80)
+        blur = cv2.GaussianBlur(image, (5, 5), 0)
+
+        #threshhold
+        threshold = 65
+        thresh = np.where(blur > threshold, 255, 0)
+
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
         image = gray
         image[ rm : h - rm, rm : w - rm ] = 0
         image *= 0.7 
-        image[ rm : h - rm, rm : w - rm ] = blur
+        image[ rm : h - rm, rm : w - rm ] = thresh
 
         # convert grayscale(1 channel) to rgb color(3 channel)
+        gray_color = np.stack( [gray, gray, gray], axis=-1 )
+        '''
         gray_color = np.empty( [h, w, 3] )
-        gray_color[ :, :, 0 ] = gray_color[ :, :, 1 ] = gray_color[ :, :, 2 ] = gray/3
-
+        gray_color[ :, :, 0 ] = gray
+        gray_color[ :, :, 1 ] = gray
+        gray_color[ :, :, 2 ] = gray
+        '''
+        
         # draw roi area rectangle
         image = gray_color
         cv2.rectangle( image, (rm, rm), (w - rm, h - rm), color=(255, 0, 0), thickness=1)
         
-        image = gray_color
         image = image.astype(np.uint8)
 
-        txt = f"Mode: LineTrack"
+        txt = f"Mode: LineTrack 1"
         
         camera.putTextLine( image, txt, tx, ty )
 
