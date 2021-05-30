@@ -2,6 +2,7 @@
 
 import RPi.GPIO as GPIO, threading, signal, inspect, sys, logging as log
 import numpy as np, cv2
+from math import cos, sin
 from random import random
 from time import sleep, time, time_ns
 from LineTracker import LineTracker
@@ -53,16 +54,14 @@ class LineCamera( LineTracker ) :
         #gray =image[:,:,0]/3 + image[:,:,1]/3 + image[:,:,2]/3
 
         # get ROI(Region Of Interest) image
-        image = gray
         rm = roi_margin = min(h, w)*5//100
-        roi = np.copy( image[ rm : h - rm, rm : w - rm ] )
+        roi = np.copy( gray[ rm : h - rm, rm : w - rm ] )
 
         # blur image to remove noise by using filter
-        image = roi
         #kernel = np.ones((5, 5), np.float32)/25
         #blur = cv2.filter2D(image, -1, kernel)
         #blur = cv2.bilateralFilter(image.astype(np.uint8), 5, 80, 80)
-        blur = cv2.GaussianBlur(image, (5, 5), 0)
+        blur = cv2.GaussianBlur(roi, (5, 5), 0)
 
         #threshhold
         threshold = 50
@@ -71,6 +70,13 @@ class LineCamera( LineTracker ) :
         # edge
         edge = cv2.Canny(thresh.astype(np.uint8), 0, 255, None, 7)
 
+        # hough line
+        lines = None
+        #lines = cv2.HoughLines(edge, 1, np.pi / 180, 10, None, 0, 0)
+
+        line_cnt = len(lines) if lines is not None else 0 
+        log.info( f"lines: count = { line_cnt}" )
+    
         overlay = edge
 
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
@@ -94,6 +100,18 @@ class LineCamera( LineTracker ) :
         cv2.rectangle( image, (rm, rm), (w - rm, h - rm), color=(255, 0, 0), thickness=1)
         
         image = image.astype(np.uint8)
+
+        # draw hough lines
+        if line_cnt :
+            for line in lines:
+                rho = line[0][0] ; theta = line[0][1]
+                a = cos(theta) ;  b = sin(theta)
+                x0 = a * rho ; y0 = b * rho
+                pt1 = (int(x0 + 1000*(-b)), int(y0 + 1000*(a)))
+                pt2 = (int(x0 - 1000*(-b)), int(y0 - 1000*(a)))
+                cv2.line(image, pt1, pt2, (0,0,255), 3, cv2.LINE_AA)
+            pass
+        pass
 
         txt = f"Mode: LineTrack 2"
         
