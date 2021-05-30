@@ -49,19 +49,23 @@ class LineCamera( LineTracker ) :
 
         # Convert to grayscale = 0.114B + 0.587G + 0.299R
         # opencv image color order is Blue Green Red
-        #gray = 0.114*image[ :, :, 0 ] + 0.587*image[ :, :, 1 ] + 0.299*image[ :, :, 2 ]
-        gray =image[:,:,0]/3 + image[:,:,1]/3 + image[:,:,2]/3
+        gray = 0.114*image[ :, :, 0 ] + 0.587*image[ :, :, 1 ] + 0.299*image[ :, :, 2 ]
+        #gray =image[:,:,0]/3 + image[:,:,1]/3 + image[:,:,2]/3
 
         # get ROI(Region Of Interest) image
         image = gray
         rm = roi_margin = min(h, w)*5//100
         roi = np.copy( image[ rm : h - rm, rm : w - rm ] )
+
+        image = roi
+        kernel = np.ones((5, 5), np.float32)/25
+        blur = cv2.filter2D(image, -1, kernel)
         
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
         image = gray
         image[ rm : h - rm, rm : w - rm ] = 0
         image *= 0.7 
-        image[ rm : h - rm, rm : w - rm ] = roi
+        image[ rm : h - rm, rm : w - rm ] = blur
 
         # convert grayscale(1 channel) to rgb color(3 channel)
         gray_color = np.empty( [h, w, 3] )
