@@ -77,7 +77,7 @@ class LineCamera( LineTracker ) :
         lines = cv2.HoughLinesP(edge, 1, np.pi/180, 50, None, 10, 10)
 
         line_cnt = len(lines) if lines is not None else 0 
-        log.info( f"lines: count = { line_cnt}" )
+        0 and log.info( f"lines: count = { line_cnt}" )
     
         overlay = edge
 
@@ -105,9 +105,10 @@ class LineCamera( LineTracker ) :
 
         # draw hough lines
         if line_cnt :
+            drawing_area = image[ rm : h - rm, rm : w - rm ]
             for line in lines:
-               l = line[0]
-               cv2.line(image, (l[0], l[1]), (l[2], l[3]), (0,0,255), 3, cv2.LINE_AA)
+               l = line[0] 
+               cv2.line(drawing_area, (l[0], l[1]), (l[2], l[3]), (0, 255, 0), 2, cv2.LINE_AA)
             pass
         pass
 
