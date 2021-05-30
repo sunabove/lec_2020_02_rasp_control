@@ -48,8 +48,9 @@ class LineCamera( LineTracker ) :
         # Convert to grayscale = 0.114B + 0.587G + 0.299R
         # opencv image color order is Blue Green Red
         target = image
-        gcf = gray_conv_factor = [0.114, 0.587, 0.299]
-        gray = gcf[0]*target[ :, :, 0 ] + gcf[1]*target[ :, :, 1 ] + gcf[2]*target[ :, :, 2 ]
+        gray = 0.114*target[ :, :, 0 ] + 0.587*target[ :, :, 1 ] + 0.299*target[ :, :, 2 ]
+        #target = image*1.0
+        #gray = (target[ :, :, 0 ] + target[ :, :, 1 ] + target[ :, :, 2 ])/3
 
         # get ROI(Region Of Interest) image
         target = gray
@@ -58,12 +59,17 @@ class LineCamera( LineTracker ) :
         
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
         target = gray
+        target[ rm : h - rm, rm : w - rm ] = 0
         target *= 0.7 
         target[ rm : h - rm, rm : w - rm ] = roi
 
         # convert grayscale(1 channel) to rgb color(3 channel)
         gray_color = np.empty( [h, w, 3] )
         gray_color[ :, :, 0 ] = gray_color[ :, :, 1 ] = gray_color[ :, :, 2 ] = gray/3
+
+        # draw roi area rectangle
+        target = gray_color
+        cv2.rectangle( target, (rm, rm), (w - rm, h - rm), color=(255, 0, 0), thickness=1)
         
         target = gray_color
         image = target.astype(np.uint8)
