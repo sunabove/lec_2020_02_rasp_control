@@ -73,8 +73,8 @@ class LineCamera( LineTracker ) :
 
         # hough line
         lines = None
-        #lines = cv2.HoughLines(edge, 1, np.pi / 180, 250, None, 0, 0)
-        lines = cv2.HoughLinesP(edge, 1, np.pi / 180, 10, None, 10, 10)
+        #lines = cv2.HoughLines(edge, 1, np.pi/180, 50, None)
+        lines = cv2.HoughLinesP(edge, 1, np.pi/180, 50, None, 10, 10)
 
         line_cnt = len(lines) if lines is not None else 0 
         log.info( f"lines: count = { line_cnt}" )
@@ -106,12 +106,8 @@ class LineCamera( LineTracker ) :
         # draw hough lines
         if line_cnt :
             for line in lines:
-                rho, theta = line[0][0], line[0][1]
-                a, b = np.cos(theta), np.sin(theta)
-                x0 = a * rho ; y0 = b * rho
-                pt1 = (int(x0 + w*(-b)), int(y0 + h*(a)))
-                pt2 = (int(x0 - w*(-b)), int(y0 - h*(a)))
-                cv2.line(image, pt1, pt2, (0,0,255), 3, cv2.LINE_AA)
+               l = line[0]
+               cv2.line(image, (l[0], l[1]), (l[2], l[3]), (0,0,255), 3, cv2.LINE_AA)
             pass
         pass
 
