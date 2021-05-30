@@ -65,17 +65,23 @@ class LineCamera( LineTracker ) :
         blur = cv2.GaussianBlur(image, (5, 5), 0)
 
         #threshhold
-        threshold = 65
+        threshold = 50
         thresh = np.where(blur > threshold, 255, 0)
+        
+        # edge
+        edge = cv2.Canny(thresh.astype(np.uint8), 0, 255, None, 7)
+
+        overlay = edge
 
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
         image = gray
         image[ rm : h - rm, rm : w - rm ] = 0
         image *= 0.7 
-        image[ rm : h - rm, rm : w - rm ] = thresh
+        image[ rm : h - rm, rm : w - rm ] = overlay
 
         # convert grayscale(1 channel) to rgb color(3 channel)
         gray_color = np.stack( [gray, gray, gray], axis=-1 )
+        #gray_color
         '''
         gray_color = np.empty( [h, w, 3] )
         gray_color[ :, :, 0 ] = gray
@@ -89,7 +95,7 @@ class LineCamera( LineTracker ) :
         
         image = image.astype(np.uint8)
 
-        txt = f"Mode: LineTrack 1"
+        txt = f"Mode: LineTrack 2"
         
         camera.putTextLine( image, txt, tx, ty )
 
