@@ -39,7 +39,9 @@ class LineCamera( LineTracker ) :
 
         robot = self.robot 
         buzzer = self.buzzer
-        camera = self.camera 
+        camera = self.camera
+
+        image_org = image
 
         # image height and width
         h = len( image )
@@ -47,32 +49,30 @@ class LineCamera( LineTracker ) :
 
         # Convert to grayscale = 0.114B + 0.587G + 0.299R
         # opencv image color order is Blue Green Red
-        target = image
-        gray = 0.114*target[ :, :, 0 ] + 0.587*target[ :, :, 1 ] + 0.299*target[ :, :, 2 ]
-        #target = image*1.0
-        #gray = (target[ :, :, 0 ] + target[ :, :, 1 ] + target[ :, :, 2 ])/3
+        #gray = 0.114*image[ :, :, 0 ] + 0.587*image[ :, :, 1 ] + 0.299*image[ :, :, 2 ]
+        gray =image[:,:,0]/3 + image[:,:,1]/3 + image[:,:,2]/3
 
         # get ROI(Region Of Interest) image
-        target = gray
+        image = gray
         rm = roi_margin = min(h, w)*5//100
-        roi = target[ rm : h - rm, rm : w - rm ]*1
+        roi = np.copy( image[ rm : h - rm, rm : w - rm ] )
         
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
-        target = gray
-        target[ rm : h - rm, rm : w - rm ] = 0
-        target *= 0.7 
-        target[ rm : h - rm, rm : w - rm ] = roi
+        image = gray
+        image[ rm : h - rm, rm : w - rm ] = 0
+        image *= 0.7 
+        image[ rm : h - rm, rm : w - rm ] = roi
 
         # convert grayscale(1 channel) to rgb color(3 channel)
         gray_color = np.empty( [h, w, 3] )
         gray_color[ :, :, 0 ] = gray_color[ :, :, 1 ] = gray_color[ :, :, 2 ] = gray/3
 
         # draw roi area rectangle
-        target = gray_color
-        cv2.rectangle( target, (rm, rm), (w - rm, h - rm), color=(255, 0, 0), thickness=1)
+        image = gray_color
+        cv2.rectangle( image, (rm, rm), (w - rm, h - rm), color=(255, 0, 0), thickness=1)
         
-        target = gray_color
-        image = target.astype(np.uint8)
+        image = gray_color
+        image = image.astype(np.uint8)
 
         txt = f"Mode: LineTrack"
         
