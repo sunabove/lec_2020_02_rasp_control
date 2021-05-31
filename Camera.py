@@ -40,7 +40,7 @@ class Camera :
         self.motor = motor
         self.output = StreamingOutput()
         # 전체 프레임 카운트 
-        self.frame_cnt = 0 
+        self.frame_cnt_sent = 0 
         self._running = False
         self._thread = None
         
@@ -104,10 +104,10 @@ class Camera :
     def get_image(self):
         success, image = self.video.read()
 
-        self.frame_cnt += 1 
+        self.frame_cnt_sent += 1 
         motor = self.motor 
 
-        txt = f"Alphabot Control [{self.frame_cnt}]"
+        txt = f"Alphabot Control"
 
         if motor :
             txt += f" {motor.mode.upper()}"
@@ -123,8 +123,10 @@ class Camera :
             # black blank image
             image = np.zeros(shape=[h, w, 3], dtype=np.uint8) 
 
-            txt = f"No Camera [{self.frame_cnt}]"
+            txt += f" No Camera"
         pass
+
+        txt += f" [{self.frame_cnt_sent}]"
 
         tx = 10   # text x position
         ty = 20   # text y position

@@ -65,7 +65,7 @@ class LineCamera( LineTracker ) :
         blur = cv2.GaussianBlur(roi, (5, 5), 0)
 
         #threshhold
-        threshold = 50
+        threshold = 100
         thresh = np.where(blur > threshold, 255, 0)
         
         # edge
@@ -80,6 +80,7 @@ class LineCamera( LineTracker ) :
         0 and log.info( f"lines: count = { line_cnt}" )
     
         overlay = edge
+        overlay = thresh
 
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
         image = gray
