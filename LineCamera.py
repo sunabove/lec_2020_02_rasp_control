@@ -66,20 +66,25 @@ class LineCamera( LineTracker ) :
 
         #threshhold
         threshold = 100
-        thresh = np.where(blur > threshold, 255, 0)
-        
-        # edge
-        edge = cv2.Canny(thresh.astype(np.uint8), 0, 255, None, 7)
+        thresh = np.where(blur > threshold, 255, 0).astype(np.uint8)
 
-        # hough line
+        contours = None
         lines = None
-        #lines = cv2.HoughLines(edge, 1, np.pi/180, 50, None)
-        lines = cv2.HoughLinesP(edge, 1, np.pi/180, 50, None, 10, 10)
+
+        useContour = True
+
+        if useContour :
+            contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        else :
+            # edge
+            edge = cv2.Canny(thresh, 0, 255, None, 7)
+            # hough line
+            lines = cv2.HoughLinesP(edge, 1, np.pi/180, 50, None, 10, 10)
+        pass
 
         line_cnt = len(lines) if lines is not None else 0 
         0 and log.info( f"lines: count = { line_cnt}" )
     
-        overlay = edge
         overlay = thresh
 
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
@@ -104,12 +109,18 @@ class LineCamera( LineTracker ) :
         
         image = image.astype(np.uint8)
 
+        if contours is not None : 
+            contour_color = (0, 255, 0)
+            cv2.drawContours(image, contours, -1, contour_color, 2)
+        pass
+
         # draw hough lines
-        if line_cnt :
+        if lines is not None :
             drawing_area = image[ rm : h - rm, rm : w - rm ]
+            line_color = (0, 255, 0)
             for line in lines:
                l = line[0] 
-               cv2.line(drawing_area, (l[0], l[1]), (l[2], l[3]), (0, 255, 0), 2, cv2.LINE_AA)
+               cv2.line(drawing_area, (l[0], l[1]), (l[2], l[3]), line_color, 2, cv2.LINE_AA)
             pass
         pass
 
