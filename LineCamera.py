@@ -74,7 +74,7 @@ class LineCamera( LineTracker ) :
         useContour = True
 
         if useContour :
-            contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, hierarchy = cv2.findContours(255-thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         else :
             # edge
             edge = cv2.Canny(thresh, 0, 255, None, 7)
@@ -109,18 +109,19 @@ class LineCamera( LineTracker ) :
         
         image = image.astype(np.uint8)
 
-        if contours is not None : 
-            contour_color = (0, 255, 0)
-            cv2.drawContours(image, contours, -1, contour_color, 2)
+        image_draw = image[ rm : h - rm, rm : w - rm ]
+
+        line_color = (0, 255, 0)
+        line_width = 2
+        if contours is not None :
+            cv2.drawContours(image_draw, contours, -1, line_color, line_width, cv2.LINE_AA)
         pass
 
         # draw hough lines
         if lines is not None :
-            drawing_area = image[ rm : h - rm, rm : w - rm ]
-            line_color = (0, 255, 0)
             for line in lines:
                l = line[0] 
-               cv2.line(drawing_area, (l[0], l[1]), (l[2], l[3]), line_color, 2, cv2.LINE_AA)
+               cv2.line(image_draw, (l[0], l[1]), (l[2], l[3]), line_color, line_width, cv2.LINE_AA)
             pass
         pass
 
