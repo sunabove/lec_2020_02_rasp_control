@@ -54,19 +54,18 @@ class LineCamera( LineTracker ) :
         gray = 0.114*image[ :, :, 0 ] + 0.587*image[ :, :, 1 ] + 0.299*image[ :, :, 2 ]
         #gray =image[:,:,0]/3 + image[:,:,1]/3 + image[:,:,2]/3
 
-        # get ROI(Region Of Interest) image
+        # get ROI(Region Of Interest) image after reversing the signal
         rm = roi_margin = min(h, w)*5//100
-        roi = np.copy( gray[ rm : h - rm, rm : w - rm ] )
+        roi = np.copy( gray[ rm : h - rm, rm : w - rm ] ).astype(np.uint8)
 
         # blur image to remove noise by using filter
-        #kernel = np.ones((5, 5), np.float32)/25
-        #blur = cv2.filter2D(image, -1, kernel)
-        #blur = cv2.bilateralFilter(image.astype(np.uint8), 5, 80, 80)
+        #blur = cv2.filter2D(roi, -1, np.ones((5, 5), np.float32)/25)
+        #blur = cv2.bilateralFilter(roi, 5, 80, 80)
         blur = cv2.GaussianBlur(roi, (5, 5), 0)
 
         #threshhold
-        threshold = 100
-        thresh = np.where(blur > threshold, 255, 0).astype(np.uint8)
+        threshold = 100 #50 #100
+        thresh = np.where(blur < threshold, 255, 0).astype(np.uint8)
 
         contours = None
         lines = None
@@ -74,7 +73,7 @@ class LineCamera( LineTracker ) :
         useContour = True
 
         if useContour :
-            contours, hierarchy = cv2.findContours(255-thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         else :
             # edge
             edge = cv2.Canny(thresh, 0, 255, None, 7)
@@ -85,7 +84,8 @@ class LineCamera( LineTracker ) :
         line_cnt = len(lines) if lines is not None else 0 
         0 and log.info( f"lines: count = { line_cnt}" )
     
-        overlay = thresh
+        overlay = (255 - thresh)
+        #overlay = blur
 
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
         image = gray
