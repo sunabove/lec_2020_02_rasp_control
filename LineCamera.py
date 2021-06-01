@@ -90,7 +90,7 @@ class LineCamera( LineTracker ) :
     
         #overlay = (255 - thresh)
         overlay = blur
-        overlay = thresh
+        #overlay = thresh
 
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
         image = gray
