@@ -57,7 +57,8 @@ class LineCamera( LineTracker ) :
         roi = np.copy( gray[ rm : h - rm, rm : w - rm ] ).astype(np.uint8)
 
         # 필터를 이용한 노이즈 제거
-        blur = cv.bilateralFilter(roi, 5, 80, 80)
+        blur = roi
+        blur = cv.bilateralFilter(blur, 5, 80, 80)
         blur = cv.Laplacian(blur, cv.CV_16S, ksize=5)
         #blur = cv.filter2D(roi, -1, np.ones((5, 5), np.float32)/25)
         #blur = cv.GaussianBlur(roi, (5, 5), 0)
@@ -119,7 +120,7 @@ class LineCamera( LineTracker ) :
         line_color = (0, 255, 0)
         line_width = 2
         # 등고선 그리기
-        draw_contour = True 
+        draw_contour = 0 
         if draw_contour and contours is not None :
             cv.drawContours(image_draw, contours, -1, line_color, line_width, cv.LINE_AA)
         pass
