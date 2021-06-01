@@ -55,7 +55,7 @@ class Camera :
 
     def start_recording(self) :
         self.video = cv2.VideoCapture(-1)
-        self.video.set(cv2.CAP_PROP_FPS, 24)
+        self.video.set(cv2.CAP_PROP_FPS, 10)
         self.video.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc(*'X264'))
 
         self._thread = threading.Thread(target=self._start_recording_impl, args=[] )
