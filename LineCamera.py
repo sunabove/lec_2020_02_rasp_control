@@ -36,8 +36,6 @@ class LineCamera( LineTracker ) :
     def robot_move_by_camera(self, image, tx = 10, ty = 30, th = 20, success=True, debug=0) :
         debug and log.info(inspect.currentframe().f_code.co_name)
 
-        self._running = True 
-
         robot = self.robot 
         buzzer = self.buzzer
         camera = self.camera
@@ -113,11 +111,12 @@ class LineCamera( LineTracker ) :
 
         line_color = (0, 255, 0)
         line_width = 2
+        # 등고선 그리기
         if contours is not None :
             cv2.drawContours(image_draw, contours, -1, line_color, line_width, cv2.LINE_AA)
         pass
 
-        # draw hough lines
+        # 허프 라인 그리기
         if lines is not None :
             for line in lines:
                l = line[0] 
@@ -128,9 +127,6 @@ class LineCamera( LineTracker ) :
         txt = f"Mode: LineTrack 2"
         
         camera.putTextLine( image, txt, tx, ty )
-
-        self._running = False
-        self.thread = None
 
         return image
     pass  # -- robot_move
