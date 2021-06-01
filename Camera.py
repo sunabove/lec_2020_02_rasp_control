@@ -1,7 +1,7 @@
 #coding: utf-8
 
 import cv2, numpy as np, io, threading, inspect
-from time import sleep
+from time import time, sleep
 from threading import Condition
 
 import logging as log
@@ -39,8 +39,9 @@ class Camera :
     def __init__(self, motor=None):
         self.motor = motor
         self.output = StreamingOutput()
-        # 전체 프레임 카운트 
+        # 전송 프레임 카운트 
         self.frame_cnt_sent = 0 
+        self.fps_data = []
         self._running = False
         self._thread = None
         
@@ -102,12 +103,41 @@ class Camera :
     pass
 
     def get_image(self):
+        motor = self.motor
+        self.frame_cnt_sent += 1 
+        fps_data = self.fps_data
+
         success, image = self.video.read()
 
-        self.frame_cnt_sent += 1 
-        motor = self.motor 
+        now = time()
+
+        if len( fps_data ) > 0 and fps_data[0][0] - now > 2 :
+            fps_data.pop( 0 )
+        pass
+
+        if len( fps_data ) == 0 :
+            fps_data.append( [now, 1] )
+        elif len( fps_data ) == 1 and fps_data[0][0] - now > 1 :
+            fps_data[0][1] += 1
+            fps_data.append( [now, 1] )
+        else :
+            fps_data[0][1] += 1
+            fps_data[1][1] += 1
+        pass
+
+        fps = 0 
+        if len( fps_data ) > 0 :
+            elapsed = fps_data[0][0] - now 
+            if elapsed > 0 :
+                fps = int( fps_data[0][0]/elapsed )
+            pass
+        pass
 
         txt = f"Alphabot Control"
+
+        if fps :
+            txt += f" : FPS = {fps}"
+        pass
 
         if motor :
             txt += f" {motor.mode.upper()}"
