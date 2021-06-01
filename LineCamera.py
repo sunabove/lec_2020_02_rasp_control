@@ -49,16 +49,16 @@ class LineCamera( LineTracker ) :
         #h = len( image )
         #w = len( image[0] )
 
-        # Convert to grayscale = 0.114B + 0.587G + 0.299R
+        # 회색조 변환 , 공식 grayscale = 0.114B + 0.587G + 0.299R
         # opencv image color order is Blue Green Red
         gray = 0.114*image[ :, :, 0 ] + 0.587*image[ :, :, 1 ] + 0.299*image[ :, :, 2 ]
         #gray =image[:,:,0]/3 + image[:,:,1]/3 + image[:,:,2]/3
 
-        # get ROI(Region Of Interest) image after reversing the signal
+        # 관심영역(ROI, Region Of Interest) 추룰
         rm = roi_margin = min(h, w)*5//100
         roi = np.copy( gray[ rm : h - rm, rm : w - rm ] ).astype(np.uint8)
 
-        # blur image to remove noise by using filter
+        # 필터를 이용한 노이즈 제거
         #blur = cv2.filter2D(roi, -1, np.ones((5, 5), np.float32)/25)
         #blur = cv2.bilateralFilter(roi, 5, 80, 80)
         blur = cv2.GaussianBlur(roi, (5, 5), 0)
@@ -73,16 +73,16 @@ class LineCamera( LineTracker ) :
         useContour = True
 
         if useContour :
+            # 등고선 추출
             contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         else :
-            # edge
+            # 엣지 추출
             edge = cv2.Canny(thresh, 0, 255, None, 7)
-            # hough line
+            # 라인 추출
             lines = cv2.HoughLinesP(edge, 1, np.pi/180, 50, None, 10, 10)
         pass
 
-        line_cnt = len(lines) if lines is not None else 0 
-        0 and log.info( f"lines: count = { line_cnt}" )
+        line_cnt = len(lines) if lines is not None else 0
     
         overlay = (255 - thresh)
         #overlay = blur
