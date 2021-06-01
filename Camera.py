@@ -131,14 +131,14 @@ class Camera :
         if len( fps_data ) > 0 :
             elapsed = now - fps_data[0][0]
             if elapsed > 0 :
-                fps = int( fps_data[0][0]/elapsed )
+                fps = int( fps_data[0][1]/elapsed )
             pass
         pass
 
         txt = f"Alphabot Control"
 
         if fps :
-            txt += f" : FPS = {fps}"
+            txt += f" : FPS = {fps},"
         pass
 
         if motor :
