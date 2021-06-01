@@ -62,7 +62,7 @@ class LineCamera( LineTracker ) :
         blur = cv2.GaussianBlur(roi, (5, 5), 0)
 
         #threshhold
-        threshold = 100 #50 #100
+        threshold = 50 #50 #100
         thresh = np.where(blur < threshold, 255, 0).astype(np.uint8)
 
         contours = None
