@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 
 import RPi.GPIO as GPIO, threading, signal, inspect, sys, logging as log
-import numpy as np, cv2
+import numpy as np, cv2 as cv
 from math import cos, sin
 from random import random
 from time import sleep, time, time_ns
@@ -57,12 +57,12 @@ class LineCamera( LineTracker ) :
         roi = np.copy( gray[ rm : h - rm, rm : w - rm ] ).astype(np.uint8)
 
         # 필터를 이용한 노이즈 제거
-        #blur = cv2.filter2D(roi, -1, np.ones((5, 5), np.float32)/25)
-        #blur = cv2.bilateralFilter(roi, 5, 80, 80)
-        blur = cv2.GaussianBlur(roi, (5, 5), 0)
+        #blur = cv.filter2D(roi, -1, np.ones((5, 5), np.float32)/25)
+        #blur = cv.bilateralFilter(roi, 5, 80, 80)
+        blur = cv.GaussianBlur(roi, (5, 5), 0)
 
         #threshhold
-        threshold = 50 #50 #100
+        threshold = 100 #50 #100
         thresh = np.where(blur < threshold, 255, 0).astype(np.uint8)
 
         contours = None
@@ -72,12 +72,12 @@ class LineCamera( LineTracker ) :
 
         if useContour :
             # 등고선 추출
-            contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, hierarchy = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
         else :
             # 엣지 추출
-            edge = cv2.Canny(thresh, 0, 255, None, 7)
+            edge = cv.Canny(thresh, 0, 255, None, 7)
             # 라인 추출
-            lines = cv2.HoughLinesP(edge, 1, np.pi/180, 50, None, 10, 10)
+            lines = cv.HoughLinesP(edge, 1, np.pi/180, 50, None, 10, 10)
         pass
 
         line_cnt = len(lines) if lines is not None else 0
@@ -103,7 +103,7 @@ class LineCamera( LineTracker ) :
         
         # draw roi area rectangle
         image = gray_color
-        cv2.rectangle( image, (rm, rm), (w - rm, h - rm), color=(255, 0, 0), thickness=1)
+        cv.rectangle( image, (rm, rm), (w - rm, h - rm), color=(255, 0, 0), thickness=1)
         
         image = image.astype(np.uint8)
 
@@ -113,14 +113,14 @@ class LineCamera( LineTracker ) :
         line_width = 2
         # 등고선 그리기
         if contours is not None :
-            cv2.drawContours(image_draw, contours, -1, line_color, line_width, cv2.LINE_AA)
+            cv.drawContours(image_draw, contours, -1, line_color, line_width, cv.LINE_AA)
         pass
 
         # 허프 라인 그리기
         if lines is not None :
             for line in lines:
                l = line[0] 
-               cv2.line(image_draw, (l[0], l[1]), (l[2], l[3]), line_color, line_width, cv2.LINE_AA)
+               cv.line(image_draw, (l[0], l[1]), (l[2], l[3]), line_color, line_width, cv.LINE_AA)
             pass
         pass
 
