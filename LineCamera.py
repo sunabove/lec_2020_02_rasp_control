@@ -58,11 +58,11 @@ class LineCamera( LineTracker ) :
 
         # 필터를 이용한 노이즈 제거
         #blur = cv.filter2D(roi, -1, np.ones((5, 5), np.float32)/25)
-        #blur = cv.bilateralFilter(roi, 5, 80, 80)
-        blur = cv.GaussianBlur(roi, (5, 5), 0)
-
+        #blur = cv.GaussianBlur(roi, (5, 5), 0)
+        blur = cv.bilateralFilter(roi, 5, 80, 80)
+        
         #threshhold
-        threshold = 100 #50 #100
+        threshold = 75 #50 #100
         thresh = np.where(blur < threshold, 255, 0).astype(np.uint8)
 
         contours = None
@@ -83,7 +83,7 @@ class LineCamera( LineTracker ) :
         line_cnt = len(lines) if lines is not None else 0
     
         overlay = (255 - thresh)
-        #overlay = blur
+        overlay = blur
 
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
         image = gray
