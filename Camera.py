@@ -122,12 +122,14 @@ class Camera :
             fps_data.append( [now, 1] )
         else :
             fps_data[0][1] += 1
-            fps_data[1][1] += 1
+            if len( fps_data ) > 1 : 
+                fps_data[1][1] += 1
+            pass
         pass
 
         fps = 0 
         if len( fps_data ) > 0 :
-            elapsed = fps_data[0][0] - now 
+            elapsed = now - fps_data[0][0]
             if elapsed > 0 :
                 fps = int( fps_data[0][0]/elapsed )
             pass
@@ -144,7 +146,7 @@ class Camera :
         pass
         
         if not self._running : 
-            txt = f"Camera Stopped"
+            txt += f" Camera Stopped"
         pass
 
         if not success or image is None :
