@@ -54,11 +54,11 @@ class LineCamera( LineTracker ) :
 
         # 관심영역(ROI, Region Of Interest) 추룰
         rm = roi_margin = min(h, w)*5//100
-        roi = np.copy( gray[ rm : h - rm, rm : w - rm ] ).astype(np.uint8)
+        roi = np.copy( gray[ rm : h - rm, rm : w - rm ] )
 
         # 필터를 이용한 노이즈 제거
         blur = roi
-        blur = cv.bilateralFilter(blur, 5, 80, 80)
+        blur = cv.bilateralFilter(blur.astype(np.uint8), 5, 80, 80)
         blur = cv.Laplacian(blur, cv.CV_16S, ksize=5)
         #blur = cv.filter2D(roi, -1, np.ones((5, 5), np.float32)/25)
         #blur = cv.GaussianBlur(roi, (5, 5), 0)
@@ -66,7 +66,7 @@ class LineCamera( LineTracker ) :
         
         #threshhold
         threshold = 75 #50 #100
-        thresh = np.where(blur > 80, 255, 0).astype(np.uint8)
+        thresh = np.where(blur > 80, 255, 0)
         #thresh = np.where(blur < threshold, 255, 0).astype(np.uint8)
         #thresh = cv.adaptiveThreshold(thresh,255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY,11,2)
         #thresh = cv.filter2D(thresh, -1, np.ones((5, 5), np.float32)/25)
@@ -79,7 +79,7 @@ class LineCamera( LineTracker ) :
 
         if useContour :
             # 등고선 추출
-            contours, hierarchy = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+            contours, hierarchy = cv.findContours(thresh.astype(np.uint8), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
         else :
             # 엣지 추출
             edge = cv.Canny(thresh, 0, 255, None, 7)
