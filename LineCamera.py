@@ -91,9 +91,9 @@ class LineCamera( LineTracker ) :
 
         line_cnt = len(lines) if lines is not None else 0
     
-        #overlay = (255 - thresh)
+        overlay = (255 - thresh)
         #overlay = blur
-        overlay = thresh
+        #overlay = thresh
 
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
         image = gray
@@ -122,7 +122,7 @@ class LineCamera( LineTracker ) :
         line_color = (0, 255, 0)
         line_width = 2
         # 등고선 그리기
-        draw_contour = 0 
+        draw_contour = 1 
         if draw_contour and contours is not None :
             cv.drawContours(image_draw, contours, -1, line_color, line_width, cv.LINE_AA)
         pass
