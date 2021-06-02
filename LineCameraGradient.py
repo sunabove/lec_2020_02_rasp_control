@@ -60,16 +60,16 @@ class LineCamera( LineTracker ) :
         blur = roi
         #blur = cv.bilateralFilter(blur.astype(np.uint8), 5, 80, 80)
         blur = cv.GaussianBlur(blur, (5, 5), 0)
-        #blur = cv.Laplacian(blur, cv.CV_16S, ksize=5)
-        #blur = cv.morphologyEx(blur, cv.MORPH_CLOSE, np.ones((9, 9), np.uint8), iterations=1)
+        blur = cv.Laplacian(blur, cv.CV_16S, ksize=5)
+        blur = cv.morphologyEx(blur, cv.MORPH_CLOSE, np.ones((9, 9), np.uint8), iterations=1)
         #blur = cv.morphologyEx(blur, cv.MORPH_OPEN, np.ones((5, 5), np.uint8), iterations=1)
         #blur = cv.filter2D(roi, -1, np.ones((5, 5), np.float32)/25)
         #blur = cv.filter2D(blur, -1, np.ones((21, 21), np.float32)/(21*21))
         
         #threshhold
-        threshold = 100 #110 #75 #50 #100
-        thresh = np.where(blur < threshold, 255, 0) 
-        #thresh = np.where(blur > threshold, 255, 0) #110
+        threshold = 110 #75 #50 #100
+        thresh = np.where(blur > threshold, 255, 0)
+        #thresh = np.where(blur < threshold, 255, 0).astype(np.uint8)
         #thresh = cv.adaptiveThreshold(blur.astype(np.uint8),255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY,11,2)
         #thresh = cv.filter2D(thresh, -1, np.ones((5, 5), np.float32)/25)
         #thresh = cv.adaptiveThreshold(blur.astype(np.uint8),255,cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 0)
@@ -122,7 +122,7 @@ class LineCamera( LineTracker ) :
         line_color = (0, 255, 0)
         line_width = 2
         # 등고선 그리기
-        draw_contour = 0 
+        draw_contour = 1 
         if draw_contour and contours is not None :
             cv.drawContours(image_draw, contours, -1, line_color, line_width, cv.LINE_AA)
         pass
@@ -135,7 +135,7 @@ class LineCamera( LineTracker ) :
             pass
         pass
 
-        txt = f"Mode: LineTrack 3"
+        txt = f"Mode: LineTrack 2"
         
         camera.putTextLine( image, txt, tx, ty )
 
