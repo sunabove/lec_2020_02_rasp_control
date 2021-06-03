@@ -158,7 +158,15 @@ class Camera :
             txt += f" No Camera"
         pass
 
-        txt += f" [{self.frame_cnt_sent}]"
+        txt = f"[{self.frame_cnt_sent:6}] {txt}"
+
+        motor = self.motor
+        if motor is not None :
+            sl = motor.speed_left()
+            sr = motor.speed_right()
+            sm = motor.speed_min()
+            txt += f" Speed L: {sl} R: {sr} Min: {sm}"
+        pass
 
         tx = 10   # text x position
         ty = 20   # text y position
