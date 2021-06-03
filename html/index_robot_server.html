@@ -45,12 +45,16 @@
             });
 
 			$('input[type=range]').click( function(){
-				var id = $(this).attr( 'id' )
+				var id = this.id
 				$('#' + id + '_desc').html( $(this).val() )
             });
 
-			$("#speed").click( function(){
-                $.post("/cmd",{ cmd: 'min_spped', val: $(this).val() }, function(data,status){
+			$(".cmd").click( function(){
+				var val = $( this ).attr( 'val' )
+				if( val == null || val == '' ) { 
+					val = $(this).val();
+				}
+                $.post("/cmd",{ cmd: this.id, val: val }, function(data,status){
                 });
             });
         });
@@ -163,8 +167,8 @@
 					<tr>
 						<td colspan="100%">
 							<br/>
-							<h6>Speed : <span id="speed_desc"> {{ min_speed }} </span></h6>
-							<input id="speed" type="range" class="form-label" min="5" max="70" value="{{ min_speed }}" style="margin:-10px; width:100%; "  >
+							<h6>Speed : <span id="min_speed_desc"> {{ min_speed }} </span></h6>
+							<input id="min_speed" type="range" class="cmd form-label" min="5" max="70" value="{{ min_speed }}" style="margin:-10px; width:100%; "  >
 						</td>
 					</tr>
 				</tfoot>
