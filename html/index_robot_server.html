@@ -35,12 +35,12 @@
             }); 
 
 			$("button.servo").bind( "mousedown", function(){
-                $.post("/cmd",{ cmd: this.id },function(data,status){
+                $.post("/cmd",{ cmd: this.id }, function(data,status){
                 });
             });
 
 			$(".menu").click( function(){
-                $.post("/cmd",{ cmd: this.id },function(data,status){
+                $.post("/cmd",{ cmd: this.id }, function(data,status){
                 });
             });
 
@@ -48,7 +48,12 @@
 				$('#speed_desc').html( $("#speed").val() )
 			}
 
-			$( "#speed" ).change( show_speed )
+			$("#speed").click( function(){
+				show_speed();
+
+                $.post("/cmd",{ cmd: 'min_spped', val: $(this).val() }, function(data,status){
+                });
+            });
 
 			show_speed();
         });
@@ -163,7 +168,7 @@
 							<td colspan="100%">
 								<br/>
 								<h6>Speed : <span id="speed_desc">50</span></h6>
-								<input id="speed" type="range" class="form-label" min="5" max="80", value="15" style="margin:-10px; width:100%; "  >
+								<input id="speed" type="range" class="form-label" min="5" max="70", value="{{ min_speed }}" style="margin:-10px; width:100%; "  >
 							</td>
 						</tr>
 					</tfoot>

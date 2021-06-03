@@ -11,15 +11,14 @@ log.basicConfig(
 
 class Motor:
 
-    min_speed = 10
-
     def __init__(self, ain1=12, ain2=13, ena=6, bin1=20, bin2=21, enb=26, debug=False):
         self.debug = debug
 
+        self.min_speed = 10
+        
         self.AIN1 = ain1; self.AIN2 = ain2; self.ENA = ena
         self.BIN1 = bin1; self.BIN2 = bin2; self.ENB = enb
         
-        GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         for port in [ ain1, ain2, ena, bin1, bin2, enb ] : 
             GPIO.setup(port,GPIO.OUT)
@@ -120,7 +119,7 @@ class Motor:
         pass
 
         self.move( left, right )
-    pass
+    pass # -- forward
     
     def move(self, left = None, right=None):
         # self.debug and log.info(inspect.currentframe().f_code.co_name)

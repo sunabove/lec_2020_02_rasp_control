@@ -238,7 +238,9 @@ def service() :
     @app.route( '/index.html' )
     @app.route( '/index.htm' )
     def index(): 
-        return render_template('index_robot_server.html')
+        motor = robot.motor
+        min_speed = motor.min_speed
+        return render_template('index_robot_server.html', min_speed=min_speed)
     pass 
 
     @app.route('/video_feed')
@@ -249,25 +251,19 @@ def service() :
     @app.route("/cmd", methods=['POST'] )
     def process_cmd():
         cmd = request.form.get("cmd")
-        speed = request.form.get("speed")
+        val = request.form.get("val")
 
-        log.info(f"cmd={cmd}")
+        log.info(f"cmd={cmd}, val={val}")
 
-        if speed :
-            speed = int( speed )
-            log.info(f"speed={speed}")
-        else :
-            speed = 50 
-        pass
 
         if cmd in ( "stop", "servo_stop", "stop_service" ):
             robot.stop_robot()
             robot.stop_servo()
             robot.stop_service() 
         elif cmd == "forward":
-            robot.forward( speed )
+            robot.forward()
         elif cmd == "backward":
-            robot.backward( speed )
+            robot.backward()
         elif cmd == "turn_left":
             robot.left()
         elif cmd == "turn_right":
@@ -294,6 +290,12 @@ def service() :
             robot.stop_service()
             robot.service = LineCamera( robot=robot, camera=robot.camera, buzzer = robot.buzzer )
             robot.service.start()
+        elif cmd == "" :
+            if val :
+                min_speed = min( 70, max( 5, int( val ) ) )
+
+                robot.motor.min_speed = min_speed
+            pass
         pass
 
         return "OK"
