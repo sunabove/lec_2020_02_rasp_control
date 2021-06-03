@@ -39,6 +39,8 @@ class Robot :
         self.joyStick   = JoyStick( self.servo, buzzer=self.buzzer )
         self.irremote   = IRRemote( self, buzzer=self.buzzer )
 
+        self.config = { 'min_speed' : self.motor.min_speed , 'threshold': cfg( 'threshold', 100 ) }
+
         # 시동 소리 내기
         self.rgb_led.light_effect( "flash", Color(0, 255, 0), duration=3 )         
         self.buzzer.beep(on_time=0.1, off_time=0.1, n = 4)
@@ -228,14 +230,14 @@ def stop():
 pass # -- stop
 
 def service() : 
+    global app, robot
+
     log.info( "Hello....." )
 
     # web by flask framewwork
     from flask import Flask, render_template, Response, request, jsonify
 
     GPIO.setwarnings(False)
-
-    global app, robot 
 
     app = Flask(__name__, static_url_path='', static_folder='html', template_folder='html')
     app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -252,9 +254,7 @@ def service() :
     @app.route( '/index.html' )
     @app.route( '/index.htm' )
     def index(): 
-        motor = robot.motor
-        
-        config = { 'min_speed' : motor.min_speed , 'threshold': cfg( 'threshold', 100 ) }
+        config = robot.config
         
         return render_template('index_robot_server.html', **config )
     pass 
