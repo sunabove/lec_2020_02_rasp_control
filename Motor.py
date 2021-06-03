@@ -233,8 +233,8 @@ class Motor:
             GPIO.output(self.BIN2, GPIO.LOW)
         pass
 
-        self.PA = self.min_speed
-        self.PB = self.min_speed
+        self.PA = 0
+        self.PB = 0
     pass
 
     def back(self) :
