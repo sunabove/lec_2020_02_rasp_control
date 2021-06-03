@@ -1,7 +1,9 @@
 #coding: utf-8
 
-import sys, cv2, numpy as np, threading, logging as log, inspect, signal
-import RPi.GPIO as GPIO    
+import sys, numpy as np, threading, logging as log, inspect, signal
+import RPi.GPIO as GPIO
+
+from Config import cfg
 
 from time import time, sleep
 from gpiozero import Buzzer
@@ -252,7 +254,8 @@ def service() :
     def index(): 
         motor = robot.motor
         min_speed = motor.min_speed
-        return render_template('index_robot_server.html', min_speed=min_speed)
+        threshold = cfg( 'threshold', 100 )
+        return render_template('index_robot_server.html', min_speed=min_speed, threshold=threshold)
     pass 
 
     @app.route('/video_feed')

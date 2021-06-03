@@ -2,7 +2,7 @@
 import RPi.GPIO as GPIO
 import inspect, numpy as np, logging as log
 
-from Config import  cfg
+from Config import cfg
 from time import sleep, time
 from LineSensor import LineSensor
 
