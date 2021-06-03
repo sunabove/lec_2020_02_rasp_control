@@ -253,9 +253,10 @@ def service() :
     @app.route( '/index.htm' )
     def index(): 
         motor = robot.motor
-        min_speed = motor.min_speed
-        threshold = cfg( 'threshold', 100 )
-        return render_template('index_robot_server.html', min_speed=min_speed, threshold=threshold)
+        
+        config = { 'min_speed' : motor.min_speed , 'threshold': cfg( 'threshold', 100 ) }
+        
+        return render_template('index_robot_server.html', **config )
     pass 
 
     @app.route('/video_feed')
