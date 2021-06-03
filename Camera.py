@@ -135,10 +135,10 @@ class Camera :
             pass
         pass
 
-        txt = f"Alphabot Control"
+        txt = f"Alphabot Web Control"
 
         if fps :
-            txt += f" : FPS = {fps},"
+            txt += f" : FPS = {fps}"
         pass
 
         if motor :
@@ -158,7 +158,7 @@ class Camera :
             txt += f" No Camera"
         pass
 
-        txt = f"[{self.frame_cnt_sent:6}] {txt}"
+        txt = f"[{self.frame_cnt_sent:06}] {txt}"
 
         motor = self.motor
         if motor is not None :
