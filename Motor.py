@@ -66,6 +66,14 @@ class Motor:
         pass
     pass
 
+    def speed_left(self) :
+        return self.PA
+    pass
+
+    def speed_right(self) :
+        return self.PB
+    pass
+
     def speed_down(self, dv = 5) : # 속도 증가
         self.speed_up( -dv )
     pass

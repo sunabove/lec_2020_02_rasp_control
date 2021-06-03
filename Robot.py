@@ -76,6 +76,14 @@ class Robot :
         log.info( "joyStick finished" )
     pass
 
+    def speed_left(self) :
+        return self.motor.speed_left()
+    pass
+
+    def speed_right(self) :
+        return self.motor.speed_right()
+    pass
+
     def stop_service(self) :
         service = self.service 
         self.service = None
