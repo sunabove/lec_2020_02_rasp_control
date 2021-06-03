@@ -250,6 +250,8 @@ def service() :
 
     @app.route("/cmd", methods=['POST'] )
     def process_cmd():
+        global robot
+        
         cmd = request.form.get("cmd")
         val = request.form.get("val")
 

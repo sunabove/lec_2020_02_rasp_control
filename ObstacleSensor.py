@@ -18,9 +18,9 @@ class ObstacleSensor :
     LEFT_GPIO  = 19    # 왼   쪽 센서 GPIO 번호
     RIGHT_GPIO = 16    # 오른 쪽 센서 GPIO 번호
 
-    def __init__(self, motor, debug=0):
+    def __init__(self, robot, debug=0):
         self.debug = debug
-        self.motor = motor
+        self.motor = robot
 
         self.event_no = 0 
         self.turn_count = 0
