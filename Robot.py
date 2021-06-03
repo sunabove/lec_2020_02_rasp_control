@@ -84,6 +84,10 @@ class Robot :
         return self.motor.speed_right()
     pass
 
+    def speed_min(self) :
+        return self.motor.speed_min()
+    pass
+
     def stop_service(self) :
         service = self.service 
         self.service = None

@@ -74,6 +74,10 @@ class Motor:
         return self.PB
     pass
 
+    def speed_min(self) :
+        return self.min_speed
+    pass
+
     def speed_down(self, dv = 5) : # 속도 증가
         self.speed_up( -dv )
     pass
