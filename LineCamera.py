@@ -40,6 +40,8 @@ class LineCamera( LineTracker ) :
         buzzer = self.buzzer
         camera = self.camera
 
+        config = robot.config
+
         image_org = image
 
         # image height and width
@@ -67,7 +69,7 @@ class LineCamera( LineTracker ) :
         #blur = cv.filter2D(blur, -1, np.ones((21, 21), np.float32)/(21*21))
         
         #threshhold
-        threshold = 100 #110 #75 #50 #100
+        threshold = config[ "threshold" ] # 65 110 #75 #50 #100
         thresh = np.where(blur < threshold, 255, 0) 
         #thresh = np.where(blur > threshold, 255, 0) #110
         #thresh = cv.adaptiveThreshold(blur.astype(np.uint8),255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY,11,2)
