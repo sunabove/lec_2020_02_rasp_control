@@ -59,45 +59,33 @@ class LineCamera( LineTracker ) :
         rm = roi_margin = min(h, w)*5//100
         roi = gray[ rm : h - rm, rm : w - rm ]
 
+        scale_width = 160
+        scale_factor = scale_width/roi.shape[1]
+        scale_height = int( roi.shape[0]*scale_factor )
+        scale = cv.resize( roi, (scale_width, scale_height))
+
         # 필터를 이용한 노이즈 제거
-        blur = roi
+        blur = scale
+        blur = cv.GaussianBlur(blur, (7, 7), 0)
         #blur = cv.bilateralFilter(blur.astype(np.uint8), 5, 80, 80)
-        blur = cv.GaussianBlur(blur, (5, 5), 0)
         #blur = cv.Laplacian(blur, cv.CV_16S, ksize=5)
         #blur = cv.morphologyEx(blur, cv.MORPH_CLOSE, np.ones((9, 9), np.uint8), iterations=1)
         #blur = cv.morphologyEx(blur, cv.MORPH_OPEN, np.ones((5, 5), np.uint8), iterations=1)
         #blur = cv.filter2D(roi, -1, np.ones((5, 5), np.float32)/25)
         #blur = cv.filter2D(blur, -1, np.ones((21, 21), np.float32)/(21*21))
-
-        scale_factor = 4
-        scale = cv.resize(blur, (w//scale_factor, h//scale_factor))
         
         #threshhold
         threshold = config[ "threshold" ] # 65 110 #75 #50 #100
-        thresh = np.where( scale < threshold, 255, 0) 
+        thresh = np.where( blur < threshold, 1, 0)
         #thresh = np.where(blur > threshold, 255, 0) #110
         #thresh = cv.adaptiveThreshold(blur.astype(np.uint8),255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY,11,2)
         #thresh = cv.filter2D(thresh, -1, np.ones((5, 5), np.float32)/25)
         #thresh = cv.adaptiveThreshold(blur.astype(np.uint8),255,cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 0)
 
-        contours = None
-        lines = None
+        # 등고선 추출
+        contours, hierarchy = cv.findContours(thresh.astype(np.uint8), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
-        useContour = True
-
-        if useContour :
-            # 등고선 추출
-            contours, hierarchy = cv.findContours(thresh.astype(np.uint8), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-        else :
-            # 엣지 추출
-            edge = cv.Canny(thresh, 0, 255, None, 7)
-            # 라인 추출
-            lines = cv.HoughLinesP(edge, 1, np.pi/180, 50, None, 10, 10)
-        pass
-
-        line_cnt = len(lines) if lines is not None else 0
-    
-        overlay = (255 - thresh)
+        overlay = 255*(1 - thresh)
         #overlay = blur
         #overlay = thresh
 
@@ -130,19 +118,15 @@ class LineCamera( LineTracker ) :
 
         image_draw = image[ rm : h - rm, rm : w - rm ]
 
-        line_color = (0, 255, 0)
-        line_width = 2
         # 등고선 그리기
         draw_contour = 1 
         if draw_contour and contours is not None :
-            cv.drawContours(image_draw, contours, -1, line_color, line_width, cv.LINE_AA)
-        pass
-
-        # 허프 라인 그리기
-        if lines is not None :
-            for line in lines:
-               l = line[0] 
-               cv.line(image_draw, (l[0], l[1]), (l[2], l[3]), line_color, line_width, cv.LINE_AA)
+            line_color = (0, 255, 0); line_width = 2
+            sf = 1/scale_factor
+            for c in contours : 
+                c[:,:,0] = c[:,:,0]*sf
+                c[:,:,1] = c[:,:,1]*sf
+                cv.drawContours(image_draw, [c], -1, line_color, line_width, cv.LINE_AA)
             pass
         pass
 

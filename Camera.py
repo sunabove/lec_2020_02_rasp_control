@@ -10,30 +10,6 @@ log.basicConfig(
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO
     )
 
-class StreamingOutput :
-    def __init__(self):
-        self.frame = None
-        self.buffer = io.BytesIO()
-        self.condition = Condition()
-    pass
-
-    def write(self, buf):
-        # New frame, copy the existing buffer's content and notify all
-        # clients it's available
-
-        self.buffer.truncate()
-        
-        with self.condition:
-            self.frame = self.buffer.getvalue()
-            self.condition.notify_all()
-        pass
-
-        self.buffer.seek(0) 
-            
-        return self.buffer.write(buf)
-    pass
-pass # -- StreamingOutput
-
 class Camera :
     
     def __init__(self, motor=None):
@@ -62,7 +38,7 @@ class Camera :
 
         self._thread = threading.Thread(target=self._start_recording_impl, args=[] )
         self._thread.start()
-    pass
+    pass # -- start_recording
 
     def _start_recording_impl(self) :
         self._running = True
@@ -87,7 +63,7 @@ class Camera :
         pass
 
         log.info( "Recording is stopped." )
-    pass
+    pass # -- _start_recording_impl
 
     def finish(self):
         self.stop_recording()
@@ -102,7 +78,7 @@ class Camera :
         if _thread is not None :
             _thread.join()
         pass 
-    pass
+    pass # -- stop_recording
 
     def get_image(self):
         motor = self.motor
@@ -176,14 +152,14 @@ class Camera :
         self.putTextLine( image, txt , tx, ty )
 
         return image
-    pass
+    pass # -- get_image
 
     def get_frame( self ) : 
         # get video frame
         img = self.get_image()         
         _, jpg = cv2.imencode('.jpg', img)         
         return jpg.tobytes()
-    pass
+    pass # -- get_frame
 
     def putTextLine(self, image, txt, x, y ) :
         # opencv 이미지에 텍스트를 그린다.
@@ -201,9 +177,35 @@ class Camera :
 
         cv2.putText(image, txt, (x, y), font, fs, bg_color, ft + 2, cv2.LINE_AA)
         cv2.putText(image, txt, (x, y), font, fs, fg_color, ft    , cv2.LINE_AA) 
-    pass 
+    pass # -- putTextLine
     
 pass # -- Camera
+
+class StreamingOutput :
+
+    def __init__(self):
+        self.frame = None
+        self.buffer = io.BytesIO()
+        self.condition = Condition()
+    pass
+
+    def write(self, buf):
+        # New frame, copy the existing buffer's content and notify all
+        # clients it's available
+
+        self.buffer.truncate()
+        
+        with self.condition:
+            self.frame = self.buffer.getvalue()
+            self.condition.notify_all()
+        pass
+
+        self.buffer.seek(0) 
+            
+        return self.buffer.write(buf)
+    pass # -- write
+
+pass # -- StreamingOutput
 
 def generate_frame(camera): 
     output = camera.output
