@@ -59,9 +59,6 @@ class LineCamera( LineTracker ) :
         rm = roi_margin = min(h, w)*5//100
         roi = gray[ rm : h - rm, rm : w - rm ]
 
-        scale_factor = 4
-        scale = cv.resize( roi, (w//scale_factor, h//scale_factor))
-
         # 필터를 이용한 노이즈 제거
         blur = roi
         #blur = cv.bilateralFilter(blur.astype(np.uint8), 5, 80, 80)
@@ -71,10 +68,13 @@ class LineCamera( LineTracker ) :
         #blur = cv.morphologyEx(blur, cv.MORPH_OPEN, np.ones((5, 5), np.uint8), iterations=1)
         #blur = cv.filter2D(roi, -1, np.ones((5, 5), np.float32)/25)
         #blur = cv.filter2D(blur, -1, np.ones((21, 21), np.float32)/(21*21))
+
+        scale_factor = 4
+        scale = cv.resize(blur, (w//scale_factor, h//scale_factor))
         
         #threshhold
         threshold = config[ "threshold" ] # 65 110 #75 #50 #100
-        thresh = np.where(blur < threshold, 255, 0) 
+        thresh = np.where( scale < threshold, 255, 0) 
         #thresh = np.where(blur > threshold, 255, 0) #110
         #thresh = cv.adaptiveThreshold(blur.astype(np.uint8),255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY,11,2)
         #thresh = cv.filter2D(thresh, -1, np.ones((5, 5), np.float32)/25)
@@ -105,7 +105,12 @@ class LineCamera( LineTracker ) :
         image = gray
         image[ rm : h - rm, rm : w - rm ] = 0
         image *= 0.7 
-        image[ rm : h - rm, rm : w - rm ] = overlay
+        if scale_factor != 1 :
+            overlay = cv.resize(overlay.astype(np.uint8), roi.shape[:2][::-1] )
+            image[ rm : h - rm, rm : w - rm ] = overlay
+        else :
+            image[ rm : h - rm, rm : w - rm ] = overlay
+        pass
 
         # convert grayscale(1 channel) to rgb color(3 channel)
         gray_color = np.stack( [gray, gray, gray], axis=-1 )
