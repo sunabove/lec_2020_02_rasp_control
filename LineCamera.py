@@ -56,8 +56,9 @@ class LineCamera( LineTracker ) :
         #gray =image[:,:,0]/3 + image[:,:,1]/3 + image[:,:,2]/3
 
         # 관심영역(ROI, Region Of Interest) 추룰
-        rm = roi_margin = min(h, w)*5//100
-        roi = gray[ rm : h - rm, rm : w - rm ]
+        rmh = h*5//100
+        rmw = w*5//100
+        roi = gray[ rmh : h - rmh, rmw : w - rmw ]
 
         scale_width = 160
         scale_factor = scale_width/roi.shape[1]
@@ -91,13 +92,13 @@ class LineCamera( LineTracker ) :
 
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
         image = gray
-        image[ rm : h - rm, rm : w - rm ] = 0
+        image[ rmh : h - rmh, rmw : w - rmw ] = 0
         image *= 0.7 
         if scale_factor != 1 :
             overlay = cv.resize(overlay.astype(np.uint8), roi.shape[:2][::-1] )
-            image[ rm : h - rm, rm : w - rm ] = overlay
+            image[ rmh : h - rmh, rmw : w - rmw ] = overlay
         else :
-            image[ rm : h - rm, rm : w - rm ] = overlay
+            image[ rmh : h - rmh, rmw : w - rmw ] = overlay
         pass
 
         # convert grayscale(1 channel) to rgb color(3 channel)
@@ -112,11 +113,11 @@ class LineCamera( LineTracker ) :
         
         # draw roi area rectangle
         image = gray_color
-        cv.rectangle( image, (rm, rm), (w - rm, h - rm), color=(255, 0, 0), thickness=1)
+        cv.rectangle( image, (rmw, rmh), (w - rmw, h - rmh), color=(255, 0, 0), thickness=1)
         
         image = image.astype(np.uint8)
 
-        image_draw = image[ rm : h - rm, rm : w - rm ]
+        image_draw = image[ rmh : h - rmh, rmw : w - rmw ]
 
         # 등고선 그리기
         draw_contour = 1 
@@ -130,7 +131,7 @@ class LineCamera( LineTracker ) :
             pass
         pass
 
-        txt = f"LineCamera: W: {w_org}, H: {h_org}, Threshold: {threshold}"
+        txt = f"LineCamera: W: {w_org}({scale.shape[1]}), H: {h_org}({scale.shape[0]}), Threshold: {threshold}"
 
         txts.append( txt )
         
