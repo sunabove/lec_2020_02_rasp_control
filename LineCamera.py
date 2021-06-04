@@ -137,7 +137,7 @@ class LineCamera( LineTracker ) :
             pass
         pass
 
-        txt = f"Mode: LineTrack 3"
+        txt = f" LineCameraTrack, Threshold: {threshold}"
         
         camera.putTextLine( image, txt, tx, ty )
 

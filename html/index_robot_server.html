@@ -44,7 +44,7 @@
                 });
             });
 
-			$('input[type=range]').click( function(){
+			$('input[type=range]').change( function(){
 				var id = this.id
 				$('#' + id + '_desc').html( $(this).val() )
             });
@@ -249,8 +249,8 @@
 					</div>
 					<br/>
 
-					<div class="form-group text-left">
-						<label for="threshold" >Treshold : <span id="threshold_desc" >{{ threshold }}</span></label>
+					<div class="form-group">
+						<label for="threshold" >Treshold: <span id="threshold_desc">{{ threshold }}</span></label>
 						<input id="threshold" type="range" class="form-label cmd" min="30" max="140" value="{{ threshold }}"> 
 					</div>
 

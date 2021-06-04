@@ -39,7 +39,8 @@ class Robot :
         self.joyStick   = JoyStick( self.servo, buzzer=self.buzzer )
         self.irremote   = IRRemote( self, buzzer=self.buzzer )
 
-        self.config = { 'min_speed' : self.motor.min_speed , 'threshold': cfg( 'threshold', 65 ) }
+        threshold_default = 65
+        self.config = { 'min_speed' : self.motor.min_speed , 'threshold': cfg( 'threshold', threshold_default ) , 'threshold_default' : threshold_default }
 
         # 시동 소리 내기
         self.rgb_led.light_effect( "flash", Color(0, 255, 0), duration=3 )         
@@ -308,11 +309,14 @@ def service() :
             robot.stop_service()
             robot.service = LineCamera( robot=robot, camera=robot.camera, buzzer = robot.buzzer )
             robot.service.start()
-        elif cmd == "" :
+        elif cmd == "min_speed" :
             if val :
-                min_speed = min( 70, max( 5, int( val ) ) )
-
-                robot.motor.min_speed = min_speed
+                robot.motor.min_speed = min( 70, max( 5, int(val) ) )
+            pass
+        elif cmd == "threshold" :
+            if val :
+                cfg( "threshold", int(val), save=True )
+                robot.config[ "threshold" ] = cfg( "threshold" )
             pass
         pass
 
