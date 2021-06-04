@@ -41,7 +41,9 @@ class Camera :
         self.output = StreamingOutput()
         # 전송 프레임 카운트 
         self.frame_cnt_sent = 0 
-        self.fps_data = []
+        self.frame_times = []
+        self.frame_time = 0 
+
         self._running = False
         self._thread = None
         
@@ -105,40 +107,34 @@ class Camera :
     def get_image(self):
         motor = self.motor
         self.frame_cnt_sent += 1 
-        fps_data = self.fps_data
 
         success, image = self.video.read()
 
         now = time()
 
-        if len( fps_data ) > 0 and fps_data[0][0] - now > 2 :
-            fps_data.pop( 0 )
-        pass
-
-        if len( fps_data ) == 0 :
-            fps_data.append( [now, 1] )
-        elif len( fps_data ) == 1 and fps_data[0][0] - now > 1 :
-            fps_data[0][1] += 1
-            fps_data.append( [now, 1] )
+        fps = 0
+        frame_times = self.frame_times
+        
+        if self.frame_time < 1 :
+            self.frame_time = now
         else :
-            fps_data[0][1] += 1
-            if len( fps_data ) > 1 : 
-                fps_data[1][1] += 1
-            pass
-        pass
+            frame_times_len = len( frame_times )
 
-        fps = 0 
-        if len( fps_data ) > 0 :
-            elapsed = now - fps_data[0][0]
-            if elapsed > 0 :
-                fps = int( fps_data[0][1]/elapsed )
+            if frame_times_len > 10 :
+                frame_times.pop( 0 )
             pass
+
+            frame_times.append( now - self.frame_time )
+
+            fps = frame_times_len/sum( frame_times )
+
+            self.frame_time = now
         pass
 
         txt = f"Alphabot Web Control"
 
         if fps :
-            txt += f" : FPS = {fps}"
+            txt += f" : FPS = {fps:.1f}"
         pass
 
         if motor :
