@@ -18,10 +18,10 @@
 			// -- tooltip init
 
 			// tab
-			$('#myTab a').on('click', function (e) {
+			$('#myTab a').click( function (e) {
 				e.preventDefault()
 				$(this).tab('show')
-			})
+			});
 			// -- tab1
 
             $(".motor").bind( "mousedown", function(){
@@ -54,9 +54,17 @@
 				if( val == null || val == '' ) { 
 					val = $(this).val();
 				}
-                $.post("/cmd",{ cmd: this.id, val: val }, function(data,status){
+
+				cmd = $(this).attr( 'cmd' ) 
+				if( cmd == null || cmd == '' ) {
+					cmd = this.id
+				}
+
+                $.post("/cmd",{ cmd: cmd, val: val }, function(data,status){
                 });
             });
+
+			$( "#line_camera-tab" ).click()
         });
 		
     </script>
@@ -91,7 +99,7 @@
 
 	<ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
 		<li class="nav-item">
-			<a class="nav-link active_" id="motor-tab" data-toggle="tab" href="#motor" role="tab" aria-controls="motor" aria-selected="false">Motor</a>
+			<a class="nav-link active" id="motor-tab" data-toggle="tab" href="#motor" role="tab" aria-controls="motor" aria-selected="false">Motor</a>
 		</li>
 		<li class="nav-item">
 			<a class="nav-link" id="servo-tab" data-toggle="tab" href="#servo" role="tab" aria-controls="servo" aria-selected="false">Servo</a>
@@ -103,7 +111,7 @@
 			<a class="nav-link" id="line_sensor-tab" data-toggle="tab" href="#line_sensor" role="tab" aria-controls="line_sensor" aria-selected="false">라인 추적 (센서)</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link active" id="line_camera-tab" data-toggle="tab" href="#line_camera" role="tab" aria-controls="line_camera" aria-selected="true">라인 추적 (카메라)</a>
+			<a class="nav-link cmd" id="line_camera-tab" data-toggle="tab" href="#line_camera" role="tab" aria-controls="line_camera" aria-selected="true" cmd="line_camera" >라인 추적 (카메라)</a>
 		</li>
 		&nbsp;
 		<div class="btn-group">
@@ -121,7 +129,7 @@
 	<br/>
 				
 	<div class="tab-content " id="myTabContent">
-		<div class="tab-pane fade show_ active_" id="motor" role="tabpanel" aria-labelledby="motor-tab" align="center">
+		<div class="tab-pane fade show active" id="motor" role="tabpanel" aria-labelledby="motor-tab" align="center">
 			<!-- # motor -->
 			<table class="text-center" >
 				<colgroup>
@@ -238,35 +246,33 @@
 			<!-- # line sensor -->
 		</div>
 
-		<div class="tab-pane fade show active" id="line_camera" role="tabpanel" aria-labelledby="line_camera-tab" align="center">
+		<div class="tab-pane fade show_ active_" id="line_camera" role="tabpanel" aria-labelledby="line_camera-tab" align="center">
 			<!-- line camera -->
 			<div style="width:300px;">
-				<form>
-					<div class="form-group">
-						<button id="line_camera" class="menu btn btn-sm btn-success">라인 추적 (카메라)</button>
-						&nbsp;
-						<button id='stop' class="menu btn btn-sm btn-danger">Stop</button>
-					</div>
-					<br/>
+				<div class="form-group">
+					<button id="line_camera" class="menu btn btn-sm btn-success">라인 추적 (카메라)</button>
+					&nbsp;
+					<button id='stop' class="menu btn btn-sm btn-danger">Stop</button>
+				</div>
+				<br/>
 
-					<div class="form-group">
-						<label for="threshold" >Treshold: <span id="threshold_desc">{{ threshold }}</span></label>
-						<input id="threshold" type="range" class="form-label cmd" min="30" max="140" value="{{ threshold }}"> 
-					</div>
+				<div class="form-group">
+					<label for="threshold" >Treshold: <span id="threshold_desc">{{ threshold }}</span></label>
+					<input id="threshold" type="range" class="form-label cmd" min="30" max="140" value="{{ threshold }}"> 
+				</div>
 
-					<!--
-					<div class="form-group text-left">
-						<label for="exampleInputEmail1">Email address</label>
-						<input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-						<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-					</div>
-					<br/>
-					<div class="form-check">
-						<input type="checkbox" class="form-check-input" id="exampleCheck1">
-						<label class="form-check-label" for="exampleCheck1">Check me out</label>
-					</div> 
-					-->
-				</form>
+				<!--
+				<div class="form-group text-left">
+					<label for="exampleInputEmail1">Email address</label>
+					<input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+					<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+				</div>
+				<br/>
+				<div class="form-check">
+					<input type="checkbox" class="form-check-input" id="exampleCheck1">
+					<label class="form-check-label" for="exampleCheck1">Check me out</label>
+				</div> 
+				-->
 			</div>
 			<!-- # line camera -->
 		</div>
