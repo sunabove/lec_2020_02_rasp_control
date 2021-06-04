@@ -90,7 +90,7 @@ class LineCamera( LineTracker ) :
         #thresh = cv.filter2D(thresh, -1, np.ones((5, 5), np.float32)/25)
         #thresh = cv.adaptiveThreshold(blur.astype(np.uint8),255,cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 0)
 
-        # 형태 노이즈 제거
+        # 형태학적 노이즈 제거
         thresh_open = thresh
         thresh_open = cv.resize(thresh_open, (thresh.shape[1]//10, thresh.shape[0]//10))
         thresh_open = cv.resize(thresh_open, thresh.shape[:2][::-1])

@@ -221,7 +221,7 @@
 
 		<div class="tab-pane fade show_ active_" id="line_camera" role="tabpanel" aria-labelledby="line_camera-tab" align="center">
 			<!-- line camera -->
-			<div style="width:300px;">
+			<div style="width:300px; text-align:left;">
 				<div class="form-group">
 					<button id="line_camera" class="cmd btn btn-sm btn-success">라인 추적 (카메라)</button>
 					&nbsp;
@@ -232,6 +232,35 @@
 				<div class="form-group">
 					<label for="threshold" >Treshold: <span id="threshold_desc">{{ threshold }}</span></label>
 					<input id="threshold" type="range" class="cmd form-label" min="30" max="140" value="{{ threshold }}"> 
+				</div>
+
+				<div class="form-check form-switch">
+					<input class="cmd form-check-input" name="radios" type="radio" id="show_image" val="successive" checked>
+					<label class="form-check-label" for="flexSwitchCheckDefault">Successive</label>
+				</div>
+				<div class="form-check form-switch">
+					<input class="cmd form-check-input" name="radios" type="radio" id="show_image" val="original">
+					<label class="form-check-label" for="flexSwitchCheckChecked">[1] Original</label>
+				</div>
+				<div class="form-check form-switch">
+					<input class="cmd form-check-input" name="radios" type="radio" id="show_image" val="grayscale">
+					<label class="form-check-label" for="flexSwitchCheckChecked">[2] Grayscale</label>
+				</div>
+				<div class="form-check form-switch">
+					<input class="cmd form-check-input" name="radios" type="radio" id="show_image" val="blur">
+					<label class="form-check-label" for="flexSwitchCheckChecked">[3] Blur(Noise Removed)</label>
+				</div>
+				<div class="form-check form-switch">
+					<input class="cmd form-check-input" name="radios" type="radio" id="show_image" val="thresh">
+					<label class="form-check-label" for="flexSwitchCheckChecked">[4] Thresh Binary</label>
+				</div>
+				<div class="form-check form-switch">
+					<input class="cmd form-check-input" name="radios" type="radio" id="show_image" val="thresh_open">
+					<label class="form-check-label" for="flexSwitchCheckChecked">[5] Thresh Open</label>
+				</div>
+				<div class="form-check form-switch">
+					<input class="cmd form-check-input" name="radios" type="radio" id="show_image" val="thresh_blur">
+					<label class="form-check-label" for="flexSwitchCheckChecked">[6] Thresh Blur</label>
 				</div>
 
 				<!--
