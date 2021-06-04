@@ -48,8 +48,7 @@ class LineCamera( LineTracker ) :
 
         # image height and width
         h_org, w_org = h, w = image.shape[:2]
-        #h = len( image )
-        #w = len( image[0] )
+        #h = len( image ); w = len( image[0] )
 
         # 회색조 변환 , 공식 grayscale = 0.114B + 0.587G + 0.299R
         # opencv image color order is Blue Green Red
@@ -58,7 +57,10 @@ class LineCamera( LineTracker ) :
 
         # 관심영역(ROI, Region Of Interest) 추룰
         rm = roi_margin = min(h, w)*5//100
-        roi = np.copy( gray[ rm : h - rm, rm : w - rm ] )
+        roi = gray[ rm : h - rm, rm : w - rm ]
+
+        scale_factor = 4
+        scale = cv.resize( roi, (w//scale_factor, h//scale_factor))
 
         # 필터를 이용한 노이즈 제거
         blur = roi
