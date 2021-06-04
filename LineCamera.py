@@ -166,6 +166,25 @@ class LineCamera( LineTracker ) :
                 line_color = green
                 cv.drawContours(image_draw, [max_poly], -1, line_color, line_width, cv.LINE_AA)
             pass
+
+            if max_poly is not None :
+                c = max_poly
+
+                # 목표 지점 구하기
+                M = cv.moments(c)
+                cx = int(M["m10"] / M["m00"])
+                cy = int(M["m01"] / M["m00"])
+
+                # 목표 지점 그리기
+                m = 14
+                cv.circle(image_draw, (cx, cy), 4, (0, 0, 255), -1)
+                for radius in range( 6, 13, 3 ) :
+                    cv.circle(image_draw, (cx, cy), radius, (0, 0, 255) )
+                pass
+
+                cv.line(image_draw, (cx - m, cy), (cx + m, cy), (0, 255, 255), 1)
+                cv.line(image_draw, (cx, cy -m), (cx, cy + m), (0, 255, 255), 1)
+            pass
         pass
 
         txt = f"LineCamera: W: {w_org}({scale.shape[1]}), H: {h_org}({scale.shape[0]}), Threshold: {threshold}"
