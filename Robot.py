@@ -305,9 +305,11 @@ def service() :
             robot.service = LineTrackerPID( robot=robot, buzzer = robot.buzzer )
             robot.service.start()
         elif cmd == "line_camera" :
-            robot.stop_service()
-            robot.service = LineCamera( robot=robot, camera=robot.camera, buzzer = robot.buzzer )
-            robot.service.start()
+            if robot.service is None or type( robot.service ) != LineCamera :
+                robot.stop_service()
+                robot.service = LineCamera( robot=robot, camera=robot.camera, buzzer = robot.buzzer )
+                robot.service.start()
+            pass
         elif cmd == "min_speed" :
             if val :
                 robot.motor.min_speed = min( 70, max( 5, int(val) ) )

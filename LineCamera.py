@@ -33,7 +33,7 @@ class LineCamera( LineTracker ) :
         super().stop()
     pass
 
-    def robot_move_by_camera(self, image, tx = 10, ty = 30, th = 20, success=True, debug=0) :
+    def robot_move_by_camera(self, image, tx=10, ty=30, th=20, success=True, debug=0) :
         debug and log.info(inspect.currentframe().f_code.co_name)
 
         robot = self.robot 
@@ -42,10 +42,12 @@ class LineCamera( LineTracker ) :
 
         config = robot.config
 
+        txts = [] # texts to draw on the image
+
         image_org = image
 
         # image height and width
-        h, w = image.shape[:2]
+        h_org, w_org = h, w = image.shape[:2]
         #h = len( image )
         #w = len( image[0] )
 
@@ -137,9 +139,14 @@ class LineCamera( LineTracker ) :
             pass
         pass
 
-        txt = f" LineCameraTrack, Threshold: {threshold}"
+        txt = f"LineCamera: W: {w_org}, H: {h_org}, Threshold: {threshold}"
+
+        txts.append( txt )
         
-        camera.putTextLine( image, txt, tx, ty )
+        for t in txts :
+            camera.putTextLine( image, t, tx, ty )
+            ty += th
+        pass
 
         return image
     pass  # -- robot_move
