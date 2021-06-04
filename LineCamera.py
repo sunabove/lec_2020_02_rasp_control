@@ -122,7 +122,7 @@ class LineCamera( LineTracker ) :
         
         # draw roi area rectangle
         image = gray_color
-        cv.rectangle( image, (rmw, rmh), (w - rmw, h - rmh), color=(255, 0, 0), thickness=1)
+        cv.rectangle( image, (rmw, rmh), (w - rmw, h - rmh), color=(255, 255, 0), thickness=2)
         
         image = image.astype(np.uint8)
 
@@ -131,12 +131,40 @@ class LineCamera( LineTracker ) :
         # 등고선 그리기
         draw_contour = 1 
         if draw_contour and contours is not None :
-            line_color = (0, 255, 0); line_width = 2
+            polys = []
+            max_poly = None
+            max_area = 0
+
+            # 스케일 복원
+            # 최대 면적 폴리곤(등고선) 검색
             sf = 1/scale_factor
             for c in contours : 
                 c[:,:,0] = c[:,:,0]*sf
                 c[:,:,1] = c[:,:,1]*sf
-                cv.drawContours(image_draw, [c], -1, line_color, line_width, cv.LINE_AA)
+
+                c = cv.approxPolyDP(c, 20, True)
+
+                area = cv.contourArea(c)
+                if area > max_area :
+                    max_area = area
+                    max_poly = c
+                pass 
+
+                polys.append( c )
+            pass
+
+            green = (0, 255, 0)
+            blue  = (255, 0, 0)
+            line_width = 2
+
+            for poly in polys :
+                line_color = blue 
+                cv.drawContours(image_draw, [poly], -1, line_color, line_width, cv.LINE_AA)
+            pass
+            
+            if max_poly is not None :
+                line_color = green
+                cv.drawContours(image_draw, [max_poly], -1, line_color, line_width, cv.LINE_AA)
             pass
         pass
 
