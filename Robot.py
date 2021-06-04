@@ -39,8 +39,7 @@ class Robot :
         self.joyStick   = JoyStick( self.servo, buzzer=self.buzzer )
         self.irremote   = IRRemote( self, buzzer=self.buzzer )
 
-        threshold_default = 65
-        self.config = { 'min_speed' : self.motor.min_speed , 'threshold': cfg( 'threshold', threshold_default ) , 'threshold_default' : threshold_default }
+        self.config = { 'min_speed' : self.motor.min_speed , 'threshold': cfg( 'threshold', 65 ) }
 
         # 시동 소리 내기
         self.rgb_led.light_effect( "flash", Color(0, 255, 0), duration=3 )         
