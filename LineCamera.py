@@ -60,6 +60,7 @@ class LineCamera( LineTracker ) :
         rmw = w*5//100
         roi = gray[ rmh : h - rmh, rmw : w - rmw ]
 
+        # ROI 크기 축소
         scale_width = 160
         scale_factor = scale_width/roi.shape[1]
         scale_height = int( roi.shape[0]*scale_factor )
@@ -75,16 +76,24 @@ class LineCamera( LineTracker ) :
         #blur = cv.filter2D(roi, -1, np.ones((5, 5), np.float32)/25)
         #blur = cv.filter2D(blur, -1, np.ones((21, 21), np.float32)/(21*21))
         
-        #threshhold
+        # 이진화/임계치 적용
         threshold = config[ "threshold" ] # 65 110 #75 #50 #100
         thresh = np.where( blur < threshold, 1, 0)
+        thresh = thresh.astype(np.uint8)
         #thresh = np.where(blur > threshold, 255, 0) #110
         #thresh = cv.adaptiveThreshold(blur.astype(np.uint8),255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY,11,2)
         #thresh = cv.filter2D(thresh, -1, np.ones((5, 5), np.float32)/25)
         #thresh = cv.adaptiveThreshold(blur.astype(np.uint8),255,cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 0)
 
+        # 형태 노이즈 제거
+        thresh_open = thresh
+        thresh_open = cv.resize(thresh_open, (thresh.shape[1]//10, thresh.shape[0]//10))
+        thresh_open = cv.resize(thresh_open, thresh.shape[:2][::-1])
+
+        thresh_blur = thresh & thresh_open
+
         # 등고선 추출
-        contours, hierarchy = cv.findContours(thresh.astype(np.uint8), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv.findContours(thresh_blur.astype(np.uint8), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
         overlay = 255*(1 - thresh)
         #overlay = blur
