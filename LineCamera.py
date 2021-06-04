@@ -40,7 +40,12 @@ class LineCamera( LineTracker ) :
         buzzer = self.buzzer
         camera = self.camera
 
+        # 환경 설정 데이터
         config = robot.config
+
+        # 목표 지점
+        cx = None
+        cy = None
 
         txts = [] # texts to draw on the image
 
@@ -128,6 +133,17 @@ class LineCamera( LineTracker ) :
 
         image_draw = image[ rmh : h - rmh, rmw : w - rmw ]
 
+        if True : 
+            # 가운데 지점 그리기
+            m = 14
+            line_color = (255, 255, 0)
+            cen_y, cen_x = image_draw.shape[:2]
+            cen_y, cen_x = cen_y//2, cen_x//2
+
+            cv.line(image_draw, (cen_x - m, cen_y), (cen_x + m, cen_y), line_color, 1)
+            cv.line(image_draw, (cen_x, cen_y -m), (cen_x, cen_y + m), line_color, 1)
+        pass
+
         # 등고선 그리기
         draw_contour = 1 
         if draw_contour and contours is not None :
@@ -190,6 +206,15 @@ class LineCamera( LineTracker ) :
         txt = f"LineCamera: W: {w_org}({scale.shape[1]}), H: {h_org}({scale.shape[0]}), Threshold: {threshold}"
 
         txts.append( txt )
+
+        if cx is not None :
+            cx = (cx + rmw) - w_org//2
+            cy = h_org//2 - (cy + rmh)
+
+            txt = f"CX: {cx}, CY: {cy}"
+
+            txts.append( txt )
+        pass
         
         for t in txts :
             camera.putTextLine( image, t, tx, ty )
