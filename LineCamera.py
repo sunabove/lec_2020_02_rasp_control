@@ -140,8 +140,8 @@ class LineCamera( LineTracker ) :
             cen_y, cen_x = image_draw.shape[:2]
             cen_y, cen_x = cen_y//2, cen_x//2
 
-            cv.line(image_draw, (cen_x - m, cen_y), (cen_x + m, cen_y), line_color, 1)
-            cv.line(image_draw, (cen_x, cen_y -m), (cen_x, cen_y + m), line_color, 1)
+            cv.line(image_draw, (cen_x - m, cen_y), (cen_x + m, cen_y), line_color, 2)
+            cv.line(image_draw, (cen_x, cen_y -m), (cen_x, cen_y + m), line_color, 2)
         pass
 
         # 등고선 그리기
