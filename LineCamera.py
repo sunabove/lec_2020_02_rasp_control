@@ -125,6 +125,7 @@ class LineCamera( LineTracker ) :
         contours, hierarchy = cv.findContours(thresh_blur.astype(np.uint8), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
         overlay = None
+        overlay_img_name = ""
         #overlay = blur
         #overlay = thresh
         #overlay = 255*(1 - thresh)
@@ -135,25 +136,19 @@ class LineCamera( LineTracker ) :
 
             for img in images :
                 if img.name == overlay_name :
-                    if img.is_bin :
-                        overlay = 255*(1 - img.image)
-                    else :
-                        overlay = img.image
-                    pass
+                    overlay = 255*(1 - img.image) if img.is_bin else img.image
+                    overlay_img_name = img.name
 
                     break
                 pass
             pass
         elif overlay_name == "successive" :
-            elapsed = int( time() - self.successive_time )*2
+            elapsed = int( time() - self.successive_time )
             idx = elapsed%len( images )
             img = images[ idx ]
 
-            if img.is_bin :
-                overlay = 255*(1 - img.image)
-            else :
-                overlay = img.image
-            pass
+            overlay = 255*(1 - img.image) if img.is_bin else img.image
+            overlay_img_name = img.name
         pass
 
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
@@ -261,7 +256,7 @@ class LineCamera( LineTracker ) :
             pass
         pass
 
-        txt = f"LineCamera: W: {w_org}({scale.shape[1]}), H: {h_org}({scale.shape[0]}), Threshold: {threshold}"
+        txt = f"LineCamera: W: {w_org}({scale.shape[1]}), H: {h_org}({scale.shape[0]}), Threshold: {threshold}, Overlay: {overlay_img_name}"
 
         txts.append( txt )
 
