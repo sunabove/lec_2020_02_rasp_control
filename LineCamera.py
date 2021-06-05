@@ -263,7 +263,7 @@ class LineCamera( LineTracker ) :
                 pass
                 cv.circle(image_draw, (cx, cy), 4, circle_color, -1)
                 for radius in range( 6, m, 3 ) :
-                    cv.circle(image_draw, (cx, cy), circle_color )
+                    cv.circle(image_draw, (cx, cy), radius, circle_color )
                 pass
 
                 # 목표 지점 십자가 그리기
