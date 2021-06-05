@@ -56,7 +56,7 @@ class LineCamera( LineTracker ) :
         overlay_name = config[ "overlay" ]
         #overlay_name = "thresh_blur"
 
-        1 and log.info( f"Overlay Name: {overlay_name}")
+        0 and log.info( f"Overlay Name: {overlay_name}")
 
         # 목표 지점
         cx = None
@@ -113,7 +113,9 @@ class LineCamera( LineTracker ) :
 
         # 형태학적 노이즈 제거
         thresh_open = thresh
-        thresh_open = cv.resize(thresh_open, (thresh.shape[1]//10, thresh.shape[0]//10))
+        # 축소 / 이웃 보간법
+        thresh_open = cv.resize(thresh_open, (thresh.shape[1]//10, thresh.shape[0]//10), cv.INTER_NEAREST) 
+        # 확대
         thresh_open = cv.resize(thresh_open, thresh.shape[:2][::-1])
 
         images.append( Image( thresh_open, 'thresh_open', True ))
