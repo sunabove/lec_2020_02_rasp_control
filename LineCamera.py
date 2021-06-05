@@ -132,7 +132,7 @@ class LineCamera( LineTracker ) :
         #overlay = thresh
         #overlay = 255*(1 - thresh)
 
-        # 오버레이 이미지 검색
+        # 화면에 출력할 오버레이 이미지 검색
         if overlay_name and overlay_name not in [ "original", "successive" ] :
             self.successive_time = time() 
 
@@ -249,8 +249,9 @@ class LineCamera( LineTracker ) :
                 cy = int(M["m01"] / M["m00"])
 
                 # 차선 중심점 거리로 부터 중심점 내부 포함 여부 판별
-                dist = cv.pointPolygonTest( c,(50,50),True)
-                inside_lane = dist < 0 
+                # 이 함수는 +1, -1 또는 0을 반환하여 점이 다각형 내부, 외부 또는 위에 있는지 여부를 나타냅니다.
+                dist = cv.pointPolygonTest( c, (cx, cy), False )
+                inside_lane = dist >= 0 
 
                 # 목표 지점 그리기
                 m = 14
