@@ -13,6 +13,13 @@ log.basicConfig(
     datefmt='%Y-%m-%d:%H:%M:%S', level=log.INFO 
     ) 
 
+class Image :
+    def __init__(self, image, name, is_bin=False):
+        self.image = image
+        self.name = name
+        self.is_bin = is_bin
+pass # -- Image
+
 class LineCamera( LineTracker ) :
 
     def __init__(self, robot, camera, buzzer=None, debug=0 ):
@@ -20,6 +27,7 @@ class LineCamera( LineTracker ) :
 
         self.camera = camera
         self.camera.lineCamera = self
+        self.successive_time = 0
     pass
 
     def robot_move(self) :
@@ -43,6 +51,13 @@ class LineCamera( LineTracker ) :
         # 환경 설정 데이터
         config = robot.config
 
+        images = []
+
+        overlay_name = config[ "overlay" ]
+        #overlay_name = "thresh_blur"
+
+        1 and log.info( f"Overlay Name: {overlay_name}")
+
         # 목표 지점
         cx = None
         cy = None
@@ -57,13 +72,15 @@ class LineCamera( LineTracker ) :
 
         # 회색조 변환 , 공식 grayscale = 0.114B + 0.587G + 0.299R
         # opencv image color order is Blue Green Red
-        gray = 0.114*image[ :, :, 0 ] + 0.587*image[ :, :, 1 ] + 0.299*image[ :, :, 2 ]
+        grayscale = 0.114*image[ :, :, 0 ] + 0.587*image[ :, :, 1 ] + 0.299*image[ :, :, 2 ]
         #gray =image[:,:,0]/3 + image[:,:,1]/3 + image[:,:,2]/3
+
+        images.append( Image( grayscale, 'grayscale', False ))
 
         # 관심영역(ROI, Region Of Interest) 추룰
         rmh = h*5//100
         rmw = w*5//100
-        roi = gray[ rmh : h - rmh, rmw : w - rmw ]
+        roi = grayscale[ rmh : h - rmh, rmw : w - rmw ]
 
         # ROI 크기 축소
         scale_width = 160
@@ -80,6 +97,8 @@ class LineCamera( LineTracker ) :
         #blur = cv.morphologyEx(blur, cv.MORPH_OPEN, np.ones((5, 5), np.uint8), iterations=1)
         #blur = cv.filter2D(roi, -1, np.ones((5, 5), np.float32)/25)
         #blur = cv.filter2D(blur, -1, np.ones((21, 21), np.float32)/(21*21))
+
+        images.append( Image( blur, 'blur', False ))
         
         # 이진화/임계치 적용
         threshold = config[ "threshold" ] # 65 110 #75 #50 #100
@@ -90,43 +109,82 @@ class LineCamera( LineTracker ) :
         #thresh = cv.filter2D(thresh, -1, np.ones((5, 5), np.float32)/25)
         #thresh = cv.adaptiveThreshold(blur.astype(np.uint8),255,cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 0)
 
+        images.append( Image( thresh, 'thresh', True ))
+
         # 형태학적 노이즈 제거
         thresh_open = thresh
         thresh_open = cv.resize(thresh_open, (thresh.shape[1]//10, thresh.shape[0]//10))
         thresh_open = cv.resize(thresh_open, thresh.shape[:2][::-1])
 
+        images.append( Image( thresh_open, 'thresh_open', True ))
+
         thresh_blur = thresh & thresh_open
+        images.append( Image( thresh_blur, 'thresh_blur', True ))
 
         # 등고선 추출
         contours, hierarchy = cv.findContours(thresh_blur.astype(np.uint8), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
-        overlay = 255*(1 - thresh)
+        overlay = None
         #overlay = blur
         #overlay = thresh
+        #overlay = 255*(1 - thresh)
 
-        # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
-        image = gray
-        image[ rmh : h - rmh, rmw : w - rmw ] = 0
-        image *= 0.7 
-        if scale_factor != 1 :
-            overlay = cv.resize(overlay.astype(np.uint8), roi.shape[:2][::-1] )
-            image[ rmh : h - rmh, rmw : w - rmw ] = overlay
-        else :
-            image[ rmh : h - rmh, rmw : w - rmw ] = overlay
+        # 오버레이 이미지 검색
+        if overlay_name and overlay_name not in [ "original", "successive" ] :
+            self.successive_time = time() 
+
+            for img in images :
+                if img.name == overlay_name :
+                    if img.is_bin :
+                        overlay = 255*(1 - img.image)
+                    else :
+                        overlay = img.image
+                    pass
+
+                    break
+                pass
+            pass
+        elif overlay_name == "successive" :
+            elapsed = int( time() - self.successive_time )*2
+            idx = elapsed%len( images )
+            img = images[ idx ]
+
+            if img.is_bin :
+                overlay = 255*(1 - img.image)
+            else :
+                overlay = img.image
+            pass
         pass
 
-        # convert grayscale(1 channel) to rgb color(3 channel)
-        gray_color = np.stack( [gray, gray, gray], axis=-1 )
-        #gray_color
-        '''
-        gray_color = np.empty( [h, w, 3] )
-        gray_color[ :, :, 0 ] = gray
-        gray_color[ :, :, 1 ] = gray
-        gray_color[ :, :, 2 ] = gray
-        '''
-        
-        # draw roi area rectangle
-        image = gray_color
+        # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
+        image = image_org
+
+        if len( overlay ) < len( image_org ) :
+            image = grayscale
+            image[ rmh : h - rmh, rmw : w - rmw ] = 0
+            image *= 0.7
+
+            if scale_factor != 1 :
+                overlay = cv.resize(overlay.astype(np.uint8), roi.shape[:2][::-1] )
+                image[ rmh : h - rmh, rmw : w - rmw ] = overlay
+            else :
+                image[ rmh : h - rmh, rmw : w - rmw ] = overlay
+            pass
+
+            # convert grayscale(1 channel) to rgb color(3 channel)
+            grayscale_color = np.stack( [grayscale, grayscale, grayscale], axis=-1 )
+            #gray_color
+            '''
+            gray_color = np.empty( [h, w, 3] )
+            gray_color[ :, :, 0 ] = gray
+            gray_color[ :, :, 1 ] = gray
+            gray_color[ :, :, 2 ] = gray
+            '''
+            
+            # draw roi area rectangle
+            image = grayscale_color
+        pass
+
         cv.rectangle( image, (rmw, rmh), (w - rmw, h - rmh), color=(255, 255, 0), thickness=2)
         
         image = image.astype(np.uint8)
