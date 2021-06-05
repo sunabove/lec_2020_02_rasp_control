@@ -135,7 +135,7 @@ class LineCamera( LineTracker ) :
 
         # 화면에 출력할 오버레이 이미지 검색
         if overlay_name and overlay_name not in [ "original", "successive" ] :
-            self.successive_time = time() 
+            self.successive_time = -1
 
             for idx, img in enumerate( images ) :
                 if img.name == overlay_name :
@@ -147,6 +147,10 @@ class LineCamera( LineTracker ) :
                 pass
             pass
         elif overlay_name == "successive" :
+            if self.successive_time < 1 :
+                self.successive_time = time()
+            pass
+
             elapsed = int( time() - self.successive_time )//3
             idx = elapsed%len( images )
             img = images[ idx ]
@@ -159,7 +163,11 @@ class LineCamera( LineTracker ) :
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
         image = image_org
 
-        if overlay is not None and len( overlay ) < len( image_org ) :
+        if overlay is not None :
+            if overlay_img_name == "grayscale" :
+                overlay = np.copy( grayscale[ rmh : h - rmh, rmw : w - rmw ] )
+            pass
+
             image = grayscale
             image[ rmh : h - rmh, rmw : w - rmw ] = 0
             image *= 0.7
@@ -185,6 +193,7 @@ class LineCamera( LineTracker ) :
             image = grayscale_color
         pass
 
+        # ROI 영역 사각형 그리기
         cv.rectangle( image, (rmw, rmh), (w - rmw, h - rmh), color=(255, 255, 0), thickness=2)
         
         image = image.astype(np.uint8)
