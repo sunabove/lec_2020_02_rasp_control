@@ -58,9 +58,10 @@ class LineCamera( LineTracker ) :
 
         0 and log.info( f"Overlay Name: {overlay_name}")
 
-        # 목표 지점
+        # 목표 지점/차선 중심점
         cx = None
         cy = None
+        inside_lane = False # 차선 내부 판별
 
         image_org = image
 
@@ -190,7 +191,7 @@ class LineCamera( LineTracker ) :
         image_draw = image[ rmh : h - rmh, rmw : w - rmw ]
 
         if True : 
-            # 가운데 지점 그리기
+            # 영상 중심점 그리기
             m = 14
             line_color = (255, 255, 0)
             cen_y, cen_x = image_draw.shape[:2]
@@ -242,10 +243,14 @@ class LineCamera( LineTracker ) :
             if max_poly is not None :
                 c = max_poly
 
-                # 목표 지점 구하기
+                # 차선 중심점 구하기
                 M = cv.moments(c)
                 cx = int(M["m10"] / M["m00"])
                 cy = int(M["m01"] / M["m00"])
+
+                # 차선 중심점 거리로 부터 중심점 내부 포함 여부 판별
+                dist = cv.pointPolygonTest( c,(50,50),True)
+                inside_lane = dist < 0 
 
                 # 목표 지점 그리기
                 m = 14
@@ -272,7 +277,7 @@ class LineCamera( LineTracker ) :
             cx = (cx + rmw) - w_org//2
             cy = h_org//2 - (cy + rmh)
 
-            txt = f"CX: {cx}, CY: {cy}"
+            txt = f"CX: {cx}, CY: {cy}, Inside: {inside_lane}"
 
             lines.append( txt )
         pass
