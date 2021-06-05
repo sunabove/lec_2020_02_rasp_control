@@ -281,8 +281,8 @@ class LineCamera( LineTracker ) :
         t = f""
         lines.append( txt )
         
-        for t in lines :
-            camera.putTextLine( image, t, tx, ty )
+        for txt in lines :
+            camera.putTextLine( image, txt, tx, ty )
             ty += th
         pass
 
