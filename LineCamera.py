@@ -62,8 +62,6 @@ class LineCamera( LineTracker ) :
         cx = None
         cy = None
 
-        txts = [] # texts to draw on the image
-
         image_org = image
 
         # image height and width
@@ -128,6 +126,7 @@ class LineCamera( LineTracker ) :
 
         overlay = None
         overlay_img_name = ""
+        overlay_idx = 0 
         #overlay = blur
         #overlay = thresh
         #overlay = 255*(1 - thresh)
@@ -136,10 +135,11 @@ class LineCamera( LineTracker ) :
         if overlay_name and overlay_name not in [ "original", "successive" ] :
             self.successive_time = time() 
 
-            for img in images :
+            for idx, img in enumerate( images ) :
                 if img.name == overlay_name :
                     overlay = 255*(1 - img.image) if img.is_bin else img.image
                     overlay_img_name = img.name
+                    overlay_idx = idx + 1
 
                     break
                 pass
@@ -151,6 +151,7 @@ class LineCamera( LineTracker ) :
 
             overlay = 255*(1 - img.image) if img.is_bin else img.image
             overlay_img_name = img.name
+            overlay_idx = idx + 1
         pass
 
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
@@ -256,22 +257,31 @@ class LineCamera( LineTracker ) :
                 cv.line(image_draw, (cx - m, cy), (cx + m, cy), (0, 255, 255), 1)
                 cv.line(image_draw, (cx, cy -m), (cx, cy + m), (0, 255, 255), 1)
             pass
-        pass
+        pass # -- 등고선 그리기
 
-        txt = f"LineCamera: W: {w_org}({scale.shape[1]}), H: {h_org}({scale.shape[0]}), Threshold: {threshold}, Overlay: {overlay_img_name}"
+        # 영상에 표현할 텍스트 
+        lines = []
 
-        txts.append( txt )
+        # 영상 크기 등의 텍스트 정보 추가 
+        txt = f"LineCamera: W: {w_org}({scale.shape[1]}), H: {h_org}({scale.shape[0]}), Threshold: {threshold}, Overlay: [{overlay_idx}]{overlay_img_name}"
 
+        lines.append( txt )
+
+        # 라인 중심정 정보 텍스트 추가
         if cx is not None :
             cx = (cx + rmw) - w_org//2
             cy = h_org//2 - (cy + rmh)
 
             txt = f"CX: {cx}, CY: {cy}"
 
-            txts.append( txt )
+            lines.append( txt )
         pass
+
+        # 과제 영상 처리 시각(시/분/초, 1/1000 초 단위) 텍스트 추가 
+        t = f""
+        lines.append( txt )
         
-        for t in txts :
+        for t in lines :
             camera.putTextLine( image, t, tx, ty )
             ty += th
         pass
