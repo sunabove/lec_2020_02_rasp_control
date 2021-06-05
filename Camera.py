@@ -3,6 +3,7 @@
 import cv2, numpy as np, io, threading, inspect
 from time import time, sleep
 from threading import Condition
+from gpiozero import CPUTemperature
 
 import logging as log
 log.basicConfig(
@@ -25,6 +26,7 @@ class Camera :
         
         self.video = None
         self.lineCamera = None
+        self.cpu = CPUTemperature()
     pass 
     
     def __del__(self):
@@ -107,7 +109,7 @@ class Camera :
             self.frame_time = now
         pass
 
-        txt = f"Alphabot Web Control"
+        txt = f"Alphabot Control"
 
         if fps :
             txt += f" : FPS = {fps:4.2f}"
@@ -151,6 +153,14 @@ class Camera :
         
         self.putTextLine( image, txt , tx, ty )
 
+        # CPU 온도 출력 
+        temperature = self.cpu.temperature
+        txt = f"TEMP: {temperature:3.2f} < 85 oC"
+        tx = 490
+        fg_color = (0, 0, 255) if temperature >= 70 else (0, 255, 0)
+        bg_color = (50, 50, 60)
+        self.putTextLine( image, txt, tx, ty, fg_color, bg_color )
+
         return image
     pass # -- get_image
 
@@ -161,14 +171,17 @@ class Camera :
         return jpg.tobytes()
     pass # -- get_frame
 
-    def putTextLine(self, image, txt, x, y ) :
+    def putTextLine(self, image, txt, x, y, fg_color=None, bg_color=None ) :
         # opencv 이미지에 텍스트를 그린다.
         font = cv2.FONT_HERSHEY_SIMPLEX
         fs = 0.4  # font size(scale)
         ft = 1    # font thickness 
 
-        bg_color = (255, 255, 255) # text background color
-        fg_color = (255,   0,   0) # text foreground color
+        if fg_color is None : 
+            fg_color = (255, 0, 0) # text foreground color
+        
+        if bg_color is None :
+            bg_color = (255, 255, 255) # text background color
 
         if image is not None and len( image.shape ) == 2 : #gray scale
             bg_color = (255, 255, 255) # white
