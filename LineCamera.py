@@ -264,18 +264,18 @@ class LineCamera( LineTracker ) :
         pass # -- 등고선 그리기
 
         if True : 
-            # 영상 중심점 그리기
-            m = 14
+            # 영상 중심점 십자가 그리기
+            m = 10
             cen_y, cen_x = image_draw.shape[:2]
             cen_y, cen_x = cen_y//2, cen_x//2
 
             line_color = (255, 255, 255)
-            cv.line(image_draw, (cen_x - m, cen_y), (cen_x + m, cen_y), line_color, 4)
-            cv.line(image_draw, (cen_x, cen_y -m), (cen_x, cen_y + m), line_color, 4)
+            cv.rectangle(image_draw, (cen_x - m - 2, cen_y - 2), (cen_x + m + 2, cen_y + 2), line_color, -1)
+            cv.rectangle(image_draw, (cen_x - 2, cen_y - m - 2), (cen_x + 2, cen_y + m + 2), line_color, -1)
 
             line_color = (255, 255, 0)
-            cv.line(image_draw, (cen_x - m, cen_y), (cen_x + m, cen_y), line_color, 2)
-            cv.line(image_draw, (cen_x, cen_y -m), (cen_x, cen_y + m), line_color, 2)
+            cv.line(image_draw, (cen_x - m, cen_y), (cen_x + m, cen_y), line_color, 1 )
+            cv.line(image_draw, (cen_x, cen_y -m), (cen_x, cen_y + m), line_color, 1 )
         pass 
 
         # 영상에 표현할 텍스트 
@@ -291,7 +291,7 @@ class LineCamera( LineTracker ) :
             cx = (cx + rmw) - w_org//2
             cy = h_org//2 - (cy + rmh)
 
-            txt = f"CX: {cx}, CY: {cy}, Inside: {inside_lane}"
+            txt = f"CX: {cx:3d}, CY: {cy:3d}, Inside: {inside_lane}"
 
             lines.append( txt )
         pass
