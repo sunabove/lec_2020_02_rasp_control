@@ -154,7 +154,7 @@ class LineCamera( LineTracker ) :
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
         image = image_org
 
-        if len( overlay ) < len( image_org ) :
+        if overlay is not None and len( overlay ) < len( image_org ) :
             image = grayscale
             image[ rmh : h - rmh, rmw : w - rmw ] = 0
             image *= 0.7
