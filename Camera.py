@@ -33,7 +33,7 @@ class Camera :
 
     def start_recording(self) :
         self.video = cv2.VideoCapture(-1)
-        self.video.set(cv2.CAP_PROP_FPS, 24)
+        self.video.set(cv2.CAP_PROP_FPS, 12)
         #self.video.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc(*'X264'))
 
         self._thread = threading.Thread(target=self._start_recording_impl, args=[] )
@@ -110,7 +110,7 @@ class Camera :
         txt = f"Alphabot Web Control"
 
         if fps :
-            txt += f" : FPS = {fps:.1f}"
+            txt += f" : FPS = {fps:4.2f}"
         pass
 
         if motor :

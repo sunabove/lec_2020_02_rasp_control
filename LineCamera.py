@@ -116,7 +116,7 @@ class LineCamera( LineTracker ) :
         # 축소 / 이웃 보간법
         thresh_open = cv.resize(thresh_open, (thresh.shape[1]//10, thresh.shape[0]//10), cv.INTER_NEAREST) 
         # 확대
-        thresh_open = cv.resize(thresh_open, thresh.shape[:2][::-1])
+        thresh_open = cv.resize(thresh_open, thresh.shape[:2][::-1], cv.INTER_NEAREST) 
 
         images.append( Image( thresh_open, 'thresh_open', True ))
 
@@ -191,17 +191,6 @@ class LineCamera( LineTracker ) :
 
         image_draw = image[ rmh : h - rmh, rmw : w - rmw ]
 
-        if True : 
-            # 영상 중심점 그리기
-            m = 14
-            line_color = (255, 255, 0)
-            cen_y, cen_x = image_draw.shape[:2]
-            cen_y, cen_x = cen_y//2, cen_x//2
-
-            cv.line(image_draw, (cen_x - m, cen_y), (cen_x + m, cen_y), line_color, 2)
-            cv.line(image_draw, (cen_x, cen_y -m), (cen_x, cen_y + m), line_color, 2)
-        pass
-
         # 등고선 그리기
         draw_contour = 1 
         if draw_contour and contours is not None :
@@ -273,6 +262,21 @@ class LineCamera( LineTracker ) :
                 cv.line(image_draw, (cx, cy -m), (cx, cy + m), line_color, 1)
             pass
         pass # -- 등고선 그리기
+
+        if True : 
+            # 영상 중심점 그리기
+            m = 14
+            cen_y, cen_x = image_draw.shape[:2]
+            cen_y, cen_x = cen_y//2, cen_x//2
+
+            line_color = (255, 255, 255)
+            cv.line(image_draw, (cen_x - m, cen_y), (cen_x + m, cen_y), line_color, 4)
+            cv.line(image_draw, (cen_x, cen_y -m), (cen_x, cen_y + m), line_color, 4)
+
+            line_color = (255, 255, 0)
+            cv.line(image_draw, (cen_x - m, cen_y), (cen_x + m, cen_y), line_color, 2)
+            cv.line(image_draw, (cen_x, cen_y -m), (cen_x, cen_y + m), line_color, 2)
+        pass 
 
         # 영상에 표현할 텍스트 
         lines = []
