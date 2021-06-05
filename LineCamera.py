@@ -253,15 +253,19 @@ class LineCamera( LineTracker ) :
                 dist = cv.pointPolygonTest( c, (cx, cy), False )
                 inside_lane = dist >= 0 
 
-                # 목표 지점 그리기
+                # 목표 지점 원 그리기
                 m = 14
-                cv.circle(image_draw, (cx, cy), 4, (0, 0, 255), -1)
-                for radius in range( 6, 13, 3 ) :
-                    cv.circle(image_draw, (cx, cy), radius, (0, 0, 255) )
+                circle_color = (0, 0, 255)  
+                # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
+                cv.circle(image_draw, (cx, cy), 4, circle_color, -1)
+                for radius in range( 6, m, 3 ) :
+                    cv.circle(image_draw, (cx, cy), circle_color )
                 pass
 
-                cv.line(image_draw, (cx - m, cy), (cx + m, cy), (0, 255, 255), 1)
-                cv.line(image_draw, (cx, cy -m), (cx, cy + m), (0, 255, 255), 1)
+                # 목표 지점 십자가 그리기
+                line_color = (0, 255, 255)
+                cv.line(image_draw, (cx - m, cy), (cx + m, cy), line_color, 1)
+                cv.line(image_draw, (cx, cy -m), (cx, cy + m), line_color, 1)
             pass
         pass # -- 등고선 그리기
 
@@ -283,7 +287,7 @@ class LineCamera( LineTracker ) :
             lines.append( txt )
         pass
 
-        # 과제 영상 처리 시각(시:분:초, 초는 1/1000 초까지 표현) 텍스트 추가 
+        # 과제 : 영상 처리 시각(시:분:초, 초는 1/1000 초까지 표현) 텍스트 추가 
         txt = f""
         lines.append( txt )
         
