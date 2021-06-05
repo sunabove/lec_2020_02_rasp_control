@@ -255,8 +255,12 @@ class LineCamera( LineTracker ) :
 
                 # 목표 지점 원 그리기
                 m = 14
-                circle_color = (0, 0, 255)  
-                # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
+                circle_color = (0, 0, 255) # 색깔 지정 순서는 blue, green, red 순서이다.
+
+                if inside_lane :
+                    # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
+                    pass
+                pass
                 cv.circle(image_draw, (cx, cy), 4, circle_color, -1)
                 for radius in range( 6, m, 3 ) :
                     cv.circle(image_draw, (cx, cy), circle_color )
