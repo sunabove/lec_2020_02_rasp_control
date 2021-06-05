@@ -125,7 +125,7 @@ class LineCamera( LineTracker ) :
         contours, hierarchy = cv.findContours(thresh_blur.astype(np.uint8), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
         overlay = None
-        overlay_img_name = ""
+        overlay_img_name = "original"
         overlay_idx = 0 
         #overlay = blur
         #overlay = thresh
