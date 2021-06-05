@@ -263,7 +263,7 @@ class LineCamera( LineTracker ) :
         lines = []
 
         # 영상 크기 등의 텍스트 정보 추가 
-        txt = f"LineCamera: W: {w_org}({scale.shape[1]}), H: {h_org}({scale.shape[0]}), Threshold: {threshold}, Overlay: [{overlay_idx}]{overlay_img_name}"
+        txt = f"LineCamera: W: {w_org}({scale.shape[1]}), H: {h_org}({scale.shape[0]}), Threshold: {threshold}, Overlay[{overlay_idx}]: {overlay_img_name}"
 
         lines.append( txt )
 
@@ -277,8 +277,8 @@ class LineCamera( LineTracker ) :
             lines.append( txt )
         pass
 
-        # 과제 영상 처리 시각(시/분/초, 1/1000 초 단위) 텍스트 추가 
-        t = f""
+        # 과제 영상 처리 시각(시:분:초, 초는 1/1000 초까지 표현) 텍스트 추가 
+        txt = f""
         lines.append( txt )
         
         for txt in lines :
