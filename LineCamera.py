@@ -102,6 +102,7 @@ class LineCamera( LineTracker ) :
         # 이진화/임계치 적용
         threshold = config[ "threshold" ] # 65 110 #75 #50 #100
         thresh = np.where( blur < threshold, 1, 0)
+        #thresh = np.where( blur > threshold, 1, 0)
         thresh = thresh.astype(np.uint8)
         #thresh = np.where(blur > threshold, 255, 0) #110
         #thresh = cv.adaptiveThreshold(blur.astype(np.uint8),255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY,11,2)
@@ -259,7 +260,7 @@ class LineCamera( LineTracker ) :
 
                 if inside_lane :
                     # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
-                    pass
+                    circle_color = (0, 125, 255)
                 pass
                 cv.circle(image_draw, (cx, cy), 4, circle_color, -1)
                 for radius in range( 6, m, 3 ) :
@@ -292,7 +293,7 @@ class LineCamera( LineTracker ) :
         pass
 
         # 과제 : 영상 처리 시각(시:분:초, 초는 1/1000 초까지 표현) 텍스트 추가 
-        txt = f""
+        txt = f"TIME CURRENT: "
         lines.append( txt )
         
         for txt in lines :
