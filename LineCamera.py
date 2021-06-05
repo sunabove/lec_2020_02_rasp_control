@@ -143,7 +143,7 @@ class LineCamera( LineTracker ) :
                 pass
             pass
         elif overlay_name == "successive" :
-            elapsed = int( time() - self.successive_time )
+            elapsed = int( time() - self.successive_time )//3
             idx = elapsed%len( images )
             img = images[ idx ]
 
