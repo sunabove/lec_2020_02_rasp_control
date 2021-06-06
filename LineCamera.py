@@ -68,6 +68,7 @@ class LineCamera( LineTracker ) :
         # image height and width
         h_org, w_org = h, w = image.shape[:2]
         #h = len( image ); w = len( image[0] )
+        total_area = w*h # 전체 면적
 
         # 회색조 변환 , 공식 grayscale = 0.114B + 0.587G + 0.299R
         # opencv image color order is Blue Green Red
@@ -206,18 +207,20 @@ class LineCamera( LineTracker ) :
             polys = []
             max_poly = None
             max_area = 0
+            min_area = total_area*scale_factor*0.005
 
             # 스케일 복원
             # 최대 면적 폴리곤(등고선) 검색
             sf = 1/scale_factor
-            for c in contours : 
-                c[:,:,0] = c[:,:,0]*sf
-                c[:,:,1] = c[:,:,1]*sf
-
-                c = cv.approxPolyDP(c, 20, True)
+            
+            for c in contours :
+                #c[:,:,0] = c[:,:,0]*sf
+                #c[:,:,1] = c[:,:,1]*sf
+                #c = cv.approxPolyDP(c, 20, True)
 
                 area = cv.contourArea(c)
-                if area > max_area :
+                
+                if area > min_area and area > max_area :
                     max_area = area
                     max_poly = c
                 pass 
@@ -227,16 +230,24 @@ class LineCamera( LineTracker ) :
 
             green = (0, 255, 0)
             blue  = (255, 0, 0)
+            yellow = (0, 255, 255)
             line_width = 2
+            poly_epsilon = 20 # 12
 
             for poly in polys :
-                line_color = blue 
-                cv.drawContours(image_draw, [poly], -1, line_color, line_width, cv.LINE_AA)
+                line_color = blue
+                # 스케일 복원 
+                poly[:,:] = poly[:,:]*sf
+                poly_appr = cv.approxPolyDP(poly, poly_epsilon, True)
+
+                cv.drawContours(image_draw, [poly], -1, yellow, line_width +1, cv.LINE_AA)
+                cv.drawContours(image_draw, [poly_appr], -1, blue, line_width, cv.LINE_AA)
             pass
             
             if max_poly is not None :
-                line_color = green
-                cv.drawContours(image_draw, [max_poly], -1, line_color, line_width, cv.LINE_AA)
+                max_poly = cv.approxPolyDP(max_poly, poly_epsilon, True)
+
+                cv.drawContours(image_draw, [max_poly], -1, green, line_width, cv.LINE_AA)
             pass
 
             if max_poly is not None :
