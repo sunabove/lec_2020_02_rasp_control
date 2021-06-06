@@ -1,6 +1,11 @@
 #coding: utf-8
 
-import cv2, numpy as np, io, threading, inspect
+from Common import check_pkg
+for pkg in [ "psutil" ] :
+    	check_pkg( pkg )
+pass
+
+import cv2, numpy as np, io, threading, inspect, psutil
 from time import time, sleep
 from threading import Condition
 from gpiozero import CPUTemperature
@@ -159,6 +164,24 @@ class Camera :
         tx = 490
         fg_color = (0, 0, 255) if temperature >= 70 else (0, 255, 0)
         bg_color = (50, 50, 60)
+        self.putTextLine( image, txt, tx, ty, fg_color, bg_color )
+
+        # CPU 사용량 출력
+        pct = psutil.cpu_percent()
+        txt = f"CPU : {pct:02.1f} %"
+        tx = 542
+        ty += th
+        fg_color = (0, 0, 255) if pct >= 90 else (0, 255, 0)
+        bg_color = (50, 50, 60)
+        self.putTextLine( image, txt, tx, ty, fg_color, bg_color )
+
+        # RAM 사용량 출력
+        pct = psutil.virtual_memory()[2]
+        tx = 542
+        ty += th
+        fg_color = (0, 0, 255) if pct >= 90 else (0, 255, 0)
+        bg_color = (50, 50, 60)
+        txt = f"RAM : {pct:02.1f} %"
         self.putTextLine( image, txt, tx, ty, fg_color, bg_color )
 
         return image

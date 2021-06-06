@@ -290,8 +290,8 @@ class LineCamera( LineTracker ) :
             cen_y, cen_x = cen_y//2, cen_x//2
 
             line_color = (255, 255, 255)
-            cv.rectangle(image_draw, (cen_x - m - 2, cen_y - 2), (cen_x + m + 2, cen_y + 2), line_color, -1)
-            cv.rectangle(image_draw, (cen_x - 2, cen_y - m - 2), (cen_x + 2, cen_y + m + 2), line_color, -1)
+            cv.rectangle(image_draw, (cen_x - m - 3, cen_y - 2), (cen_x + m + 3, cen_y + 2), line_color, -1)
+            cv.rectangle(image_draw, (cen_x - 2, cen_y - m - 3), (cen_x + 2, cen_y + m + 3), line_color, -1)
 
             line_color = (255, 255, 0)
             cv.line(image_draw, (cen_x - m, cen_y), (cen_x + m, cen_y), line_color, 1 )
