@@ -1,7 +1,8 @@
 # -*- coding:utf-8 -*-
 
 from Common import check_pkg
-for pkg in [ "shapely, libgeos-dev, shapely", "centerline, libgdal-dev, centerline" ] :
+for pkg in [ "shapely, libgeos-dev, shapely" ] :
+        #"centerline, libgdal-dev, centerline" 
     	check_pkg( pkg )
 pass
 
@@ -12,7 +13,6 @@ from random import random
 from time import sleep, time, time_ns
 from LineTracker import LineTracker
 from shapely.geometry import Polygon
-from centerline.geometry import Centerline
 
 from Config import cfg
 
@@ -58,6 +58,12 @@ class LineCamera( LineTracker ) :
 
         # 환경 설정 데이터
         config = robot.config
+
+        # color definition
+        green = (0, 255, 0)
+        blue  = (255, 0, 0)
+        red = (0, 0, 255)
+        yellow = (0, 255, 255)
 
         images = []
 
@@ -235,10 +241,7 @@ class LineCamera( LineTracker ) :
 
                 polys.append( c )
             pass
-
-            green = (0, 255, 0)
-            blue  = (255, 0, 0)
-            yellow = (0, 255, 255)
+            
             line_width = 2
             poly_epsilon = 20 # 12
 
@@ -254,8 +257,10 @@ class LineCamera( LineTracker ) :
             
             if max_poly is not None :
                 max_poly = cv.approxPolyDP(max_poly, poly_epsilon, True)
-
                 cv.drawContours(image_draw, [max_poly], -1, green, line_width, cv.LINE_AA)
+
+                polygon = Polygon( np.squeeze(max_poly) )
+                attributes = {"id": 1, "name": "polygon", "valid": True}
             pass
 
             if max_poly is not None :
