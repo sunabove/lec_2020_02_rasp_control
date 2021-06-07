@@ -59,39 +59,39 @@ class LineCamera( LineTracker ) :
         # 환경 설정 데이터
         config = robot.config
 
-        # color definition
+        # 색깔 정의
         green = (0, 255, 0)
         blue  = (255, 0, 0)
         red = (0, 0, 255)
         yellow = (0, 255, 255)
+        violet = (255, 0 , 127)
 
+        # 영상 처리 과정의 이미지들
         images = []
 
         overlay_name = config[ "overlay" ]
-        #overlay_name = "thresh_blur"
-
-        0 and log.info( f"Overlay Name: {overlay_name}")
 
         # 목표 지점/차선 중심점
         cx = None
         cy = None
         inside_lane = False # 차선 내부 판별
 
+        # 원본 이미지
         image_org = image
 
-        # image height and width
+        # 이미지 높이와 폭
         h_org, w_org = h, w = image.shape[:2]
         #h = len( image ); w = len( image[0] )
         total_area = w*h # 전체 면적
 
         # 회색조 변환 , 공식 grayscale = 0.114B + 0.587G + 0.299R
-        # opencv image color order is Blue Green Red
+        # opencv image color order is in order Blue, Green and Red
         grayscale = 0.114*image[ :, :, 0 ] + 0.587*image[ :, :, 1 ] + 0.299*image[ :, :, 2 ]
         #gray =image[:,:,0]/3 + image[:,:,1]/3 + image[:,:,2]/3
 
         images.append( Image( grayscale, 'grayscale', False ))
 
-        # 관심영역(ROI, Region Of Interest) 추룰
+        # 관심영역(ROI, Region Of Interest) 추출
         rmh = h*5//100
         rmw = w*5//100
         roi = grayscale[ rmh : h - rmh, rmw : w - rmw ]
@@ -100,7 +100,7 @@ class LineCamera( LineTracker ) :
         scale_width = 160
         scale_factor = scale_width/roi.shape[1]
         scale_height = int( roi.shape[0]*scale_factor )
-        scale = cv.resize( roi, (scale_width, scale_height))
+        scale = cv.resize( roi, (scale_width, scale_height) )
 
         # 필터를 이용한 노이즈 제거
         blur = scale
@@ -134,6 +134,7 @@ class LineCamera( LineTracker ) :
 
         images.append( Image( thresh_open, 'thresh_open', True ))
 
+        # 임계치 영상에서 그림자 제거
         thresh_blur = thresh & thresh_open
         images.append( Image( thresh_blur, 'thresh_blur', True ))
 
