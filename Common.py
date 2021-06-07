@@ -1,19 +1,25 @@
 # coding: utf-8
 
+import os
+
 def check_pkg( pkg ) : 
 	try:
+		pkg = pkg.split(",")
 		import importlib
-		mode_name = pkg.split(",")[0].strip() 
+		mode_name = pkg[0].strip() 
 		importlib.import_module( mode_name )
 	except ModuleNotFoundError :
 		print( '%s is not installed, installing it now ... ' % mode_name )
-		import sys 
-		try:
-			from pip import main as pipmain
-		except:
-			from pip._internal import main as pipmain
+		
+		for lib in pkg[ 1 : ] :
+			lib = lib.strip()
+			
+			if lib.startswith( "lib") :
+				os.system( f"sudo apt install -y {lib}" )
+			else :
+				os.system( f"sudo pip3 install {lib}" )
+			pass
 		pass
-		pipmain( ['install', pkg.split(",")[-1].strip() ] )
 	pass
 pass
 

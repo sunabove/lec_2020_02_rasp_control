@@ -1,11 +1,19 @@
 # -*- coding:utf-8 -*-
 
+from Common import check_pkg
+for pkg in [ "shapely, libgeos-dev, shapely", "centerline, libgdal-dev, centerline" ] :
+    	check_pkg( pkg )
+pass
+
 import RPi.GPIO as GPIO, threading, signal, inspect, sys, logging as log
 import numpy as np, cv2 as cv
 from math import cos, sin
 from random import random
 from time import sleep, time, time_ns
 from LineTracker import LineTracker
+from shapely.geometry import Polygon
+from centerline.geometry import Centerline
+
 from Config import cfg
 
 log.basicConfig(
