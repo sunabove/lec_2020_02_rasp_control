@@ -266,7 +266,6 @@ class LineCamera( LineTracker ) :
             max_poly_min_box = cv.boxPoints(max_poly_min_box)
             max_poly_min_box = np.int0(max_poly_min_box)
 
-            cv.drawContours(image, [max_poly_min_box], -1, white, line_width + 2, cv.LINE_AA, offset=(rmw, rmh))
             cv.drawContours(image, [max_poly_min_box], -1, violet, line_width + 1, cv.LINE_AA, offset=(rmw, rmh))
             cv.drawContours(image_draw, [max_poly], -1, green, line_width, cv.LINE_AA)
         pass
