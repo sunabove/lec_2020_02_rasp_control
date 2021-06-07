@@ -64,7 +64,9 @@ class LineCamera( LineTracker ) :
         blue  = (255, 0, 0)
         red = (0, 0, 255)
         yellow = (0, 255, 255)
-        violet = (255, 0 , 127)
+        violet = (255, 0, 127)
+        white = (255, 255, 255)
+        black = (0, 0, 0)
 
         # 영상 처리 과정의 이미지들
         images = []
@@ -216,81 +218,89 @@ class LineCamera( LineTracker ) :
         image_draw = image[ rmh : h - rmh, rmw : w - rmw ]
 
         # 등고선 그리기
-        draw_contour = 1 
-        if draw_contour and contours is not None :
-            polys = []
-            max_poly = None
-            max_area = 0
-            min_area = total_area*scale_factor*0.005
+        
+        polys = []
+        max_poly = None
+        max_poly_min_box = None
+        max_area = 0
+        min_area = total_area*scale_factor*0.005
 
-            # 스케일 복원
-            # 최대 면적 폴리곤(등고선) 검색
-            sf = 1/scale_factor
+        # 스케일 복원
+        # 최대 면적 폴리곤(등고선) 검색
+        sf = 1/scale_factor
+        
+        for c in contours :
+            #c[:,:,0] = c[:,:,0]*sf
+            #c[:,:,1] = c[:,:,1]*sf
+            #c = cv.approxPolyDP(c, 20, True)
+
+            area = cv.contourArea(c)
             
-            for c in contours :
-                #c[:,:,0] = c[:,:,0]*sf
-                #c[:,:,1] = c[:,:,1]*sf
-                #c = cv.approxPolyDP(c, 20, True)
+            if area > min_area and area > max_area :
+                max_area = area
+                max_poly = c
+            pass 
 
-                area = cv.contourArea(c)
-                
-                if area > min_area and area > max_area :
-                    max_area = area
-                    max_poly = c
-                pass 
+            polys.append( c )
+        pass
+        
+        line_width = 2
+        # 폴리곤 정점들의 최소 간격
+        poly_epsilon = 20 # 6 #20 # 12
 
-                polys.append( c )
-            pass
+        for poly in polys :
+            line_color = blue
+            # 스케일 복원 
+            poly[:,:] = poly[:,:]*sf
+            poly_appr = cv.approxPolyDP(poly, poly_epsilon, True)
+
+            cv.drawContours(image_draw, [poly], -1, yellow, line_width +1, cv.LINE_AA)
+            cv.drawContours(image_draw, [poly_appr], -1, blue, line_width, cv.LINE_AA)
+        pass
+        
+        # 최대 폴리곤(= 차선) 그리기
+        if max_poly is not None :
+            max_poly = cv.approxPolyDP(max_poly, poly_epsilon, True)
             
-            line_width = 2
-            poly_epsilon = 20 # 12
+            max_poly_min_box = cv.minAreaRect(max_poly)
+            max_poly_min_box = cv.boxPoints(max_poly_min_box)
+            max_poly_min_box = np.int0(max_poly_min_box)
 
-            for poly in polys :
-                line_color = blue
-                # 스케일 복원 
-                poly[:,:] = poly[:,:]*sf
-                poly_appr = cv.approxPolyDP(poly, poly_epsilon, True)
+            cv.drawContours(image, [max_poly_min_box], -1, white, line_width + 2, cv.LINE_AA, offset=(rmw, rmh))
+            cv.drawContours(image, [max_poly_min_box], -1, violet, line_width + 1, cv.LINE_AA, offset=(rmw, rmh))
+            cv.drawContours(image_draw, [max_poly], -1, green, line_width, cv.LINE_AA)
+        pass
 
-                cv.drawContours(image_draw, [poly], -1, yellow, line_width +1, cv.LINE_AA)
-                cv.drawContours(image_draw, [poly_appr], -1, blue, line_width, cv.LINE_AA)
+        if max_poly is not None :
+            c = max_poly
+
+            # 차선 중심점 구하기
+            M = cv.moments(c)
+            cx = int(M["m10"] / M["m00"])
+            cy = int(M["m01"] / M["m00"])
+
+            # 차선 중심점 거리로 부터 중심점 내부 포함 여부 판별
+            # 이 함수는 +1, -1 또는 0을 반환하여 점이 다각형 내부, 외부 또는 위에 있는지 여부를 나타냅니다.
+            dist = cv.pointPolygonTest( c, (cx, cy), False )
+            inside_lane = dist >= 0 
+
+            # 목표 지점 원 그리기
+            m = 14
+            circle_color = (0, 0, 255) # 색깔 지정 순서는 blue, green, red 순서이다.
+
+            if inside_lane :
+                # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
+                circle_color = (0, 125, 255)
             pass
-            
-            if max_poly is not None :
-                max_poly = cv.approxPolyDP(max_poly, poly_epsilon, True)
-                cv.drawContours(image_draw, [max_poly], -1, green, line_width, cv.LINE_AA)
+            cv.circle(image_draw, (cx, cy), 4, circle_color, -1)
+            for radius in range( 6, m, 3 ) :
+                cv.circle(image_draw, (cx, cy), radius, circle_color )
             pass
 
-            if max_poly is not None :
-                c = max_poly
-
-                # 차선 중심점 구하기
-                M = cv.moments(c)
-                cx = int(M["m10"] / M["m00"])
-                cy = int(M["m01"] / M["m00"])
-
-                # 차선 중심점 거리로 부터 중심점 내부 포함 여부 판별
-                # 이 함수는 +1, -1 또는 0을 반환하여 점이 다각형 내부, 외부 또는 위에 있는지 여부를 나타냅니다.
-                dist = cv.pointPolygonTest( c, (cx, cy), False )
-                inside_lane = dist >= 0 
-
-                # 목표 지점 원 그리기
-                m = 14
-                circle_color = (0, 0, 255) # 색깔 지정 순서는 blue, green, red 순서이다.
-
-                if inside_lane :
-                    # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
-                    circle_color = (0, 125, 255)
-                pass
-                cv.circle(image_draw, (cx, cy), 4, circle_color, -1)
-                for radius in range( 6, m, 3 ) :
-                    cv.circle(image_draw, (cx, cy), radius, circle_color )
-                pass
-
-                # 목표 지점 십자가 그리기
-                line_color = (0, 255, 255)
-                cv.line(image_draw, (cx - m, cy), (cx + m, cy), line_color, 1)
-                cv.line(image_draw, (cx, cy -m), (cx, cy + m), line_color, 1)
-            pass
+            # 목표 지점 십자가 그리기
+            line_color = (0, 255, 255)
+            cv.line(image_draw, (cx - m, cy), (cx + m, cy), line_color, 1)
+            cv.line(image_draw, (cx, cy -m), (cx, cy + m), line_color, 1)
         pass # -- 등고선 그리기
 
         if True : 
