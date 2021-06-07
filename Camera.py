@@ -24,7 +24,6 @@ class Camera :
         # 전송 프레임 카운트 
         self.frame_cnt_sent = 0 
         self.frame_times = []
-        self.frame_time = 0 
 
         self._running = False
         self._thread = None
@@ -97,21 +96,16 @@ class Camera :
 
         fps = 0
         frame_times = self.frame_times
-        
-        if self.frame_time < 1 :
-            self.frame_time = now
-        else :
-            frame_times_len = len( frame_times )
 
-            if frame_times_len > 10 :
-                frame_times.pop( 0 )
-            pass
+        frame_times.append( now )
 
-            frame_times.append( now - self.frame_time )
+        if len( frame_times ) > 10 :
+            frame_times.pop( 0 )
+        pass
 
-            fps = frame_times_len/sum( frame_times )
-
-            self.frame_time = now
+        frame_times_len = len( frame_times )
+        if frame_times_len > 1 :
+            fps = (frame_times_len - 1)/( frame_times[-1] - frame_times[0] )
         pass
 
         txt = f"Alphabot Control"

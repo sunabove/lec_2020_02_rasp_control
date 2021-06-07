@@ -1,7 +1,8 @@
 # -*- coding:utf-8 -*-
 
 from Common import check_pkg
-for pkg in [ "shapely, libgeos-dev, shapely" ] :
+for pkg in [ ] :
+        #"shapely, libgeos-dev, shapely"
         #"centerline, libgdal-dev, centerline" 
     	check_pkg( pkg )
 pass
@@ -12,7 +13,6 @@ from math import cos, sin
 from random import random
 from time import sleep, time, time_ns
 from LineTracker import LineTracker
-from shapely.geometry import Polygon
 
 from Config import cfg
 
@@ -258,9 +258,6 @@ class LineCamera( LineTracker ) :
             if max_poly is not None :
                 max_poly = cv.approxPolyDP(max_poly, poly_epsilon, True)
                 cv.drawContours(image_draw, [max_poly], -1, green, line_width, cv.LINE_AA)
-
-                polygon = Polygon( np.squeeze(max_poly) )
-                attributes = {"id": 1, "name": "polygon", "valid": True}
             pass
 
             if max_poly is not None :
