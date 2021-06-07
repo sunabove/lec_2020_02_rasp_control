@@ -94,8 +94,9 @@ class LineCamera( LineTracker ) :
         images.append( Image( grayscale, 'grayscale', False ))
 
         # 관심영역(ROI, Region Of Interest) 추출
-        rmh = h*5//100
-        rmw = w*5//100
+        roi_ratio = 0.05
+        rmh = int(h*roi_ratio)
+        rmw = int(w*roi_ratio)
         roi = grayscale[ rmh : h - rmh, rmw : w - rmw ]
 
         # ROI 크기 축소
@@ -266,7 +267,7 @@ class LineCamera( LineTracker ) :
             max_poly_min_box = cv.boxPoints(max_poly_min_box)
             max_poly_min_box = np.int0(max_poly_min_box)
 
-            cv.drawContours(image, [max_poly_min_box], -1, violet, line_width + 1, cv.LINE_AA, offset=(rmw, rmh))
+            cv.drawContours(image, [max_poly_min_box], -1, violet, line_width + 2, cv.LINE_AA, offset=(rmw, rmh))
             cv.drawContours(image_draw, [max_poly], -1, green, line_width, cv.LINE_AA)
         pass
 
@@ -275,31 +276,35 @@ class LineCamera( LineTracker ) :
 
             # 차선 중심점 구하기
             M = cv.moments(c)
-            cx = int(M["m10"] / M["m00"])
-            cy = int(M["m01"] / M["m00"])
 
-            # 차선 중심점 거리로 부터 중심점 내부 포함 여부 판별
-            # 이 함수는 +1, -1 또는 0을 반환하여 점이 다각형 내부, 외부 또는 위에 있는지 여부를 나타냅니다.
-            dist = cv.pointPolygonTest( c, (cx, cy), False )
-            inside_lane = dist >= 0 
+            m00 = M["m00"]
+            if m00 != 0 :
+                cx = int( M["m10"]/m00 )
+                cy = int( M["m01"]/m00 )
 
-            # 목표 지점 원 그리기
-            m = 14
-            circle_color = (0, 0, 255) # 색깔 지정 순서는 blue, green, red 순서이다.
+                # 차선 중심점 거리로 부터 중심점 내부 포함 여부 판별
+                # 이 함수는 +1, -1 또는 0을 반환하여 점이 다각형 내부, 외부 또는 위에 있는지 여부를 나타냅니다.
+                dist = cv.pointPolygonTest( c, (cx, cy), False )
+                inside_lane = dist >= 0 
 
-            if inside_lane :
-                # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
-                circle_color = (0, 125, 255)
+                # 목표 지점 원 그리기
+                m = 14
+                circle_color = (0, 0, 255) # 색깔 지정 순서는 blue, green, red 순서이다.
+
+                if inside_lane :
+                    # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
+                    circle_color = (0, 125, 255)
+                pass
+                cv.circle(image_draw, (cx, cy), 4, circle_color, -1)
+                for radius in range( 6, m, 3 ) :
+                    cv.circle(image_draw, (cx, cy), radius, circle_color )
+                pass
+
+                # 목표 지점 십자가 그리기
+                line_color = (0, 255, 255)
+                cv.line(image_draw, (cx - m, cy), (cx + m, cy), line_color, 1)
+                cv.line(image_draw, (cx, cy -m), (cx, cy + m), line_color, 1)
             pass
-            cv.circle(image_draw, (cx, cy), 4, circle_color, -1)
-            for radius in range( 6, m, 3 ) :
-                cv.circle(image_draw, (cx, cy), radius, circle_color )
-            pass
-
-            # 목표 지점 십자가 그리기
-            line_color = (0, 255, 255)
-            cv.line(image_draw, (cx - m, cy), (cx + m, cy), line_color, 1)
-            cv.line(image_draw, (cx, cy -m), (cx, cy + m), line_color, 1)
         pass # -- 등고선 그리기
 
         if True : 
