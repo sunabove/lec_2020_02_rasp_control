@@ -117,7 +117,6 @@ class LineCamera( LineTracker ) :
         # 이진화/임계치 적용
         threshold = config[ "threshold" ] # 65 110 #75 #50 #100
         thresh = np.where( blur < threshold, 1, 0)
-        #thresh = np.where( blur > threshold, 1, 0)
         thresh = thresh.astype(np.uint8)
         #thresh = np.where(blur > threshold, 255, 0) #110
         #thresh = cv.adaptiveThreshold(blur.astype(np.uint8),255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY,11,2)
