@@ -107,8 +107,8 @@ class LineCamera( LineTracker ) :
 
         # 필터를 이용한 노이즈 제거
         blur = scale
-        blur = cv.GaussianBlur(blur, (7, 7), 0)
-        #blur = cv.bilateralFilter(blur.astype(np.uint8), 5, 80, 80)
+        #blur = cv.GaussianBlur(blur, (7, 7), 0)
+        blur = cv.bilateralFilter(blur.astype(np.uint8), 7, 80, 80)
         #blur = cv.Laplacian(blur, cv.CV_16S, ksize=5)
         #blur = cv.morphologyEx(blur, cv.MORPH_CLOSE, np.ones((9, 9), np.uint8), iterations=1)
         #blur = cv.morphologyEx(blur, cv.MORPH_OPEN, np.ones((5, 5), np.uint8), iterations=1)
@@ -121,10 +121,6 @@ class LineCamera( LineTracker ) :
         threshold = config[ "threshold" ] # 65 110 #75 #50 #100
         thresh = np.where( blur < threshold, 1, 0)
         thresh = thresh.astype(np.uint8)
-        #thresh = np.where(blur > threshold, 255, 0) #110
-        #thresh = cv.adaptiveThreshold(blur.astype(np.uint8),255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY,11,2)
-        #thresh = cv.filter2D(thresh, -1, np.ones((5, 5), np.float32)/25)
-        #thresh = cv.adaptiveThreshold(blur.astype(np.uint8),255,cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 0)
 
         images.append( Image( thresh, 'thresh', True ))
 
@@ -262,7 +258,7 @@ class LineCamera( LineTracker ) :
         # 최대 폴리곤(= 차선) 그리기
         if max_poly is not None :
             # 폴리곤 단순화/최대 길이 적용
-            useConvexHull = True
+            useConvexHull = False
             if useConvexHull :
                 # 폴리곤 외곽선 알고리즘 사용
                 max_poly = cv.convexHull(max_poly, clockwise=True)
