@@ -253,16 +253,23 @@ class LineCamera( LineTracker ) :
             line_color = blue
             # 스케일 복원 
             poly[:,:] = poly[:,:]*sf
-            poly_appr = cv.approxPolyDP(poly, poly_epsilon, True)
+            #poly_appr = cv.approxPolyDP(poly, poly_epsilon, True)
 
-            cv.drawContours(image_draw, [poly], -1, yellow, line_width +1, cv.LINE_AA)
-            cv.drawContours(image_draw, [poly_appr], -1, blue, line_width, cv.LINE_AA)
+            cv.drawContours(image_draw, [poly], -1, blue, line_width +1, cv.LINE_AA)
+            #cv.drawContours(image_draw, [poly_appr], -1, blue, line_width, cv.LINE_AA)
         pass
         
         # 최대 폴리곤(= 차선) 그리기
         if max_poly is not None :
             # 폴리곤 단순화/최대 길이 적용
-            max_poly = cv.approxPolyDP(max_poly, poly_epsilon, True)
+            useConvexHull = True
+            if useConvexHull :
+                # 폴리곤 외곽선 알고리즘 사용
+                max_poly = cv.convexHull(max_poly, clockwise=True)
+            else :
+                # 폴리곤 단순화 알고리즘 사용
+                max_poly = cv.approxPolyDP(max_poly, poly_epsilon, True)
+            pass
             
             # 회전된 폴리곤 최소 사각형
             max_poly_min_box = cv.minAreaRect(max_poly)
@@ -277,7 +284,7 @@ class LineCamera( LineTracker ) :
             # 차선 중심점 구하기
             # 이미지 모멘트
             M = cv.moments(max_poly) 
-            
+
             if M[ "m00"] == 0 :
                 M = cv.moments(max_poly_min_box)
             pass
