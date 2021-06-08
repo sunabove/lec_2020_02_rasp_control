@@ -9,7 +9,7 @@ pass
 
 import RPi.GPIO as GPIO, threading, signal, inspect, sys, logging as log
 import numpy as np, cv2 as cv
-from math import cos, sin
+from math import cos, sin, atan2, pi
 from random import random
 from time import sleep, time, time_ns
 from LineTracker import LineTracker
@@ -76,6 +76,8 @@ class LineCamera( LineTracker ) :
         # 목표 지점/차선 중심점
         cx = None
         cy = None
+        theta = None # 방향 RADIAN
+        angle = None # 방향 DEGREE
         inside_lane = False # 차선 내부 판별
 
         # 원본 이미지
@@ -290,6 +292,14 @@ class LineCamera( LineTracker ) :
                 cx = int( M["m10"]/m00 )
                 cy = int( M["m01"]/m00 )
 
+                u00 = m00
+                u20 = M[ "mu20" ]/u00
+                u02 = M[ "mu02" ]/u00
+                u11 = M[ "mu11" ]/u00
+
+                theta = 0.5*atan2(2*u11, u20 - u02)
+                angle = theta/pi*180
+
                 # 차선 중심점 거리로 부터 중심점 내부 포함 여부 판별
                 # 이 함수는 +1, -1 또는 0을 반환하여 점이 다각형 내부, 외부 또는 위에 있는지 여부를 나타냅니다.
                 dist = cv.pointPolygonTest( c, (cx, cy), False )
@@ -343,7 +353,7 @@ class LineCamera( LineTracker ) :
             cx = (cx + rmw) - w_org//2
             cy = h_org//2 - (cy + rmh)
 
-            txt = f"CX: {cx:3d}, CY: {cy:3d}, Inside: {inside_lane}"
+            txt = f"CX: {cx:+3d}, CY: {cy:+3d}, ANGLE: {angle:+3.2f}, Inside: {inside_lane}"
 
             lines.append( txt )
         pass
