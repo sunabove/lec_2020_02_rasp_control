@@ -128,18 +128,24 @@ class LineCamera( LineTracker ) :
 
         images.append( Image( thresh, 'thresh', True ))
 
-        # 형태학적 노이즈 제거
-        thresh_open = thresh
-        # 축소 / 이웃 보간법
-        thresh_open = cv.resize(thresh_open, (thresh.shape[1]//10, thresh.shape[0]//10), cv.INTER_NEAREST) 
-        # 확대
-        thresh_open = cv.resize(thresh_open, thresh.shape[:2][::-1], cv.INTER_NEAREST) 
+        remove_shade = False 
+        if remove_shade : 
+            # 형태학적 노이즈 제거
+            thresh_open = thresh
+            # 축소 / 이웃 보간법
+            thresh_open = cv.resize(thresh_open, (thresh.shape[1]//10, thresh.shape[0]//10), cv.INTER_NEAREST) 
+            # 확대
+            thresh_open = cv.resize(thresh_open, thresh.shape[:2][::-1], cv.INTER_NEAREST) 
+            thresh_open = np.where(thresh_open > 0, 1, 0 )
 
-        images.append( Image( thresh_open, 'thresh_open', True ))
+            images.append( Image( thresh_open, 'thresh_open', True ))
 
-        # 임계치 영상에서 그림자 제거
-        thresh_blur = thresh & thresh_open
-        images.append( Image( thresh_blur, 'thresh_blur', True ))
+            # 임계치 영상에서 그림자 제거
+            thresh_blur = thresh & thresh_open
+            images.append( Image( thresh_blur, 'thresh_blur', True ))
+        else :
+            thresh_blur = thresh
+        pass
 
         # 등고선 추출
         contours, hierarchy = cv.findContours(thresh_blur.astype(np.uint8), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
@@ -247,7 +253,7 @@ class LineCamera( LineTracker ) :
         
         line_width = 2
         # 폴리곤 정점들의 최소 간격
-        poly_epsilon = 20 # 6 #20 # 12
+        poly_epsilon = 18 #15 # 6 #20 # 12
 
         for poly in polys :
             line_color = blue
@@ -261,8 +267,10 @@ class LineCamera( LineTracker ) :
         
         # 최대 폴리곤(= 차선) 그리기
         if max_poly is not None :
+            # 폴리곤 단순화/최대 길이 적용
             max_poly = cv.approxPolyDP(max_poly, poly_epsilon, True)
             
+            # 회전된 폴리곤 최소 사각형
             max_poly_min_box = cv.minAreaRect(max_poly)
             max_poly_min_box = cv.boxPoints(max_poly_min_box)
             max_poly_min_box = np.int0(max_poly_min_box)
