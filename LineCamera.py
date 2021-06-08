@@ -298,7 +298,7 @@ class LineCamera( LineTracker ) :
                 u11 = M[ "mu11" ]/u00
 
                 theta = 0.5*atan2(2*u11, u20 - u02)
-                angle = theta/pi*180
+                angle = theta*180/pi
 
                 # 차선 중심점 거리로 부터 중심점 내부 포함 여부 판별
                 # 이 함수는 +1, -1 또는 0을 반환하여 점이 다각형 내부, 외부 또는 위에 있는지 여부를 나타냅니다.
