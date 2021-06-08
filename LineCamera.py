@@ -232,18 +232,12 @@ class LineCamera( LineTracker ) :
         max_area = 0
         min_area = total_area*scale_factor*0.005
 
-        # 스케일 복원
         # 최대 면적 폴리곤(등고선) 검색
-        sf = 1/scale_factor
-        
+        sf = 1/scale_factor        
         for c in contours :
-            #c[:,:,0] = c[:,:,0]*sf
-            #c[:,:,1] = c[:,:,1]*sf
-            #c = cv.approxPolyDP(c, 20, True)
-
             area = cv.contourArea(c)
             
-            if area > min_area and area > max_area :
+            if len(c) > 3 and area > min_area and area > max_area :
                 max_area = area
                 max_poly = c
             pass 
@@ -280,13 +274,16 @@ class LineCamera( LineTracker ) :
         pass
 
         if max_poly is not None :
-            c = max_poly
-
             # 차선 중심점 구하기
-            M = cv.moments(c)
+            # 이미지 모멘트
+            M = cv.moments(max_poly) 
+            
+            if M[ "m00"] == 0 :
+                M = cv.moments(max_poly_min_box)
+            pass
 
             m00 = M["m00"]
-            if m00 != 0 :
+            if m00 != 0 : 
                 cx = int( M["m10"]/m00 )
                 cy = int( M["m01"]/m00 )
 
