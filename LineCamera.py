@@ -13,6 +13,7 @@ from math import cos, sin, atan2, pi
 from random import random
 from time import sleep, time, time_ns
 from LineTracker import LineTracker
+from Common import get_polygon_intersection
 from Config import cfg
 
 log.basicConfig(
@@ -295,7 +296,12 @@ class LineCamera( LineTracker ) :
                 # 차선 중심점 거리로 부터 중심점 내부 포함 여부 판별
                 # 이 함수는 +1, -1 또는 0을 반환하여 점이 다각형 내부, 외부 또는 위에 있는지 여부를 나타냅니다.
                 dist = cv.pointPolygonTest( c, (cx, cy), False )
-                inside_lane = dist >= 0 
+                inside_lane = ( dist >= 0 )
+
+                r = max( w_org, h_org )
+                a1 = [ cx, cy ]
+                a2 = [ 2*r*cos(theta), 2*r*sin(theta) ]
+                cross = get_polygon_intersection(a1, a2, max_poly)
 
                 # 목표 지점 원 그리기
                 m = 14
@@ -305,15 +311,26 @@ class LineCamera( LineTracker ) :
                     # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
                     circle_color = (0, 125, 255)
                 pass
-                cv.circle(image_draw, (cx, cy), 4, circle_color, -1)
+
+                os = offset = (rmw, rmh)
+
+                cv.circle(image, (cx + os[0], cy + os[1]), 4, circle_color)
                 for radius in range( 6, m, 3 ) :
-                    cv.circle(image_draw, (cx, cy), radius, circle_color )
+                    cv.circle(image, (cx + os[0], cy + os[1]), radius, circle_color)
                 pass
 
                 # 목표 지점 십자가 그리기
                 line_color = (0, 255, 255)
-                cv.line(image_draw, (cx - m, cy), (cx + m, cy), line_color, 1)
-                cv.line(image_draw, (cx, cy -m), (cx, cy + m), line_color, 1)
+                cv.line(image, (cx - m + os[0], cy + os[1]), (cx + m + os[0], cy + os[1]), line_color, 1)
+                cv.line(image, (cx + os[0], cy - m + os[1]), (cx + os[0], cy + m + os[1]), line_color, 1)
+
+                if cross is not None:
+                    for radius in range( 6, m, 3 ) :
+                        pass
+                        #cv.rectangle( image, (rmw, rmh), (w - rmw, h - rmh), color=(255, 255, 0), thickness=2)
+                        cv.rectangle( image, (rmw, rmh), (w - rmw, h - rmh), color=(255, 255, 0), thickness=2)
+                    pass
+                pass
             pass
         pass # -- 등고선 그리기
 
