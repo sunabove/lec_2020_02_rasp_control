@@ -325,11 +325,11 @@ class LineCamera( LineTracker ) :
                 cv.line(image, (cx + os[0], cy - m + os[1]), (cx + os[0], cy + m + os[1]), line_color, 1)
 
                 if cross is not None:
-                    for radius in range( 6, m, 3 ) :
-                        pass
-                        #cv.rectangle( image, (rmw, rmh), (w - rmw, h - rmh), color=(255, 255, 0), thickness=2)
-                        cv.rectangle( image, (rmw, rmh), (w - rmw, h - rmh), color=(255, 255, 0), thickness=2)
-                    pass
+                    c = ( int(cross[0]), int(cross[1] ) )
+                    m = 6
+                    lt = ( c[0] + os[0] - m, c[1] + os[1] - m )
+                    rb = ( c[0] + os[0] + m, c[1] + os[1] + m )
+                    cv.rectangle( image, lt, rb, color=green, thickness=2)
                 pass
             pass
         pass # -- 등고선 그리기
