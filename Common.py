@@ -56,9 +56,7 @@ def get_polygon_intersection(a1, a2, polygon):
 
 	for b2 in points :            
 		if b1 is None :
-			b1 = b2
-		else :
-			cross = get_line_intersecttion( a1, a2, b1, b2)
+			cross = get_line_intersecttion( a1, a2, b1, b2 )
 
 			if cross is None :
 				pass # do nothing
@@ -81,6 +79,8 @@ def get_polygon_intersection(a1, a2, polygon):
 				pass
 			pass
 		pass
+
+		b1 = b2
 	pass
 
 	return min_point
