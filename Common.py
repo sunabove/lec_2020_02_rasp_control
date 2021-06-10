@@ -23,7 +23,29 @@ def check_pkg( pkg ) :
 	pass
 pass
 
-def get_polygon_intersection(self, a1, a2, polygon):
+def get_line_intersecttion(a1, a2, b1, b2):
+    	# 두 직선의 교점 구하기 
+	""" 
+	Returns the point of intersection of the lines passing through a2,a1 and b2,b1.
+	a1: [x, y] a point on the first line
+	a2: [x, y] another point on the first line
+	b1: [x, y] a point on the second line
+	b2: [x, y] another point on the second line
+	"""
+	s = np.vstack([a1,a2,b1,b2])        # s for stacked
+	h = np.hstack((s, np.ones((4, 1)))) # h for homogeneous
+	l1 = np.cross(h[0], h[1])           # get first line
+	l2 = np.cross(h[2], h[3])           # get second line
+	x, y, z = np.cross(l1, l2)          # point of intersection
+	
+	if z == 0:                          # lines are parallel
+		return None
+	else :
+		return (x/z, y/z)
+	pass
+pass # -- get_line_intersecttion
+
+def get_polygon_intersection(a1, a2, polygon):
 	# 한직선과 폴리곤의 교점 구하기 
 	points = polygon[:,:]
 
@@ -36,7 +58,7 @@ def get_polygon_intersection(self, a1, a2, polygon):
 		if b1 is None :
 			b1 = b2
 		else :
-			cross = self.get_line_intersecttion( a1, a2, b1, b2)
+			cross = get_line_intersecttion( a1, a2, b1, b2)
 
 			if cross is None :
 				pass # do nothing
@@ -63,26 +85,3 @@ def get_polygon_intersection(self, a1, a2, polygon):
 
 	return min_point
 pass # get_polygon_intersection
-
-def get_line_intersecttion(self, a1, a2, b1, b2):
-	# 두 직선의 교점 구하기 
-	""" 
-	Returns the point of intersection of the lines passing through a2,a1 and b2,b1.
-	a1: [x, y] a point on the first line
-	a2: [x, y] another point on the first line
-	b1: [x, y] a point on the second line
-	b2: [x, y] another point on the second line
-	"""
-	s = np.vstack([a1,a2,b1,b2])        # s for stacked
-	h = np.hstack((s, np.ones((4, 1)))) # h for homogeneous
-	l1 = np.cross(h[0], h[1])           # get first line
-	l2 = np.cross(h[2], h[3])           # get second line
-	x, y, z = np.cross(l1, l2)          # point of intersection
-	
-	if z == 0:                          # lines are parallel
-		return None
-	else :
-		return (x/z, y/z)
-	pass
-pass # -- get_intercetion
-
