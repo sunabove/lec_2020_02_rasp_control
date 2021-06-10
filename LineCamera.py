@@ -300,7 +300,7 @@ class LineCamera( LineTracker ) :
 
                 r = max( w_org, h_org )
                 a1 = [ cx, cy ]
-                a2 = [ 2*r*cos(theta), 2*r*sin(theta) ]
+                a2 = [ cx + 2*r*cos(theta), cy + 2*r*sin(theta) ]
                 cross = get_polygon_intersection(a1, a2, max_poly)
 
                 # 목표 지점 원 그리기
@@ -329,7 +329,7 @@ class LineCamera( LineTracker ) :
                     m = 6
                     lt = ( c[0] + os[0] - m, c[1] + os[1] - m )
                     rb = ( c[0] + os[0] + m, c[1] + os[1] + m )
-                    cv.rectangle( image, lt, rb, color=cv.Color.gold, thickness=2)
+                    cv.rectangle( image, lt, rb, color=yellow, thickness=2)
                 pass
             pass
         pass # -- 등고선 그리기
