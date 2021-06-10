@@ -329,7 +329,7 @@ class LineCamera( LineTracker ) :
                     m = 6
                     lt = ( c[0] + os[0] - m, c[1] + os[1] - m )
                     rb = ( c[0] + os[0] + m, c[1] + os[1] + m )
-                    cv.rectangle( image, lt, rb, color=green, thickness=2)
+                    cv.rectangle( image, lt, rb, color=cv.Color.gold, thickness=2)
                 pass
             pass
         pass # -- 등고선 그리기

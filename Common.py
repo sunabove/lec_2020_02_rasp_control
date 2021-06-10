@@ -54,7 +54,7 @@ def get_polygon_intersection(a1, a2, polygon):
 
 	b1 = None
 
-	for b2 in points :            
+	for b2 in points :
 		if b1 is not None :
 			cross = get_line_intersecttion( a1, a2, b1, b2 )
 
