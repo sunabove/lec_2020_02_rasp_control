@@ -179,7 +179,7 @@ class LineCamera( LineTracker ) :
             overlay = 255*(1 - img.image) if img.is_bin else img.image
             overlay_img_name = img.name
             overlay_idx = idx + 1
-        pass
+        pass # -- 화면에 출력할 오버레이 이미지 검색
 
         # ROI 영영 강조, ROI 영역 외부는 희미하게 처리
         image = image_org
@@ -202,13 +202,6 @@ class LineCamera( LineTracker ) :
 
             # convert grayscale(1 channel) to rgb color(3 channel)
             grayscale_color = np.stack( [grayscale, grayscale, grayscale], axis=-1 )
-            #gray_color
-            '''
-            gray_color = np.empty( [h, w, 3] )
-            gray_color[ :, :, 0 ] = gray
-            gray_color[ :, :, 1 ] = gray
-            gray_color[ :, :, 2 ] = gray
-            '''
             
             # draw roi area rectangle
             image = grayscale_color
