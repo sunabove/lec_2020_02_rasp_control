@@ -49,7 +49,7 @@ def get_polygon_intersection(a1, a2, polygon):
 	# 한직선과 폴리곤의 교점 구하기 
 	points = polygon[:,:]
 
-	max_distum = 0 
+	max_distum = -1
 	max_point = None
 
 	b1 = None
@@ -64,7 +64,7 @@ def get_polygon_intersection(a1, a2, polygon):
 
 				distum = dx*dx + dy*dy
 
-				if distum > max_distum :
+				if distum >= max_distum :
 					max_distum = distum
 					max_point = cross
 				pass
