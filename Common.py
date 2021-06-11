@@ -31,8 +31,8 @@ def get_line_intersection(a1, a2, b1, b2):
 
 	debug = 0 
 	
-	line1 = LineString([a1, a2])
-	line2 = LineString([b1, b2])
+	line1 = LineString( [a1, a2] )
+	line2 = LineString( [b1, b2] )
 
 	cross = line1.intersection(line2)
 	poi = None
@@ -62,11 +62,13 @@ def get_polygon_intersection(a1, a2, polygon):
 
 	b1 = None
 
-	for b2 in points :
+	for b in points :
+		b2 = b
+
 		if len( b2 ) == 1 :
 			b2 = b2[0]
 		pass
-		
+
 		if b1 is not None :
 			cross = get_line_intersection( a1, a2, b1, b2 )
 
