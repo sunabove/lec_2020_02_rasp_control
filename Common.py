@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import os, numpy as np
+import os, numpy as np, math
 
 def check_pkg( pkg ) : 
 	try:
@@ -23,7 +23,7 @@ def check_pkg( pkg ) :
 	pass
 pass
 
-def get_line_intersecttion_old(a, b, c, d):
+def get_line_intersection(a, b, c, d):
 	print( "a = ", a )
 	print( "b = ", b )
 	print( "c = ", c )
@@ -54,7 +54,7 @@ def get_line_intersecttion_old(a, b, c, d):
 	return (x, y)
 pass # -- get_line_intersecttion old
 
-def get_line_intersection( pt1, pt2, ptA, ptB ): 
+def get_line_intersection_new( pt1, pt2, ptA, ptB ): 
     """ this returns the intersection of Line(pt1,pt2) and Line(ptA,ptB)
         
         returns a tuple: (xi, yi, valid, r, s), where
@@ -73,9 +73,9 @@ def get_line_intersection( pt1, pt2, ptA, ptB ):
 
     # the second line is ptA + s*(ptB-ptA)
     x, y = ptA
-	xB, yB = ptB
+    xB, yB = ptB
     dx = xB - x
-	dy = yB - y
+    dy = yB - y
 
     # we need to find the (typically unique) values of r and s
     # that will satisfy
@@ -99,7 +99,7 @@ def get_line_intersection( pt1, pt2, ptA, ptB ):
     DET = (-dx1 * dy + dy1 * dx)
 
     if math.fabs(DET) < DET_TOLERANCE: 
-		return None
+        return None
 
     # now, the determinant should be OK
     DETinv = 1.0/DET
