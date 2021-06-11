@@ -276,14 +276,16 @@ class LineCamera( LineTracker ) :
             # 이미지 모멘트
             M = cv.moments(max_poly) 
 
-            if M[ "m00"] == 0 :
+            if M["m00"] == 0 :
                 M = cv.moments(max_poly_min_box)
             pass
 
             m00 = M["m00"]
             if m00 != 0 : 
-                cx = int( M["m10"]/m00 )
-                cy = int( M["m01"]/m00 )
+                cx = M["m10"]/m00
+                cy = M["m01"]/m00
+
+                c = (int(cx + 0.5), int(cy + 0.5))
 
                 u00 = m00
                 u20 = M[ "mu20" ]/u00
@@ -295,13 +297,13 @@ class LineCamera( LineTracker ) :
 
                 # 차선 중심점 거리로 부터 중심점 내부 포함 여부 판별
                 # 이 함수는 +1, -1 또는 0을 반환하여 점이 다각형 내부, 외부 또는 위에 있는지 여부를 나타냅니다.
-                dist = cv.pointPolygonTest( c, (cx, cy), False )
+                dist = cv.pointPolygonTest( max_poly, c, False )
                 inside_lane = ( dist >= 0 )
 
                 crosses = []
                 r = max( w_org, h_org )
                 a1 = [ cx, cy ]
-                a2 = [ int(cx + 2*r*cos(theta)), int(cy + 2*r*sin(theta)) ]
+                a2 = [ cx + 2*r*cos(theta), cy + 2*r*sin(theta) ]
                 cross = get_polygon_intersection(a1, a2, max_poly_min_box)
                 debug and print( "a1 = ", a1, ", a2 = ", a2, ", cross 1 = ", cross )
 
@@ -309,7 +311,7 @@ class LineCamera( LineTracker ) :
                     crosses.append( cross )
                 pass
 
-                a2 = [ int(cx + 2*r*cos(theta + pi)), int(cy + 2*r*sin(theta + pi)) ]
+                a2 = [ cx + 2*r*cos(theta + pi), cy + 2*r*sin(theta + pi) ]
                 cross = get_polygon_intersection(a1, a2, max_poly_min_box)
                 debug and print( "a1 = ", a1, ", a2 = ", a2, ", cross 2 = ", cross )
 
@@ -328,21 +330,21 @@ class LineCamera( LineTracker ) :
 
                 os = offset = (rmw, rmh)
 
-                cv.circle(image, (cx + os[0], cy + os[1]), 4, circle_color)
+                cv.circle(image, (c[0] + os[0], c[1] + os[1]), 4, circle_color)
                 for radius in range( 6, m, 3 ) :
-                    cv.circle(image, (cx + os[0], cy + os[1]), radius, circle_color)
+                    cv.circle(image, (c[0] + os[0], c[1] + os[1]), radius, circle_color)
                 pass
 
                 # 목표 지점 십자가 그리기
                 line_color = (0, 255, 255)
-                cv.line(image, (cx - m + os[0], cy + os[1]), (cx + m + os[0], cy + os[1]), line_color, 1)
-                cv.line(image, (cx + os[0], cy - m + os[1]), (cx + os[0], cy + m + os[1]), line_color, 1)
+                cv.line(image, (c[0] - m + os[0], c[1] + os[1]), (c[0] + m + os[0], c[1] + os[1]), line_color, 1)
+                cv.line(image, (c[0] + os[0], c[1] - m + os[1]), (c[0] + os[0], c[1] + m + os[1]), line_color, 1)
 
                 for cross in crosses :
-                    c = ( int(cross[0]), int(cross[1] ) )
+                    cross = ( int(cross[0]), int(cross[1] ) )
                     m = 6
-                    lt = ( c[0] + os[0] - m, c[1] + os[1] - m )
-                    rb = ( c[0] + os[0] + m, c[1] + os[1] + m )
+                    lt = ( cross[0] + os[0] - m, cross[1] + os[1] - m )
+                    rb = ( cross[0] + os[0] + m, cross[1] + os[1] + m )
                     cv.rectangle( image, lt, rb, color=yellow, thickness=2)
                 pass
             pass
@@ -376,7 +378,7 @@ class LineCamera( LineTracker ) :
             cx = (cx + rmw) - w_org//2
             cy = h_org//2 - (cy + rmh)
 
-            txt = f"CX: {cx:+3d}, CY: {cy:+3d}, ANGLE: {angle:+3.2f}, Inside: {inside_lane}"
+            txt = f"CX: {cx:+3.0f}, CY: {cy:+3.0f}, ANGLE: {angle:+3.2f}, Inside: {inside_lane}"
 
             lines.append( txt )
         pass
