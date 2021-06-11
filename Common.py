@@ -26,10 +26,10 @@ pass
 def get_line_intersection(a1, a2, b1, b2):
 	# 두 직선의 교점 구하기 
 	
-	print( "a = ", a )
-	print( "b = ", b )
-	print( "c = ", c )
-	print( "d = ", d )
+	print( "a1 = ", a1 )
+	print( "a2 = ", a2 )
+	print( "b1 = ", b1 )
+	print( "b2 = ", b2 )
 	
 	""" returns a (x, y) tuple or None if there is no intersection """
 	
