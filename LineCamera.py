@@ -235,10 +235,10 @@ class LineCamera( LineTracker ) :
         for poly in polys :
             line_color = blue
             # 스케일 복원 
-            poly[:,:] = poly[:,:]*sf
-            #poly_appr = cv.approxPolyDP(poly, poly_epsilon, True)
-
+            poly[:,:] = poly[:,:]*sf            
             cv.drawContours(image_draw, [poly], -1, blue, line_width +1, cv.LINE_AA)
+
+            #poly_appr = cv.approxPolyDP(poly, poly_epsilon, True)
             #cv.drawContours(image_draw, [poly_appr], -1, blue, line_width, cv.LINE_AA)
         pass
         
