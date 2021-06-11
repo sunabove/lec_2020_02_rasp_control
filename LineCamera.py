@@ -12,6 +12,7 @@ import numpy as np, cv2 as cv
 from math import cos, sin, atan2, pi
 from random import random
 from time import sleep, time, time_ns
+from datetime import datetime
 from LineTracker import LineTracker
 from Common import get_polygon_intersection
 from Config import cfg
@@ -232,11 +233,13 @@ class LineCamera( LineTracker ) :
         # 폴리곤 정점들의 최소 간격
         poly_epsilon = 18 #15 # 6 #20 # 12
 
+        os = offset = (rmw, rmh) # 도형 그리기 오프셋
+
         for poly in polys :
             line_color = blue
             # 스케일 복원 
             poly[:,:] = poly[:,:]*sf            
-            cv.drawContours(image_draw, [poly], -1, blue, line_width +1, cv.LINE_AA)
+            cv.drawContours(image, [poly], -1, blue, line_width +1, cv.LINE_AA, offset=offset)
 
             #poly_appr = cv.approxPolyDP(poly, poly_epsilon, True)
             #cv.drawContours(image_draw, [poly_appr], -1, blue, line_width, cv.LINE_AA)
@@ -259,8 +262,8 @@ class LineCamera( LineTracker ) :
             max_poly_min_box = cv.boxPoints(max_poly_min_box)
             max_poly_min_box = np.int0(max_poly_min_box)
 
-            cv.drawContours(image, [max_poly_min_box], -1, violet, line_width + 2, cv.LINE_AA, offset=(rmw, rmh))
-            cv.drawContours(image, [max_poly], -1, green, line_width, cv.LINE_AA, offset=(rmw, rmh))
+            cv.drawContours(image, [max_poly_min_box], -1, violet, line_width + 2, cv.LINE_AA, offset=offset)
+            cv.drawContours(image, [max_poly], -1, green, line_width, cv.LINE_AA, offset=offset)
         pass
 
         if max_poly is not None :
@@ -320,8 +323,6 @@ class LineCamera( LineTracker ) :
                     circle_color = (0, 125, 255)
                 pass
 
-                os = offset = (rmw, rmh)
-
                 cv.circle(image, (c[0] + os[0], c[1] + os[1]), 4, circle_color)
                 for radius in range( 6, m, 3 ) :
                     cv.circle(image, (c[0] + os[0], c[1] + os[1]), radius, circle_color)
@@ -376,9 +377,10 @@ class LineCamera( LineTracker ) :
         pass
 
         # 과제 : 영상 처리 시각(시:분:초, 초는 1/1000 초까지 표현) 텍스트 추가 
-        txt = f"TIME CURRENT: "
+        txt = f"TIME CURRENT: {datetime.now().strftime('%p %H:%M:%S')}"
         lines.append( txt )
         
+        # 텍스트 이미지에 출력하기
         for txt in lines :
             camera.putTextLine( image, txt, tx, ty )
             ty += th
