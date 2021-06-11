@@ -2,6 +2,8 @@
 
 import os, numpy as np, math
 
+from shapely.geometry import LineString, Point
+
 def check_pkg( pkg ) : 
 	try:
 		pkg = pkg.split(",")
@@ -26,28 +28,17 @@ pass
 def get_line_intersection(a1, a2, b1, b2):
 	# 두 직선의 교점 구하기 
 	
-	print( "a1 = ", a1 )
-	print( "a2 = ", a2 )
-	print( "b1 = ", b1 )
-	print( "b2 = ", b2 )
-	
-	""" returns a (x, y) tuple or None if there is no intersection """
-	
-	d = (b2[1] - b1[1])*(a2[0] - a1[0]) - (b2[0] - b1[0])*(a2[1] - a1[1])
-	
-	if d:
-		uA = ((b2[0] - b1[0]) * (a1[1] - b1[1]) - (b2[1] - b1[1]) * (a1[0] - b1[0])) / d
-		uB = ((a2[0] - a1[0]) * (a1[1] - b1[1]) - (a2[1] - a1[1]) * (a1[0] - b1[0])) / d
-	else:
-		return None
-	
-	if not(0 <= uA <= 1 and 0 <= uB <= 1):
-		return None
-	
-	x = a1[0] + uA*(a2[0] - a1[0])
-	y = a1[1] + uA*(a2[1] - a1[1])
+	line1 = LineString([a1, a2])
+	line2 = LineString([b1, b2])
 
-	return [ x, y ]
+	cross = line1.intersection(line2)
+	poi = None
+
+	if type( cross ) == Point :
+		poi = cross.x, cross.y
+	pass
+
+	return poi
 pass # -- get_line_intersection
 
 def get_polygon_intersection(a1, a2, polygon):

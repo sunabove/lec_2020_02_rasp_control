@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 
 from Common import check_pkg
-for pkg in [ ] :
+for pkg in [ "shapely, libgeos-dev, shapely" ] :
         #"shapely, libgeos-dev, shapely"
         #"centerline, libgdal-dev, centerline" 
     	check_pkg( pkg )
