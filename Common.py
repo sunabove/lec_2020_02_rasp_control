@@ -2,6 +2,7 @@
 
 import os, numpy as np, math
 
+import shapely
 from shapely.geometry import LineString, Point
 
 def check_pkg( pkg ) : 
@@ -27,6 +28,8 @@ pass
 
 def get_line_intersection(a1, a2, b1, b2):
 	# 두 직선의 교점 구하기 
+
+	debug = 0 
 	
 	line1 = LineString([a1, a2])
 	line2 = LineString([b1, b2])
@@ -34,7 +37,16 @@ def get_line_intersection(a1, a2, b1, b2):
 	cross = line1.intersection(line2)
 	poi = None
 
-	if type( cross ) == Point :
+	tp = type( cross )
+
+	debug and print( "type = ", tp )
+
+	if cross is None :
+		pass
+	elif cross.is_empty :
+		pass
+		debug and print( "geom empty = ", cross )
+	elif tp == Point :
 		poi = cross.x, cross.y
 	pass
 
