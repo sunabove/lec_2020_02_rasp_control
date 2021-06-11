@@ -56,8 +56,6 @@ def get_polygon_intersection(a1, a2, polygon):
 		if b1 is not None :
 			cross = get_line_intersection( a1, a2, b1, b2 )
 
-			print( "cross = ", cross )
-
 			if cross is not None :
 				dx = a1[0] - cross[0]
 				dy = a1[1] - cross[1]
