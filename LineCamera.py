@@ -303,7 +303,7 @@ class LineCamera( LineTracker ) :
                 a1 = [ cx, cy ]
                 a2 = [ cx + 2*r*cos(theta), cy + 2*r*sin(theta) ]
                 cross = get_polygon_intersection(a1, a2, max_poly_min_box)
-                print( "cross 1 = ", cross )
+                print( "a2 = ", a2, ", cross 1 = ", cross )
 
                 if cross is not None :
                     crosses.append( cross )
@@ -311,7 +311,7 @@ class LineCamera( LineTracker ) :
 
                 a2 = [ cx + 2*r*cos(theta + pi), cy + 2*r*sin(theta + pi) ]
                 cross = get_polygon_intersection(a1, a2, max_poly_min_box)
-                print( "cross 2 = ", cross )
+                print( "a2 = ", a2, ", cross 1 = ", cross )
 
                 if cross is not None :
                     crosses.append( cross ) 
