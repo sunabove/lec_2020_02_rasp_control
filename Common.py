@@ -49,8 +49,8 @@ def get_polygon_intersection(a1, a2, polygon):
 	# 한직선과 폴리곤의 교점 구하기 
 	points = polygon[:,:]
 
-	min_distum = 0 
-	min_point = None
+	max_distum = 0 
+	max_point = None
 
 	b1 = None
 
@@ -58,24 +58,15 @@ def get_polygon_intersection(a1, a2, polygon):
 		if b1 is not None :
 			cross = get_line_intersecttion( a1, a2, b1, b2 )
 
-			if cross is None :
-				pass # do nothing
-			elif min_point is None :
-				min_point = cross
-
-				dx = a1[0] - cross[0]
-				dy = a1[1] - cross[1]
-
-				min_distum = dx*dx + dy*dy
-			else :
+			if cross is not None :
 				dx = a1[0] - cross[0]
 				dy = a1[1] - cross[1]
 
 				distum = dx*dx + dy*dy
 
-				if distum < min_distum :
-					min_distum = distum
-					min_point = cross
+				if distum > max_distum :
+					max_distum = distum
+					max_point = cross
 				pass
 			pass
 		pass
