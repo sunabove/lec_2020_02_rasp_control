@@ -23,26 +23,31 @@ def check_pkg( pkg ) :
 	pass
 pass
 
-def get_line_intersecttion(a1, a2, b1, b2):
-    	# 두 직선의 교점 구하기 
-	""" 
-	Returns the point of intersection of the lines passing through a2,a1 and b2,b1.
-	a1: [x, y] a point on the first line
-	a2: [x, y] another point on the first line
-	b1: [x, y] a point on the second line
-	b2: [x, y] another point on the second line
-	"""
-	s = np.vstack([a1,a2,b1,b2])        # s for stacked
-	h = np.hstack((s, np.ones((4, 1)))) # h for homogeneous
-	l1 = np.cross(h[0], h[1])           # get first line
-	l2 = np.cross(h[2], h[3])           # get second line
-	x, y, z = np.cross(l1, l2)          # point of intersection
-	
-	if z == 0:                          # lines are parallel
-		return None
-	else :
-		return (x/z, y/z)
+def get_line_intersecttion(a, b, c, d):
+    # 두 직선의 교점 구하기 
+	# a1x + b1y = c1
+    a1 = b[1] - a[1]
+    b1 = a[0] - b[0]
+    c1 = a1*a[0] + b1*a[1]
+
+    # a2x + b2y = c2
+    a2 = d[1] - c[1]
+    b2 = c[0] - d[0]
+    c2 = a2*c[0] + b2*c[1]
+
+    # determinant
+    det = a1*b2 - a2*b1
+
+    # parallel line
+    if det == 0:
+        return None
 	pass
+
+    # intersect point(x,y)
+    x = ((b2*c1) - (b1*c2)) / det
+    y = ((a1*c2) - (a2*c1)) / det
+
+    return (x, y)
 pass # -- get_line_intersecttion
 
 def get_polygon_intersection(a1, a2, polygon):
