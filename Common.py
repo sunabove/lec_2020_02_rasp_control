@@ -55,7 +55,9 @@ pass # -- get_line_intersection
 
 def get_polygon_intersection(a1, a2, polygon):
 	# 한직선과 폴리곤의 교점 구하기 
-	points = polygon[:,:]
+	points = np.copy( polygon[:,:] )
+
+	points = np.append( points, [ points[0] ] , axis=0)
 
 	max_distum = -1
 	max_point = None
