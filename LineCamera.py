@@ -372,7 +372,7 @@ class LineCamera( LineTracker ) :
                 x += 50
             pass
 
-            camera.putTextLine( image, "200", x + 10, y )
+            camera.putTextLine( image, "200", 202, h_org - rmh//2 + 4, fg_color=gray )
         pass 
 
         # 영상에 표현할 텍스트 
