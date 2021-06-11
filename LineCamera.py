@@ -377,7 +377,7 @@ class LineCamera( LineTracker ) :
         pass
 
         # 과제 : 영상 처리 시각(시:분:초, 초는 1/1000 초까지 표현) 텍스트 추가 
-        txt = f"TIME CURRENT: {datetime.now().strftime('%p %H:%M:%S')}"
+        txt = f"TIME CURRENT: {datetime.now().strftime('%H:%M:%S.%f')[:-3]}"
         lines.append( txt )
         
         # 텍스트 이미지에 출력하기
