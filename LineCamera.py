@@ -298,10 +298,21 @@ class LineCamera( LineTracker ) :
                 dist = cv.pointPolygonTest( c, (cx, cy), False )
                 inside_lane = ( dist >= 0 )
 
+                crosses = []
                 r = max( w_org, h_org )
                 a1 = [ cx, cy ]
                 a2 = [ cx + 2*r*cos(theta), cy + 2*r*sin(theta) ]
                 cross = get_polygon_intersection(a1, a2, max_poly_min_box)
+                if cross is not None :
+                    crosses.append( cross )
+                pass
+
+                a2 = [ cx + 2*r*cos(theta + pi), cy + 2*r*sin(theta + pi) ]
+                cross = get_polygon_intersection(a1, a2, max_poly_min_box)
+                if cross is not None :
+                    crosses.append( cross )
+                pass
+
 
                 # 목표 지점 원 그리기
                 m = 14
@@ -324,7 +335,7 @@ class LineCamera( LineTracker ) :
                 cv.line(image, (cx - m + os[0], cy + os[1]), (cx + m + os[0], cy + os[1]), line_color, 1)
                 cv.line(image, (cx + os[0], cy - m + os[1]), (cx + os[0], cy + m + os[1]), line_color, 1)
 
-                if cross is not None:
+                for cross in crosses :
                     c = ( int(cross[0]), int(cross[1] ) )
                     m = 6
                     lt = ( c[0] + os[0] - m, c[1] + os[1] - m )
