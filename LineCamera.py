@@ -145,10 +145,7 @@ class LineCamera( LineTracker ) :
 
         overlay = None
         overlay_img_name = "original"
-        overlay_idx = 0 
-        #overlay = blur
-        #overlay = thresh
-        #overlay = 255*(1 - thresh)
+        overlay_idx = 0
 
         # 화면에 출력할 오버레이 이미지 검색
         if overlay_name and overlay_name not in [ "original", "successive" ] :
