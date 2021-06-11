@@ -111,12 +111,7 @@ class LineCamera( LineTracker ) :
         blur = scale
         #blur = cv.GaussianBlur(blur, (7, 7), 0)
         blur = cv.bilateralFilter(blur.astype(np.uint8), 7, 80, 80)
-        #blur = cv.Laplacian(blur, cv.CV_16S, ksize=5)
-        #blur = cv.morphologyEx(blur, cv.MORPH_CLOSE, np.ones((9, 9), np.uint8), iterations=1)
-        #blur = cv.morphologyEx(blur, cv.MORPH_OPEN, np.ones((5, 5), np.uint8), iterations=1)
-        #blur = cv.filter2D(roi, -1, np.ones((5, 5), np.float32)/25)
-        #blur = cv.filter2D(blur, -1, np.ones((21, 21), np.float32)/(21*21))
-
+        
         images.append( Image( blur, 'blur', False ))
         
         # 이진화/임계치 적용
