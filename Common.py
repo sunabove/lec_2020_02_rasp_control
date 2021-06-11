@@ -74,5 +74,5 @@ def get_polygon_intersection(a1, a2, polygon):
 		b1 = b2
 	pass
 
-	return min_point
+	return max_point
 pass # get_polygon_intersection
