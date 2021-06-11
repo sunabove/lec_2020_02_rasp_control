@@ -303,16 +303,19 @@ class LineCamera( LineTracker ) :
                 a1 = [ cx, cy ]
                 a2 = [ cx + 2*r*cos(theta), cy + 2*r*sin(theta) ]
                 cross = get_polygon_intersection(a1, a2, max_poly_min_box)
+                print( "cross 1 = ", cross )
+
                 if cross is not None :
                     crosses.append( cross )
                 pass
 
                 a2 = [ cx + 2*r*cos(theta + pi), cy + 2*r*sin(theta + pi) ]
                 cross = get_polygon_intersection(a1, a2, max_poly_min_box)
-                if cross is not None :
-                    crosses.append( cross )
-                pass
+                print( "cross 2 = ", cross )
 
+                if cross is not None :
+                    crosses.append( cross ) 
+                pass
 
                 # 목표 지점 원 그리기
                 m = 14
