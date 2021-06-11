@@ -68,6 +68,7 @@ class LineCamera( LineTracker ) :
         violet = (255, 0, 127)
         white = (255, 255, 255)
         black = (0, 0, 0)
+        lightgray = (211,211,211)
 
         # 영상 처리 과정의 이미지들
         images = []
@@ -349,13 +350,21 @@ class LineCamera( LineTracker ) :
             cen_y, cen_x = image_draw.shape[:2]
             cen_y, cen_x = cen_y//2, cen_x//2
 
-            line_color = (255, 255, 255)
+            line_color = white
             cv.rectangle(image_draw, (cen_x - m - 3, cen_y - 2), (cen_x + m + 3, cen_y + 2), line_color, -1)
             cv.rectangle(image_draw, (cen_x - 2, cen_y - m - 3), (cen_x + 2, cen_y + m + 3), line_color, -1)
 
             line_color = (255, 255, 0)
             cv.line(image_draw, (cen_x - m, cen_y), (cen_x + m, cen_y), line_color, 1 )
             cv.line(image_draw, (cen_x, cen_y -m), (cen_x, cen_y + m), line_color, 1 )
+
+            # 하단 스케일바 그리기
+
+            m = 1
+            line_color = lightgray
+            x = rmw
+            y = h_org - rmh//2
+            cv.rectangle(image, (x, y - m), (x + 100, y + m), line_color, -1 )
         pass 
 
         # 영상에 표현할 텍스트 
