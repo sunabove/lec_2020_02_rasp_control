@@ -24,30 +24,34 @@ def check_pkg( pkg ) :
 pass
 
 def get_line_intersecttion(a, b, c, d):
-    # 두 직선의 교점 구하기 
+	print( "a = ", a )
+	print( "b = ", b )
+	print( "c = ", c )
+	print( "d = ", d )
+	# 두 직선의 교점 구하기 
 	# a1x + b1y = c1
-    a1 = b[1] - a[1]
-    b1 = a[0] - b[0]
-    c1 = a1*a[0] + b1*a[1]
+	a1 = b[1] - a[1]
+	b1 = a[0] - b[0]
+	c1 = a1*a[0] + b1*a[1]
 
-    # a2x + b2y = c2
-    a2 = d[1] - c[1]
-    b2 = c[0] - d[0]
-    c2 = a2*c[0] + b2*c[1]
+	# a2x + b2y = c2
+	a2 = d[1] - c[1]
+	b2 = c[0] - d[0]
+	c2 = a2*c[0] + b2*c[1]
 
-    # determinant
-    det = a1*b2 - a2*b1
+	# determinant
+	det = a1*b2 - a2*b1
 
-    # parallel line
-    if det == 0:
-        return None
+	# parallel line
+	if abs(det) < 0.0000001 :
+		return None
 	pass
 
-    # intersect point(x,y)
-    x = ((b2*c1) - (b1*c2)) / det
-    y = ((a1*c2) - (a2*c1)) / det
+	# intersect point(x,y)
+	x = ((b2*c1) - (b1*c2)) / det
+	y = ((a1*c2) - (a2*c1)) / det
 
-    return (x, y)
+	return (x, y)
 pass # -- get_line_intersecttion
 
 def get_polygon_intersection(a1, a2, polygon):
@@ -60,6 +64,8 @@ def get_polygon_intersection(a1, a2, polygon):
 	b1 = None
 
 	for b2 in points :
+		b2 = b2[0]
+
 		if b1 is not None :
 			cross = get_line_intersecttion( a1, a2, b1, b2 )
 
