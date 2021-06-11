@@ -301,7 +301,7 @@ class LineCamera( LineTracker ) :
                 r = max( w_org, h_org )
                 a1 = [ cx, cy ]
                 a2 = [ cx + 2*r*cos(theta), cy + 2*r*sin(theta) ]
-                cross = get_polygon_intersection(a1, a2, max_poly)
+                cross = get_polygon_intersection(a1, a2, max_poly_min_box)
 
                 # 목표 지점 원 그리기
                 m = 14
