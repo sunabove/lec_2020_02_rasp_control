@@ -43,7 +43,7 @@ def get_line_intersection(a, b, c, d):
 	det = a1*b2 - a2*b1
 
 	# parallel line
-	if abs(det) < 0.0000001 :
+	if abs(det) < 0.000001 :
 		return None
 	pass
 
