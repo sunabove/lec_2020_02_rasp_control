@@ -70,6 +70,7 @@ class LineCamera( LineTracker ) :
         black = (0, 0, 0)
         gray = (128, 128, 128)
         lightgray = (211, 211, 211)
+        sienna = (45, 82, 160)
 
         # 영상 처리 과정의 이미지들
         images = []
@@ -279,6 +280,7 @@ class LineCamera( LineTracker ) :
 
             m00 = M["m00"]
             if m00 != 0 : 
+                # 모멘트를 이용하여 검출 라인의 중심점 구하기 
                 cx = M["m10"]/m00
                 cy = M["m01"]/m00
 
@@ -289,6 +291,7 @@ class LineCamera( LineTracker ) :
                 u02 = M[ "mu02" ]/u00
                 u11 = M[ "mu11" ]/u00
 
+                # 모멘트를 이용하여 검출 라인의 회전 각도 구하기
                 theta = 0.5*atan2(2*u11, u20 - u02)
                 angle = theta*180/pi
 
@@ -316,32 +319,30 @@ class LineCamera( LineTracker ) :
                     crosses.append( cross ) 
                 pass
 
-                # 목표 지점 원 그리기
-                m = 14
-                circle_color = (0, 0, 255) # 색깔 지정 순서는 blue, green, red 순서이다.
-
-                if inside_lane :
-                    # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
-                    circle_color = (0, 125, 255)
+                # 라인의 두 끝점 그리기
+                m = 6
+                for cross in crosses :
+                    cross = ( int(cross[0]), int(cross[1] ) )
+                    lt = ( cross[0] + os[0] - m, cross[1] + os[1] - m )
+                    rb = ( cross[0] + os[0] + m, cross[1] + os[1] + m )
+                    cv.rectangle( image, lt, rb, color=yellow, thickness=2)
                 pass
+
+                # 무게 중심 십자가 그리기
+                m = 14
+                
+                line_color = (0, 255, 255)
+                cv.line(image, (c[0] - m + os[0], c[1] + os[1]), (c[0] + m + os[0], c[1] + os[1]), line_color, 1)
+                cv.line(image, (c[0] + os[0], c[1] - m + os[1]), (c[0] + os[0], c[1] + m + os[1]), line_color, 1)
+
+                # 무게 중심 지점 원 그리기 / # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
+                circle_color = red if inside_lane else yellow
 
                 cv.circle(image, (c[0] + os[0], c[1] + os[1]), 4, circle_color)
                 for radius in range( 6, m, 3 ) :
                     cv.circle(image, (c[0] + os[0], c[1] + os[1]), radius, circle_color)
                 pass
-
-                # 목표 지점 십자가 그리기
-                line_color = (0, 255, 255)
-                cv.line(image, (c[0] - m + os[0], c[1] + os[1]), (c[0] + m + os[0], c[1] + os[1]), line_color, 1)
-                cv.line(image, (c[0] + os[0], c[1] - m + os[1]), (c[0] + os[0], c[1] + m + os[1]), line_color, 1)
-
-                for cross in crosses :
-                    cross = ( int(cross[0]), int(cross[1] ) )
-                    m = 6
-                    lt = ( cross[0] + os[0] - m, cross[1] + os[1] - m )
-                    rb = ( cross[0] + os[0] + m, cross[1] + os[1] + m )
-                    cv.rectangle( image, lt, rb, color=yellow, thickness=2)
-                pass
+                
             pass
         pass # -- 등고선 그리기
 
