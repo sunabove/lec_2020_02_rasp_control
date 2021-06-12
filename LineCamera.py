@@ -342,7 +342,7 @@ class LineCamera( LineTracker ) :
                 pass
 
                 if target_cross is not None :
-                    t = target_cross
+                    t = [ cx + os[0], cy + os[1] ]
                     o = origin
                     theta = atan2(t[1] - o[1], t[0] - o[0])
                     angle = theta*180/pi
