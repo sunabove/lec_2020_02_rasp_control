@@ -278,6 +278,8 @@ def service() :
         config = robot.config
 
         if cmd in ( "stop", "servo_stop", "stop_service" ):
+            config[ "move" ] = False
+
             robot.stop_robot()
             robot.stop_servo()
             robot.stop_service() 

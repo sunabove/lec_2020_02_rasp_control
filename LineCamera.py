@@ -454,9 +454,25 @@ class LineCamera( LineTracker ) :
             ty += th
         pass
 
+        # 로봇 이동 
         move = config[ "move"]
 
-        print( "move = ", move )
+        if move and angle is not None :
+            print( "move = ", move )
+            base_speed = 10
+            max_speed = 20
+
+            control = 0
+
+            # 모터 속도
+            left_speed  = base_speed - control
+            right_speed = base_speed + control
+
+            left_speed  = max( min( left_speed, max_speed ), -max_speed )
+            right_speed = max( min( right_speed, max_speed ), -max_speed )
+
+            robot.move( left_speed, right_speed )
+        pass
 
         return image
     pass  # -- robot_move
