@@ -463,11 +463,13 @@ class LineCamera( LineTracker ) :
         move = config[ "move"]
 
         if move and angle is not None :
+            # 모터 최소 속도
             base_speed = 10
+            # 모터 최대 속도
             max_speed = 15
 
             # 과제: angle에 맞추어 모터 속도 조절값 계산하기
-            control = - (max_speed-base_speed)*angle/360
+            control = -(max_speed-base_speed)*angle/360
 
             # 모터 속도
             left_speed  = base_speed - control
