@@ -108,7 +108,7 @@ class Camera :
             fps = (frame_times_len - 1)/( frame_times[-1] - frame_times[0] )
         pass
 
-        txt = f"Alphabot Control"
+        txt = f"Alphabot "
 
         if fps :
             txt += f" : FPS = {fps:4.2f}"
@@ -133,24 +133,31 @@ class Camera :
 
         txt = f"[{self.frame_cnt_sent:06}] {txt}"
 
+        texts = []
+        
         motor = self.motor
         if motor is not None :
             sl = motor.speed_left()
             sr = motor.speed_right()
             sm = motor.speed_min()
-            txt += f" Speed L: {sl} R: {sr} Min: {sm}"
+            txt = f" Spd L: {sl:.2f} R: {sr:.2f} Min: {sm}"
+
+            texts.append( txt )
         pass
 
         tx = 10   # text x position
         ty = 20   # text y position
         th = 20   # line height
 
+        for txt in texts :
+            self.putTextLine( image, txt , tx, ty )
+            ty += th
+        pass
+
         lineCamera = self.lineCamera
         if lineCamera :
-            image = lineCamera.robot_move_by_camera( image=image, success=success, tx=tx, ty=ty + th, th=th )
+            image = lineCamera.robot_move_by_camera( image=image, success=success, tx=tx, ty=ty, th=th )
         pass
-        
-        self.putTextLine( image, txt , tx, ty )
 
         # CPU 온도 출력 
         temperature = self.cpu.temperature

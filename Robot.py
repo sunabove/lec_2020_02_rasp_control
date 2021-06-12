@@ -318,6 +318,11 @@ def service() :
             pass
         elif cmd == "move" :
             config[ "move" ] = not ( config[ "move" ] )
+
+            if not config[ "move" ] :
+                robot.stop_robot()
+            pass
+            
             log.info( f"move = {config['move']}")
         elif cmd == "min_speed" :
             if val :
