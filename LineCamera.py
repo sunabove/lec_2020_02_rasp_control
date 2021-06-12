@@ -353,10 +353,13 @@ class LineCamera( LineTracker ) :
                     pass
                 pass
 
-                if target_cross is not None :
+                useOrgAngle = False
+                if useOrgAngle :
+                    pass
+                elif target_cross is not None :
                     t = [ cx + os[0], cy + os[1] ]
-                    #o = target_cross
-                    o = origin
+                    o = target_cross
+                    #o = origin
                     theta = atan2(t[1] - o[1], - (t[0] - o[0]) )
                     angle = theta*180/pi
                     angle = abs(angle) - 90
@@ -478,16 +481,16 @@ class LineCamera( LineTracker ) :
             log.info( f"line cam move: elapsed = {elapsed:.3f}" )
 
             # 모터 기준 속도
-            base_speed = 10
+            base_speed = 8
             # 모터 최대 속도
-            max_speed = 20
+            max_speed = 15
 
             if angle is None :
                 angle = 45
             pass
 
             # 과제: 각도(angle)을 이용하여 모터 속도 조절값 계산하기
-            control = -(max_speed - base_speed)*angle/360
+            control = -(max_speed - base_speed)*angle/90
 
             # 모터 속도
             left_speed  = base_speed - control
