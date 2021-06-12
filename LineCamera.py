@@ -467,6 +467,7 @@ class LineCamera( LineTracker ) :
             max_speed = 20
 
             # 과제: angle에 맞추어 모토 속도 조절값 계산하기
+            # 
             control = 0
 
             # 모터 속도

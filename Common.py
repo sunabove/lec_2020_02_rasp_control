@@ -2,9 +2,6 @@
 
 import os, numpy as np, math
 
-import shapely
-from shapely.geometry import LineString, Point
-
 def check_pkg( pkg ) : 
 	try:
 		pkg = pkg.split(",")
@@ -28,6 +25,8 @@ pass
 
 def get_line_intersection(a1, a2, b1, b2):
 	# 두 직선의 교점 구하기 
+	import shapely
+	from shapely.geometry import LineString, Point
 
 	debug = 0 
 	
