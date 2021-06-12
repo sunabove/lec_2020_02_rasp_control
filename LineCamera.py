@@ -463,7 +463,7 @@ class LineCamera( LineTracker ) :
         move = config[ "move"]
 
         if move and angle is not None :
-            # 모터 최소 속도
+            # 모터 기준 속도
             base_speed = 10
             # 모터 최대 속도
             max_speed = 15
