@@ -375,7 +375,7 @@ class LineCamera( LineTracker ) :
                     rb = ( cross[0] + m, cross[1] + m )
 
                     #cv.circle( image, ( cross[0] + os[0], cross[1] + os[1]), 6, fill_color, -1)
-                    cv.rectangle( image, lt, rb, fill_color, -1)
+                    cv.rectangle( image, lt, rb, fill_color, -1 )
                     cv.rectangle( image, lt, rb, rect_color, thickness=2)
                 pass
 
