@@ -84,6 +84,7 @@ class LineCamera( LineTracker ) :
         theta = None # 방향 RADIAN
         angle = None # 방향 DEGREE
         inside_lane = False # 차선 내부 판별
+        center_lane_width = 100 # 센터 라인 넓이
 
         # 원본 이미지
         image_org = image
@@ -345,6 +346,15 @@ class LineCamera( LineTracker ) :
                     lt = ( cross[0] + os[0] - m, cross[1] + os[1] - m )
                     rb = ( cross[0] + os[0] + m, cross[1] + os[1] + m )
                     cv.rectangle( image, lt, rb, color=rect_color, thickness=2)
+                pass
+
+                # 가운데 가상의 센터 라인 그리기
+                if True :
+                    lw = center_lane_width
+                    line_color = lightgray
+                    m = 2
+                    cv.line(image, ( (w - lw)//2, rmh - m), ( (w - lw)//2, h - rmh + m), line_color, 1)
+                    cv.line(image, ( (w + lw)//2, rmh - m), ( (w + lw)//2, h - rmh + m), line_color, 1)
                 pass
 
                 # 라인의 두 끝점 그리기
