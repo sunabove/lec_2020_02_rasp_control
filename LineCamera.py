@@ -363,14 +363,19 @@ class LineCamera( LineTracker ) :
 
                 # 라인의 두 끝점 그리기
                 for cross in crosses :
-                    m = 6
+                    m = 8
+
                     rect_color = yellow if cross == target_cross else orange
 
                     cross = ( int(cross[0]), int(cross[1] ) )
                     
+                    fill_color = red if cv.pointPolygonTest( center_lane, cross, False ) < 0 else green
+                    
                     lt = ( cross[0] + os[0] - m, cross[1] + os[1] - m )
                     rb = ( cross[0] + os[0] + m, cross[1] + os[1] + m )
-                    cv.rectangle( image, lt, rb, color=rect_color, thickness=2)
+
+                    cv.circle( image, ( cross[0] + os[0], cross[1] + os[1]), 4, fill_color, -1)
+                    cv.rectangle( image, lt, rb, rect_color, thickness=2)
                 pass
 
                 # 무게 중심 십자가 그리기
