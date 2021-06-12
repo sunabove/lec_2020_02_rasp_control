@@ -319,9 +319,21 @@ class LineCamera( LineTracker ) :
                     crosses.append( cross ) 
                 pass
 
+                # 논리적 원점. 영상의 하단 가운데 점(마진 제외).
+                origin = ( w_org//2 - os[0], h_org - rmh - os[1] ) 
+
+                # 원점 그리기
+                if True :
+                    m = 6
+                    cross = origin
+                    lt = ( cross[0] + os[0] - m, cross[1] + os[1] - m )
+                    rb = ( cross[0] + os[0] + m, cross[1] + os[1] + m )
+                    cv.rectangle( image, lt, rb, color=yellow, thickness=2)
+                pass
+
                 # 라인의 두 끝점 그리기
-                m = 6
                 for cross in crosses :
+                    m = 6
                     cross = ( int(cross[0]), int(cross[1] ) )
                     lt = ( cross[0] + os[0] - m, cross[1] + os[1] - m )
                     rb = ( cross[0] + os[0] + m, cross[1] + os[1] + m )
