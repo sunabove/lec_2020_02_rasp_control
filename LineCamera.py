@@ -322,22 +322,40 @@ class LineCamera( LineTracker ) :
                 # 논리적 원점. 영상의 하단 가운데 점(마진 제외).
                 origin = ( w_org//2 - os[0], h_org - rmh - os[1] ) 
 
+                # 목표점 구하기 
+                target_cross = None
+                if True :
+                    min_distum = 1_000_000
+                    for cross in crosses :
+                        dx = cross[0] - origin[0]
+                        dy = cross[1] - origin[1]
+                        distum = dx*dx + dy*dy
+                        if distum < min_distum :
+                            target_cross = cross
+                        pass
+                    pass
+                pass
+
                 # 원점 그리기
                 if True :
                     m = 6
+                    rect_color = yellow
                     cross = origin
                     lt = ( cross[0] + os[0] - m, cross[1] + os[1] - m )
                     rb = ( cross[0] + os[0] + m, cross[1] + os[1] + m )
-                    cv.rectangle( image, lt, rb, color=yellow, thickness=2)
+                    cv.rectangle( image, lt, rb, color=rect_color, thickness=2)
                 pass
 
                 # 라인의 두 끝점 그리기
                 for cross in crosses :
                     m = 6
+                    rect_color = yellow if cross == target_cross else red
+
                     cross = ( int(cross[0]), int(cross[1] ) )
+                    
                     lt = ( cross[0] + os[0] - m, cross[1] + os[1] - m )
                     rb = ( cross[0] + os[0] + m, cross[1] + os[1] + m )
-                    cv.rectangle( image, lt, rb, color=yellow, thickness=2)
+                    cv.rectangle( image, lt, rb, color=rect_color, thickness=2)
                 pass
 
                 # 무게 중심 십자가 그리기
