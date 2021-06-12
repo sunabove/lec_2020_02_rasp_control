@@ -67,7 +67,8 @@ class LineCamera( LineTracker ) :
         if move :
             self.move_idx += 1
             if self.move_idx % 2 == 0 :
-                robot.stop()
+                #robot.stop()
+                pass
             pass
         pass
 
@@ -482,7 +483,7 @@ class LineCamera( LineTracker ) :
             max_speed = 20
 
             if angle is None :
-                angle = 10
+                angle = 45
             pass
 
             # 과제: 각도(angle)을 이용하여 모터 속도 조절값 계산하기
