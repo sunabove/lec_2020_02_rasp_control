@@ -429,6 +429,9 @@ class LineCamera( LineTracker ) :
 
         lines.append( txt )
 
+        # 각도 보정
+        angle = 90 - angle
+
         # 라인 중심정 정보 텍스트 추가
         if cx is not None :
             cx = (cx + rmw) - w_org//2
@@ -448,6 +451,10 @@ class LineCamera( LineTracker ) :
             camera.putTextLine( image, txt, tx, ty )
             ty += th
         pass
+
+        move = config[ "move"]
+
+        print( "move = ", move )
 
         return image
     pass  # -- robot_move

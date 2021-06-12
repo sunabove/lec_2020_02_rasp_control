@@ -315,7 +315,7 @@ def service() :
                 robot.service.start()
             pass
         elif cmd == "move" :
-            config[ "move" ] = False
+            config[ "move" ] = True
             log.info( f"move = {config['move']}")
         elif cmd == "min_speed" :
             if val :
