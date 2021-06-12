@@ -310,6 +310,7 @@ class LineCamera( LineTracker ) :
                 debug and print( "a1 = ", a1, ", a2 = ", a2, ", cross 1 = ", cross )
 
                 if cross is not None :
+                    cross = ( int(cross[0] + os[0] + 0.5), int(cross[1] + os[1] + 0.5) )
                     crosses.append( cross )
                 pass
 
@@ -318,11 +319,12 @@ class LineCamera( LineTracker ) :
                 debug and print( "a1 = ", a1, ", a2 = ", a2, ", cross 2 = ", cross )
 
                 if cross is not None :
+                    cross = ( int(cross[0] + os[0] + 0.5), int(cross[1] + os[1] + 0.5) )
                     crosses.append( cross ) 
                 pass
 
                 # 논리적 원점. 영상의 하단 가운데 점(마진 제외).
-                origin = ( w_org//2 - os[0], h_org - rmh - os[1] ) 
+                origin = ( w_org//2, h_org - rmh ) 
 
                 # 목표점 구하기 
                 target_cross = None
@@ -343,8 +345,8 @@ class LineCamera( LineTracker ) :
                     m = 6
                     rect_color = yellow
                     cross = origin
-                    lt = ( cross[0] + os[0] - m, cross[1] + os[1] - m )
-                    rb = ( cross[0] + os[0] + m, cross[1] + os[1] + m )
+                    lt = ( cross[0] - m, cross[1] - m )
+                    rb = ( cross[0] + m, cross[1] + m )
                     cv.rectangle( image, lt, rb, color=rect_color, thickness=2)
                 pass
 
@@ -364,11 +366,7 @@ class LineCamera( LineTracker ) :
                 # 라인의 두 끝점 그리기
                 for cross in crosses :
                     m = 8
-
                     rect_color = yellow if cross == target_cross else orange
-
-                    cross = ( int(cross[0] + os[0]), int(cross[1] + os[1]) )
-                    
                     fill_color = red if cv.pointPolygonTest( center_lane, cross, False ) < 0 else green
                     
                     lt = ( cross[0] - m, cross[1] - m )
