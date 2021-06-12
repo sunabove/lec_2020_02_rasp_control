@@ -341,6 +341,13 @@ class LineCamera( LineTracker ) :
                     pass
                 pass
 
+                if target_cross is not None :
+                    t = target_cross
+                    o = origin
+                    theta = atan2(t[1] - o[1], t[0] - o[0])
+                    angle = theta*180/pi
+                pass
+
                 # 원점 그리기
                 if True :
                     m = 6
