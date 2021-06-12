@@ -41,7 +41,7 @@ class Robot :
 
         overlay = "grayscale" # "successive"
 
-        self.config = { 'min_speed' : self.motor.min_speed , 'threshold': cfg( 'threshold', 85 ), 'overlay' : overlay }  #65
+        self.config = { 'min_speed' : self.motor.min_speed , 'threshold': cfg( 'threshold', 85 ), 'overlay' : overlay, 'move' : False }  #65
 
         # 시동 소리 내기
         self.rgb_led.light_effect( "flash", Color(0, 255, 0), duration=3 )         
@@ -275,6 +275,7 @@ def service() :
 
         log.info(f"cmd={cmd}, val={val}")
 
+        config = robot.config
 
         if cmd in ( "stop", "servo_stop", "stop_service" ):
             robot.stop_robot()
@@ -309,9 +310,13 @@ def service() :
         elif cmd == "line_camera" :
             if robot.service is None or type( robot.service ) != LineCamera :
                 robot.stop_service()
+                config[ "move" ] = False
                 robot.service = LineCamera( robot=robot, camera=robot.camera, buzzer = robot.buzzer )
                 robot.service.start()
             pass
+        elif cmd == "move" :
+            config[ "move" ] = False
+            log.info( f"move = {config['move']}")
         elif cmd == "min_speed" :
             if val :
                 robot.motor.min_speed = min( 70, max( 5, int(val) ) )
