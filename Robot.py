@@ -317,10 +317,11 @@ def service() :
                 robot.service.start()
             pass
         elif cmd == "move" :
-            config[ "move" ] = not ( config[ "move" ] )
+            config[ "move" ] = not config[ "move" ] 
 
             if not config[ "move" ] :
-                robot.stop_robot()
+                log.info( "romove move stop." )
+                robot.stop()
             pass
             
             log.info( f"move = {config['move']}")
