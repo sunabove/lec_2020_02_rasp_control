@@ -37,6 +37,7 @@ class LineCamera( LineTracker ) :
         self.camera = camera
         self.camera.lineCamera = self
         self.successive_time = 0
+        self.move_idx = 0 
     pass
 
     def robot_move(self) :
@@ -64,7 +65,10 @@ class LineCamera( LineTracker ) :
         move = config[ "move"]
 
         if move :
-            robot.stop()
+            self.move_idx += 1
+            if self.move_idx % 2 == 0 :
+                robot.stop()
+            pass
         pass
 
         # 색깔 정의
@@ -467,7 +471,7 @@ class LineCamera( LineTracker ) :
         pass
 
         # 로봇 이동
-        if move and angle is not None :
+        if move :
             elapsed = time() - then
 
             log.info( f"line cam move: elapsed = {elapsed:.3f}" )
@@ -476,6 +480,10 @@ class LineCamera( LineTracker ) :
             base_speed = 10
             # 모터 최대 속도
             max_speed = 20
+
+            if angle is None :
+                angle = 10
+            pass
 
             # 과제: 각도(angle)을 이용하여 모터 속도 조절값 계산하기
             control = -(max_speed - base_speed)*angle/360
