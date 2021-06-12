@@ -468,8 +468,8 @@ class LineCamera( LineTracker ) :
             # 모터 최대 속도
             max_speed = 15
 
-            # 과제: angle에 맞추어 모터 속도 조절값 계산하기
-            control = -(max_speed-base_speed)*angle/360
+            # 과제: 각도(angle)을 이용하여 모터 속도 조절값 계산하기
+            control = -(max_speed - base_speed)*angle/360
 
             # 모터 속도
             left_speed  = base_speed - control
