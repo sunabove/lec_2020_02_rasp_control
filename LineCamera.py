@@ -69,7 +69,7 @@ class LineCamera( LineTracker ) :
         white = (255, 255, 255)
         black = (0, 0, 0)
         gray = (128, 128, 128)
-        lightgray = (211, 211, 211)
+        lightgray = light_gray = (211, 211, 211)
         sienna = (45, 82, 160)
         orange = (0, 69, 255)
 
@@ -355,8 +355,8 @@ class LineCamera( LineTracker ) :
                 center_lane = center_lane.reshape((-1, 1, 2))
                     
                 if True :
-                    line_color = lightgray
-                    cv.drawContours(image, [center_lane], -1, line_color, 1, cv.LINE_AA)
+                    cv.drawContours(image, [center_lane], -1, lightgray, 1, cv.LINE_AA)
+                    #cv.drawContours(image, [center_lane], -1, sienna, 1, cv.LINE_AA)
                     #cv.line(image, ( (w - lw)//2, rmh - m), ( (w - lw)//2, h - rmh + m), line_color, 1)
                     #cv.line(image, ( (w + lw)//2, rmh - m), ( (w + lw)//2, h - rmh + m), line_color, 1)
                 pass
