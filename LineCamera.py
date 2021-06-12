@@ -352,9 +352,15 @@ class LineCamera( LineTracker ) :
                 if True :
                     lw = center_lane_width
                     line_color = lightgray
-                    m = 2
-                    cv.line(image, ( (w - lw)//2, rmh - m), ( (w - lw)//2, h - rmh + m), line_color, 1)
-                    cv.line(image, ( (w + lw)//2, rmh - m), ( (w + lw)//2, h - rmh + m), line_color, 1)
+                    m = 10
+
+                    center_lane = np.array( [ [ (w - lw)//2, rmh - m ], [ (w - lw)//2, h - rmh + m ], [ (w + lw)//2, h - rmh + m ], [ (w + lw)//2, rmh - m ] ])
+                    center_lane = center_lane.reshape((-1, 1, 2))
+
+                    cv.drawContours(image, [center_lane], -1, line_color, 1, cv.LINE_AA)
+
+                    #cv.line(image, ( (w - lw)//2, rmh - m), ( (w - lw)//2, h - rmh + m), line_color, 1)
+                    #cv.line(image, ( (w + lw)//2, rmh - m), ( (w + lw)//2, h - rmh + m), line_color, 1)
                 pass
 
                 # 라인의 두 끝점 그리기
