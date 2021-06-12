@@ -140,7 +140,7 @@ class Camera :
             sl = motor.speed_left()
             sr = motor.speed_right()
             sm = motor.speed_min()
-            txt = f" Spd L: {sl:.2f} R: {sr:.2f} Min: {sm}"
+            txt += f" Spd L: {sl:.2f} R: {sr:.2f} Min: {sm}"
 
             texts.append( txt )
         pass
