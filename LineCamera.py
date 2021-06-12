@@ -367,12 +367,12 @@ class LineCamera( LineTracker ) :
 
                     rect_color = yellow if cross == target_cross else orange
 
-                    cross = ( int(cross[0]), int(cross[1] ) )
+                    cross = ( int(cross[0] + os[0]), int(cross[1] + os[1]) )
                     
                     fill_color = red if cv.pointPolygonTest( center_lane, cross, False ) < 0 else green
                     
-                    lt = ( cross[0] + os[0] - m, cross[1] + os[1] - m )
-                    rb = ( cross[0] + os[0] + m, cross[1] + os[1] + m )
+                    lt = ( cross[0] - m, cross[1] - m )
+                    rb = ( cross[0] + m, cross[1] + m )
 
                     #cv.circle( image, ( cross[0] + os[0], cross[1] + os[1]), 6, fill_color, -1)
                     cv.rectangle( image, lt, rb, fill_color, -1)
