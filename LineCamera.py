@@ -353,9 +353,11 @@ class LineCamera( LineTracker ) :
                     pass
                 pass
 
-                useOrgAngle = False
+                useOrgAngle = True
                 if useOrgAngle :
-                    pass
+                    angle = 360 - angle
+                    angle = angle % 180
+                    angle = (90 - angle)
                 elif target_cross is not None :
                     t = [ cx + os[0], cy + os[1] ]
                     o = target_cross
