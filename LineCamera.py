@@ -329,12 +329,13 @@ class LineCamera( LineTracker ) :
                 # 목표점 구하기 
                 target_cross = None
                 if True :
-                    min_distum = 1_000_000
+                    min_distum = 100_000_000
                     for cross in crosses :
                         dx = cross[0] - origin[0]
                         dy = cross[1] - origin[1]
                         distum = dx*dx + dy*dy
                         if distum < min_distum :
+                            min_distum = distum
                             target_cross = cross
                         pass
                     pass
@@ -358,9 +359,6 @@ class LineCamera( LineTracker ) :
                     
                 if True :
                     cv.drawContours(image, [center_lane], -1, lightgray, 1, cv.LINE_AA)
-                    #cv.drawContours(image, [center_lane], -1, sienna, 1, cv.LINE_AA)
-                    #cv.line(image, ( (w - lw)//2, rmh - m), ( (w - lw)//2, h - rmh + m), line_color, 1)
-                    #cv.line(image, ( (w + lw)//2, rmh - m), ( (w + lw)//2, h - rmh + m), line_color, 1)
                 pass
 
                 # 라인의 두 끝점 그리기
@@ -372,7 +370,6 @@ class LineCamera( LineTracker ) :
                     lt = ( cross[0] - m, cross[1] - m )
                     rb = ( cross[0] + m, cross[1] + m )
 
-                    #cv.circle( image, ( cross[0] + os[0], cross[1] + os[1]), 6, fill_color, -1)
                     cv.rectangle( image, lt, rb, fill_color, -1 )
                     cv.rectangle( image, lt, rb, rect_color, thickness=2)
                 pass
