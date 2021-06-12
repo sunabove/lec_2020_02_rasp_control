@@ -329,14 +329,13 @@ class LineCamera( LineTracker ) :
                 pass
 
                 # 무게 중심 십자가 그리기
+                # 무게 중심 지점 원 그리기 / # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
                 m = 14
-                
-                line_color = (0, 255, 255)
+                circle_color = yellow if inside_lane else red
+                line_color = circle_color
+
                 cv.line(image, (c[0] - m + os[0], c[1] + os[1]), (c[0] + m + os[0], c[1] + os[1]), line_color, 1)
                 cv.line(image, (c[0] + os[0], c[1] - m + os[1]), (c[0] + os[0], c[1] + m + os[1]), line_color, 1)
-
-                # 무게 중심 지점 원 그리기 / # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
-                circle_color = yellow if inside_lane else red
 
                 cv.circle(image, (c[0] + os[0], c[1] + os[1]), 4, circle_color)
                 for radius in range( 6, m, 3 ) :
