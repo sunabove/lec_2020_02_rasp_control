@@ -111,7 +111,7 @@ class Camera :
         txt = f"Alphabot "
 
         if fps :
-            txt += f" : FPS = {fps:4.2f}"
+            txt += f" FPS = {fps:4.2f}"
         pass
 
         if motor :
