@@ -60,6 +60,13 @@ class LineCamera( LineTracker ) :
         # 환경 설정 데이터
         config = robot.config
 
+        then = time()
+        move = config[ "move"]
+
+        if move :
+            robot.stop()
+        pass
+
         # 색깔 정의
         green = (0, 255, 0)
         blue  = (255, 0, 0)
@@ -459,14 +466,16 @@ class LineCamera( LineTracker ) :
             ty += th
         pass
 
-        # 로봇 이동 
-        move = config[ "move"]
-
+        # 로봇 이동
         if move and angle is not None :
+            elapsed = time() - then
+
+            log.info( f"line cam move: elapsed = {elapsed:.3f}" )
+
             # 모터 기준 속도
             base_speed = 10
             # 모터 최대 속도
-            max_speed = 15
+            max_speed = 20
 
             # 과제: 각도(angle)을 이용하여 모터 속도 조절값 계산하기
             control = -(max_speed - base_speed)*angle/360
