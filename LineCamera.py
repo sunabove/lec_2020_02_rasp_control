@@ -346,6 +346,7 @@ class LineCamera( LineTracker ) :
                     o = target_cross
                     theta = atan2(t[1] - o[1], - (t[0] - o[0]) )
                     angle = theta*180/pi
+                    angle = abs(angle) - 90
                     #angle = (angle + 180)%360
                 pass
 
