@@ -71,6 +71,7 @@ class LineCamera( LineTracker ) :
         gray = (128, 128, 128)
         lightgray = (211, 211, 211)
         sienna = (45, 82, 160)
+        orange = (0, 69, 255)
 
         # 영상 처리 과정의 이미지들
         images = []
@@ -349,7 +350,7 @@ class LineCamera( LineTracker ) :
                 # 라인의 두 끝점 그리기
                 for cross in crosses :
                     m = 6
-                    rect_color = yellow if cross == target_cross else red
+                    rect_color = yellow if cross == target_cross else orange
 
                     cross = ( int(cross[0]), int(cross[1] ) )
                     
