@@ -336,7 +336,7 @@ class LineCamera( LineTracker ) :
                 cv.line(image, (c[0] + os[0], c[1] - m + os[1]), (c[0] + os[0], c[1] + m + os[1]), line_color, 1)
 
                 # 무게 중심 지점 원 그리기 / # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
-                circle_color = red if inside_lane else yellow
+                circle_color = yellow if inside_lane else red
 
                 cv.circle(image, (c[0] + os[0], c[1] + os[1]), 4, circle_color)
                 for radius in range( 6, m, 3 ) :
