@@ -349,16 +349,14 @@ class LineCamera( LineTracker ) :
                 pass
 
                 # 가운데 가상의 센터 라인 그리기
+                lw = center_lane_width
+                m = 10
+                center_lane = np.array( [ [ (w - lw)//2, rmh - m ], [ (w - lw)//2, h - rmh + m ], [ (w + lw)//2, h - rmh + m ], [ (w + lw)//2, rmh - m ] ])
+                center_lane = center_lane.reshape((-1, 1, 2))
+                    
                 if True :
-                    lw = center_lane_width
                     line_color = lightgray
-                    m = 10
-
-                    center_lane = np.array( [ [ (w - lw)//2, rmh - m ], [ (w - lw)//2, h - rmh + m ], [ (w + lw)//2, h - rmh + m ], [ (w + lw)//2, rmh - m ] ])
-                    center_lane = center_lane.reshape((-1, 1, 2))
-
                     cv.drawContours(image, [center_lane], -1, line_color, 1, cv.LINE_AA)
-
                     #cv.line(image, ( (w - lw)//2, rmh - m), ( (w - lw)//2, h - rmh + m), line_color, 1)
                     #cv.line(image, ( (w + lw)//2, rmh - m), ( (w + lw)//2, h - rmh + m), line_color, 1)
                 pass
