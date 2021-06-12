@@ -436,11 +436,6 @@ class LineCamera( LineTracker ) :
 
         lines.append( txt )
 
-        # 각도 보정
-        if angle is not None :
-            angle = 90 - angle
-        pass
-
         # 라인 중심정 정보 텍스트 추가
         if cx is not None :
             cx = (cx + rmw) - w_org//2
@@ -469,6 +464,7 @@ class LineCamera( LineTracker ) :
             base_speed = 10
             max_speed = 20
 
+            # 과제: angle에 맞추어 모토 속도 조절값 계산하기
             control = 0
 
             # 모터 속도
