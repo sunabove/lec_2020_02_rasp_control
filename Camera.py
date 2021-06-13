@@ -149,20 +149,21 @@ class Camera :
         ty = 20   # text y position
         th = 20   # line height
 
+        lineCamera = self.lineCamera
+        if lineCamera :
+            image = lineCamera.robot_move_by_camera( image=image, success=success, tx=tx, ty=ty + len(texts)*th, th=th )
+        pass
+
         for txt in texts :
             self.putTextLine( image, txt , tx, ty )
             ty += th
-        pass
-
-        lineCamera = self.lineCamera
-        if lineCamera :
-            image = lineCamera.robot_move_by_camera( image=image, success=success, tx=tx, ty=ty, th=th )
         pass
 
         # CPU 온도 출력 
         temperature = self.cpu.temperature
         txt = f"TEMP: {temperature:3.2f} < 85 oC"
         tx = 490
+        ty = 20   # text y position
         fg_color = (0, 0, 255) if temperature >= 70 else (0, 255, 0)
         bg_color = (50, 50, 60)
         self.putTextLine( image, txt, tx, ty, fg_color, bg_color )

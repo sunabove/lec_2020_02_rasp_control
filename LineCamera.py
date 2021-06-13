@@ -77,6 +77,7 @@ class LineCamera( LineTracker ) :
         red = (0, 0, 255)
         yellow = (0, 255, 255)
         violet = (255, 0, 127)
+        cyan = (255, 255, 0)
         white = (255, 255, 255)
         black = (0, 0, 0)
         gray = (128, 128, 128)
@@ -218,7 +219,7 @@ class LineCamera( LineTracker ) :
         pass
 
         # ROI 영역 사각형 그리기
-        cv.rectangle( image, (rmw, rmh), (w - rmw, h - rmh), color=(255, 255, 0), thickness=2)
+        cv.rectangle( image, (rmw, rmh), (w - rmw -1, h - rmh -1), color=cyan, thickness=1)
         
         image = image.astype(np.uint8)
 
@@ -256,9 +257,6 @@ class LineCamera( LineTracker ) :
             # 스케일 복원 
             poly[:,:] = poly[:,:]*sf            
             cv.drawContours(image, [poly], -1, blue, line_width +1, cv.LINE_AA, offset=offset)
-
-            #poly_appr = cv.approxPolyDP(poly, poly_epsilon, True)
-            #cv.drawContours(image_draw, [poly_appr], -1, blue, line_width, cv.LINE_AA)
         pass
         
         # 최대 폴리곤(= 차선) 그리기
