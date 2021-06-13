@@ -491,7 +491,7 @@ class LineCamera( LineTracker ) :
             pass
 
             # 과제: 각도(angle)을 이용하여 모터 속도 조절값 계산하기
-            control = (max_speed - base_speed)*angle/90
+            control = -(max_speed - base_speed)*angle/90
 
             # 모터 속도
             left_speed  = base_speed - control
