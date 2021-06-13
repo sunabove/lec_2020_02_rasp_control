@@ -445,6 +445,24 @@ class LineCamera( LineTracker ) :
             camera.putTextLine( image, "200", 202, h_org - rmh//2 + 4, fg_color=gray )
         pass 
 
+        if True :
+            # 주석 그리기
+            tw = 100
+            th = 100
+            tm = 10
+            h = h_org
+            w = w_org
+            
+
+            cv.rectangle(image, (w - tw - tm, h - th - tm), (w - tm - 1, h - tm - 1), lightgray, 0 )
+            
+            timage = image[ h - th - tm : h - tm, w - tw - tm : w - tm ]
+            timage = timage/2 + 100
+
+            image[ h - th - tm : h - tm, w - tw - tm : w - tm ] = timage
+            pass
+        pass
+
         # 영상에 표현할 텍스트 
         lines = []
 
