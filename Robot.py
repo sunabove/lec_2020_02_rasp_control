@@ -321,6 +321,7 @@ def service() :
 
             if not config[ "move" ] :
                 log.info( "romove move stop." )
+                sleep( 0.1 )
                 robot.stop()
             pass
             

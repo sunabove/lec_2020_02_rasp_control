@@ -62,9 +62,8 @@ class LineCamera( LineTracker ) :
         config = robot.config
 
         then = time()
-        move = config[ "move"]
 
-        if move :
+        if config[ "move"] :
             self.move_idx += 1
             if self.move_idx % 2 == 0 :
                 #robot.stop()
@@ -477,7 +476,7 @@ class LineCamera( LineTracker ) :
         pass
 
         # 로봇 이동
-        if move :
+        if config[ "move"] :
             elapsed = time() - then
 
             log.info( f"line cam move: elapsed = {elapsed:.3f}" )
