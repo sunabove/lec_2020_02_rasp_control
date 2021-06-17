@@ -456,7 +456,7 @@ class LineCamera( LineTracker ) :
 
             fh = 16 # font height
             lw = 113
-            lh = fh*len(legends) + 9
+            lh = fh*len(legends) + 7
             m = 10
             h = h_org
             w = w_org
@@ -468,13 +468,18 @@ class LineCamera( LineTracker ) :
 
             image[ h - lh - m : h - m, w - lw - m : w - m ] = timage
 
-            lx = w - lw - m + 45
+            lx = w - lw - m + 4
             ly = h - m - 8
+            ih = 5
 
             for legend in legends[ ::-1 ] :
-                fg_color = black
+                color = legend[0]
                 txt = legend[1]
-                camera.putTextLine( image, txt, lx, ly, fg_color=fg_color, font_size=0.3 )
+
+                cv.rectangle(image, (lx + 4, ly - 2*ih + 2 ), (lx + 34, ly + 2), color, -1 )
+                cv.rectangle(image, (lx + 4, ly - 2*ih + 2 ), (lx + 34, ly + 2), white, 0 )
+
+                camera.putTextLine( image, txt, lx + 42, ly, fg_color=black, font_size=0.3 )
                 ly = ly - fh
             pass
         pass
