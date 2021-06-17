@@ -447,19 +447,34 @@ class LineCamera( LineTracker ) :
 
         if True :
             # 주석 그리기
-            tw = 100
-            th = 100
-            tm = 10
+            legends = []
+            legends.append( [ cyan, "ROI" ] )
+            legends.append( [ blue, "Polygon" ] )
+            legends.append( [ green, "SPolygon" ] )
+            legends.append( [ violet, "MinBox" ] )
+            legends.append( [ lightgray, "CenterLane" ] )
+
+            lw = 100
+            lh = 100
+            m = 10
             h = h_org
             w = w_org
-            
 
-            cv.rectangle(image, (w - tw - tm, h - th - tm), (w - tm - 1, h - tm - 1), lightgray, 0 )
+            cv.rectangle(image, (w - lw - m, h - lh - m), (w - m - 1, h - m - 1), lightgray, 0 )
             
-            timage = image[ h - th - tm : h - tm, w - tw - tm : w - tm ]
+            timage = image[ h - lh - m : h - m, w - lw - m : w - m ]
             timage = timage/2 + 100
 
-            image[ h - th - tm : h - tm, w - tw - tm : w - tm ] = timage
+            image[ h - lh - m : h - m, w - lw - m : w - m ] = timage
+
+            lx = w - lw - m + 5
+            ly = h - m - 10
+
+            for legend in legends[ ::-1 ] :
+                fg_color = legend[0]
+                txt = legend[1]
+                camera.putTextLine( image, txt, lx, ly, fg_color=fg_color )
+                ly = ly - th
             pass
         pass
 
