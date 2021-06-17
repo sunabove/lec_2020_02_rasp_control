@@ -196,10 +196,10 @@ class Camera :
         return jpg.tobytes()
     pass # -- get_frame
 
-    def putTextLine(self, image, txt, x, y, fg_color=None, bg_color=None ) :
+    def putTextLine(self, image, txt, x, y, fg_color=None, bg_color=None, font_size=0.4 ) :
         # opencv 이미지에 텍스트를 그린다.
         font = cv2.FONT_HERSHEY_SIMPLEX
-        fs = 0.4  # font size(scale)
+        fs = font_size  # font size(scale)
         ft = 1    # font thickness 
 
         if fg_color is None : 

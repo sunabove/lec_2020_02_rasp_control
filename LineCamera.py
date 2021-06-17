@@ -452,10 +452,11 @@ class LineCamera( LineTracker ) :
             legends.append( [ blue, "Polygon" ] )
             legends.append( [ green, "SPolygon" ] )
             legends.append( [ violet, "MinBox" ] )
-            legends.append( [ lightgray, "CenterLane" ] )
+            legends.append( [ lightgray, "Center Lane" ] )
 
-            lw = 100
-            lh = 100
+            fh = 16 # font height
+            lw = 113
+            lh = fh*len(legends) + 9
             m = 10
             h = h_org
             w = w_org
@@ -467,14 +468,14 @@ class LineCamera( LineTracker ) :
 
             image[ h - lh - m : h - m, w - lw - m : w - m ] = timage
 
-            lx = w - lw - m + 5
-            ly = h - m - 10
+            lx = w - lw - m + 45
+            ly = h - m - 8
 
             for legend in legends[ ::-1 ] :
-                fg_color = legend[0]
+                fg_color = black
                 txt = legend[1]
-                camera.putTextLine( image, txt, lx, ly, fg_color=fg_color )
-                ly = ly - th
+                camera.putTextLine( image, txt, lx, ly, fg_color=fg_color, font_size=0.3 )
+                ly = ly - fh
             pass
         pass
 
