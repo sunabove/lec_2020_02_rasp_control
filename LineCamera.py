@@ -388,8 +388,8 @@ class LineCamera( LineTracker ) :
                 # 라인의 두 끝점 그리기
                 for cross in crosses :
                     m = 8
-                    rect_color = yellow if cross == target_cross else orange
-                    fill_color = red if cv.pointPolygonTest( center_lane, cross, False ) < 0 else green
+                    rect_color = (blue, yellow)[ cross == target_cross ]
+                    fill_color = (green, red)[ cv.pointPolygonTest( center_lane, cross, False ) < 0 ]
                     
                     lt = ( cross[0] - m, cross[1] - m )
                     rb = ( cross[0] + m, cross[1] + m )
@@ -421,9 +421,9 @@ class LineCamera( LineTracker ) :
             cen_y, cen_x = image_draw.shape[:2]
             cen_y, cen_x = cen_y//2, cen_x//2
 
-            line_color = white
-            cv.rectangle(image_draw, (cen_x - m - 3, cen_y - 2), (cen_x + m + 3, cen_y + 2), line_color, -1)
-            cv.rectangle(image_draw, (cen_x - 2, cen_y - m - 3), (cen_x + 2, cen_y + m + 3), line_color, -1)
+            lc = line_color = white
+            cv.rectangle(image_draw, (cen_x - m - 3, cen_y - 2), (cen_x + m + 3, cen_y + 2), lc, -1)
+            cv.rectangle(image_draw, (cen_x - 2, cen_y - m - 3), (cen_x + 2, cen_y + m + 3), lc, -1)
 
             line_color = (255, 255, 0)
             cv.line(image_draw, (cen_x - m, cen_y), (cen_x + m, cen_y), line_color, 1 )
@@ -431,14 +431,14 @@ class LineCamera( LineTracker ) :
 
             # 하단 스케일바 그리기
             m = 1
-            line_color = lightgray
+            lc = line_color = lightgray
             x = rmw
             y = h_org - rmh//2
-            cv.rectangle(image, (x, y - m), (x + 200, y + m), line_color, -1 )
+            cv.rectangle(image, (x, y - m), (x + 200, y + m), lc, -1 )
 
             for i in range(5) :
                 m = 6 - 2*(i%2)
-                cv.rectangle(image, (x - 1, y - m), (x + 1, y + m), line_color, -1 )
+                cv.rectangle(image, (x - 1, y - m), (x + 1, y + m), lc, -1 )
                 x += 50
             pass
 
@@ -453,6 +453,7 @@ class LineCamera( LineTracker ) :
             legends.append( [ green, white, 34, "SPolygon" ] )
             legends.append( [ violet, white, 34, "MinBox" ] )
             legends.append( [ lightgray, white, 34, "Center Lane" ] )
+            legends.append( [ yellow, white, 16, "Base Point" ] )
 
             fh = 16 # font height
             lw = 113
@@ -475,11 +476,12 @@ class LineCamera( LineTracker ) :
             for legend in legends[ ::-1 ] :
                 fc = fg_color = legend[0]
                 bc = bg_clolor = legend[1]
-                ww = legend[2]
+                tw = legend[2]
+                tm = 2
                 txt = legend[3]
 
-                cv.rectangle(image, (lx + 4, ly - 2*ih + 2 ), (lx + ww, ly + 2), fc, -1 )
-                cv.rectangle(image, (lx + 4, ly - 2*ih + 2 ), (lx + ww, ly + 2), bc, 0 )
+                cv.rectangle(image, (lx + 4, ly - 2*ih + 2 ), (lx + tw, ly + 2), fc, thickness=tm )
+                #cv.rectangle(image, (lx + 4, ly - 2*ih + 2 ), (lx + tw, ly + 2), bc, 0 )
 
                 camera.putTextLine( image, txt, lx + 42, ly, fg_color=black, font_size=0.3 )
                 ly = ly - fh
