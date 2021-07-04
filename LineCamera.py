@@ -246,7 +246,7 @@ class LineCamera( LineTracker ) :
             polys.append( c )
         pass
         
-        line_width = 2
+        lw = line_width = 2 # 라인 폭
         # 폴리곤 정점들의 최소 간격
         poly_epsilon = 18 #15 # 6 #20 # 12
 
@@ -256,7 +256,7 @@ class LineCamera( LineTracker ) :
             line_color = blue
             # 스케일 복원 
             poly[:,:] = poly[:,:]*sf            
-            cv.drawContours(image, [poly], -1, blue, line_width +1, cv.LINE_AA, offset=offset)
+            cv.drawContours(image, [poly], -1, blue, lw +1, cv.LINE_AA, offset=offset)
         pass
         
         # 최대 폴리곤(= 차선) 그리기
@@ -276,8 +276,8 @@ class LineCamera( LineTracker ) :
             max_poly_min_box = cv.boxPoints(max_poly_min_box)
             max_poly_min_box = np.int0(max_poly_min_box)
 
-            cv.drawContours(image, [max_poly_min_box], -1, violet, line_width + 2, cv.LINE_AA, offset=offset)
-            cv.drawContours(image, [max_poly], -1, green, line_width, cv.LINE_AA, offset=offset)
+            cv.drawContours(image, [max_poly_min_box], -1, violet, lw + 2, cv.LINE_AA, offset=offset)
+            cv.drawContours(image, [max_poly], -1, green, lw, cv.LINE_AA, offset=offset)
         pass
 
         if max_poly is not None :
@@ -399,17 +399,17 @@ class LineCamera( LineTracker ) :
                 pass
 
                 # 무게 중심 십자가 그리기
-                # 무게 중심 지점 원 그리기 / # 과제 : 중심점 내외부 여부에 따라서 색깔을 달리하도록 코딩한다.
                 m = 14
-                circle_color = yellow if inside_lane else red
-                line_color = circle_color
+                cc = circle_color = yellow if inside_lane else red
+                lc = line_color = circle_color
 
-                cv.line(image, (c[0] - m + os[0], c[1] + os[1]), (c[0] + m + os[0], c[1] + os[1]), line_color, 1)
-                cv.line(image, (c[0] + os[0], c[1] - m + os[1]), (c[0] + os[0], c[1] + m + os[1]), line_color, 1)
+                cv.line(image, (c[0] - m + os[0], c[1] + os[1]), (c[0] + m + os[0], c[1] + os[1]), lc, 1)
+                cv.line(image, (c[0] + os[0], c[1] - m + os[1]), (c[0] + os[0], c[1] + m + os[1]), lc, 1)
 
-                cv.circle(image, (c[0] + os[0], c[1] + os[1]), 4, circle_color)
+                # 무게 중심 지점 원 그리기
+                cv.circle(image, (c[0] + os[0], c[1] + os[1]), 4, cc)
                 for radius in range( 6, m, 3 ) :
-                    cv.circle(image, (c[0] + os[0], c[1] + os[1]), radius, circle_color)
+                    cv.circle(image, (c[0] + os[0], c[1] + os[1]), radius, cc)
                 pass
                 
             pass
@@ -448,11 +448,11 @@ class LineCamera( LineTracker ) :
         if True :
             # 주석 그리기
             legends = []
-            legends.append( [ cyan, "ROI" ] )
-            legends.append( [ blue, "Polygon" ] )
-            legends.append( [ green, "SPolygon" ] )
-            legends.append( [ violet, "MinBox" ] )
-            legends.append( [ lightgray, "Center Lane" ] )
+            legends.append( [ cyan, white, 34, "ROI" ] )
+            legends.append( [ blue, white, 34, "Polygon" ] )
+            legends.append( [ green, white, 34, "SPolygon" ] )
+            legends.append( [ violet, white, 34, "MinBox" ] )
+            legends.append( [ lightgray, white, 34, "Center Lane" ] )
 
             fh = 16 # font height
             lw = 113
@@ -473,16 +473,18 @@ class LineCamera( LineTracker ) :
             ih = 5
 
             for legend in legends[ ::-1 ] :
-                color = legend[0]
-                txt = legend[1]
+                fc = fg_color = legend[0]
+                bc = bg_clolor = legend[1]
+                ww = legend[2]
+                txt = legend[3]
 
-                cv.rectangle(image, (lx + 4, ly - 2*ih + 2 ), (lx + 34, ly + 2), color, -1 )
-                cv.rectangle(image, (lx + 4, ly - 2*ih + 2 ), (lx + 34, ly + 2), white, 0 )
+                cv.rectangle(image, (lx + 4, ly - 2*ih + 2 ), (lx + ww, ly + 2), fc, -1 )
+                cv.rectangle(image, (lx + 4, ly - 2*ih + 2 ), (lx + ww, ly + 2), bc, 0 )
 
                 camera.putTextLine( image, txt, lx + 42, ly, fg_color=black, font_size=0.3 )
                 ly = ly - fh
             pass
-        pass
+        pass # // 주석 그리기
 
         # 영상에 표현할 텍스트 
         lines = []
