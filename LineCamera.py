@@ -470,8 +470,8 @@ class LineCamera( LineTracker ) :
             image[ h - lh - m : h - m, w - lw - m : w - m ] = timage
 
             lx = w - lw - m + 4
-            ly = h - m - 8
-            ih = 5
+            ly = h - m - 9
+            ih = 4
 
             for legend in legends[ ::-1 ] :
                 fc = fg_color = legend[0]

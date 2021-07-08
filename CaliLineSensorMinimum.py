@@ -78,7 +78,7 @@ def service(debug=0) :
 
     interval = 0.01
     while line_sensor_running :
-        pos, norm, sum_norm, check_time = lineSensor.read_sensor() 
+        pos, norm, sum_norm, sensor, check_time = lineSensor.read_sensor() 
 
         if do_plot_chart == False :
             sleep( interval )
