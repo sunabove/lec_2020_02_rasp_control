@@ -264,7 +264,21 @@ if __name__=='__main__':
     motor = Motor(debug=True)
 
     try:
-        motor.test_all(duration=3)        
+        duration=3
+
+        motor.forward()
+        sleep(duration)
+
+        motor.backward()
+        sleep(duration)
+
+        motor.left()
+        sleep(duration)
+
+        motor.right()
+        sleep(duration)
+        
+        motor.stop()
     except KeyboardInterrupt:
         print( "" )
     pass 
