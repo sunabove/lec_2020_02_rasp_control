@@ -57,7 +57,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                     self.client_address, str(e))
         else:
             self.send_error(404)
-            self.end_headers()\
+            self.end_headers()
         pass
     pass
 pass
